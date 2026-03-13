@@ -1,3 +1,7 @@
 # monke-cooks
 
-it is a game about cooking and it includes boss fights, cmpaign and multiplayer
+## WANTED FEATURES
+1. Cooking
+2. Multiplayer
+3. Campaign
+4. Boss Fights

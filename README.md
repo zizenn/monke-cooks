@@ -11,7 +11,7 @@ This game is about cooking at your peak and serving as many customers as possibl
 5. Sameer (Artist)
 7. Ryan (Lead Musicician)
 8. Minh Bao (Musician)
-9. Felix (Musicician)
+9. Felix (Musician)
 
 # Wanted Features
 1. cooking (ofc)

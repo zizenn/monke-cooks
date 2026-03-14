@@ -6,10 +6,11 @@
 1. Sakif (Lead Dev / Founder)
 2. Marcus (Co-Founder)
 3. Eaton (Second Dev)
-4. Jnho (Lead Artst)
-5. Minh Bao (Artist)
-6. Ryan (Lead Music)
-7. Felix (Music)
+4. Jnho (Lead Artst / Story Writer)
+5. Sameer (Artist)
+6. Minh Bao (Artist)
+7. Ryan (Lead Musicician)
+8. Felix (Musicician)
 
 ## mechanics
 1. cooking with cooking tools

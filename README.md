@@ -9,7 +9,7 @@ This game is about cooking at your peak and serving as many customers as possibl
 3. Eaton (Dev)
 4. Jnho (Lead Artst / Story Writer)
 5. Sameer (Artist)
-7. Ryan (Lead Musicician)
+7. Ryan (Lead Musician)
 8. Minh Bao (Musician)
 9. Felix (Musician)
 

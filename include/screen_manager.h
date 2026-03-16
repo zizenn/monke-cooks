@@ -1,0 +1,9 @@
+#ifndef SCREEN_MANAGER_H
+#define SCREEN_MANAGER_H
+
+typedef enum {
+  MAIN_MENU,
+  SETTINGS_MENU
+} GameScreen;
+
+#endif

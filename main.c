@@ -33,7 +33,6 @@ int main() {
         break;
       case ADVANCEMENTS_MENU:
         break;
-
     }
 
     BeginDrawing();

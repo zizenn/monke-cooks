@@ -29,12 +29,11 @@ void UpdateMenu() {
    }
 
    if (clicked(MOUSE_BUTTON_LEFT, campaignBtn)) {
-     // current = CAMPAIGN_MENU;
+     current = CAMPAIGN_MENU;
    }
 }
 
 void DrawMenu(void) {
-
    
  ClearBackground(RAYWHITE);
  DrawText("monke cooks", 15, 15, 35, BLACK);

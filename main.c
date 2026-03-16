@@ -1,6 +1,11 @@
 #include "include/screen_menu.h"
 #include "raylib.h"
 #include "include/screen_manager.h"
+#include "include/globals.h"
+
+// globals
+Vector2 mousePos = { 0 };
+GameScreen current = MAIN_MENU;
 
 bool hovered(Vector2 mousePos, Rectangle rec);
 bool clicked(int mouseBtn, Vector2 mousePos, Rectangle rec);
@@ -11,14 +16,31 @@ int main() {
   InitAudioDevice();
   SetTargetFPS(60);
 
-  GameScreen current = MAIN_MENU;
+  InitMenu();
 
-  if (current == MAIN_MENU) {
-    DrawMenu();
-    UnloadMenu();
+  while (!WindowShouldClose()) {
+    // variable setting
+    mousePos = GetMousePosition();
+
+    switch (current) {
+      case MAIN_MENU:
+        UpdateMenu(); break;
+    }
+
+    BeginDrawing();
+
+      switch (current) {
+        case MAIN_MENU:
+          DrawMenu(); break;
+      }
+
+    EndDrawing();
+
   }
 
   // close
+  UnloadMenu();
+  CloseAudioDevice();
   CloseWindow();
 
   return 0;

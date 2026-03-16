@@ -7,8 +7,8 @@
 Vector2 mousePos = { 0 };
 GameScreen current = MAIN_MENU;
 
-bool hovered(Vector2 mousePos, Rectangle rec);
-bool clicked(int mouseBtn, Vector2 mousePos, Rectangle rec);
+static inline bool hovered(Rectangle rec); //no longer includes additional parameter mousePos
+static inline bool clicked(int mouseBtn, Rectangle rec); //no longer includes additional parameter mousePos
 void button(char hover_color[], char color[], char name[], char text[], Vector2 mousePos);
 
 int main() {
@@ -16,7 +16,8 @@ int main() {
   InitAudioDevice();
   SetTargetFPS(60);
 
-  InitMenu();
+  InitMainMenu();
+  InitCampaignMenu();
 
   while (!WindowShouldClose()) {
     // variable setting
@@ -24,11 +25,11 @@ int main() {
 
     switch (current) {
       case MAIN_MENU:
-        UpdateMenu(); break;
+        UpdateMainMenu(); break;
       case SETTINGS_MENU:
         break;
       case CAMPAIGN_MENU:
-        break;
+        UpdateCampaignMenu(); break;
       case MULTIPLAYER_MENU:
         break;
       case ADVANCEMENTS_MENU:
@@ -40,7 +41,15 @@ int main() {
 
       switch (current) {
         case MAIN_MENU:
-          DrawMenu(); break;
+          DrawMainMenu(); break;
+        case SETTINGS_MENU:
+          break;
+        case CAMPAIGN_MENU:
+          DrawCampaignMenu(); break;
+        case MULTIPLAYER_MENU:
+          break;
+        case ADVANCEMENTS_MENU:
+          break;
       }
 
     EndDrawing();
@@ -48,7 +57,8 @@ int main() {
   }
 
   // close
-  UnloadMenu();
+  UnloadMainMenu();
+  UnloadCampaignMenu(); //optimise unloading so it doesn't RE-unload everything when more menus added
   CloseAudioDevice();
   CloseWindow();
 

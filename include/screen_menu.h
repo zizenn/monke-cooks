@@ -1,9 +1,14 @@
 #ifndef SCREEN_MENU_H
 #define SCREEN_MENU_H
 
-void InitMenu(void);
-void UpdateMenu(void);
-void DrawMenu(void);
-void UnloadMenu(void);
+void InitMainMenu(void);
+void UpdateMainMenu(void);
+void DrawMainMenu(void);
+void UnloadMainMenu(void);
+
+void InitCampaignMenu(void);
+void UpdateCampaignMenu(void);
+void DrawCampaignMenu(void);
+void UnloadCampaignMenu(void);
 
 #endif

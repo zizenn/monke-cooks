@@ -3,7 +3,10 @@
 
 typedef enum {
   MAIN_MENU,
-  SETTINGS_MENU
+  SETTINGS_MENU,
+  CAMPAIGN_MENU,
+  MULTIPLAYER_MENU,
+  ADVANCEMENTS_MENU
 } GameScreen;
 
 #endif

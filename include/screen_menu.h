@@ -3,9 +3,9 @@
 
 #include "screen_manager.h"
 
-void MenuInit(void);
+void InitMenu(void);
 GameScreen MenuUpdate(void);
-void MenuDraw(void);
-void MenuUnload(void);
+void DrawMenu(void);
+void UnloadMenu(void);
 
 #endif

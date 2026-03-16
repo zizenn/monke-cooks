@@ -2,40 +2,42 @@
 #include "raylib.h"
 #include "include/screen_manager.h"
 
-void MenuInit(void);
-GameScreen MenuUpdate(void);
-void MenuDraw(void);
-void MenuUnload(void);
+// music
+static Music menu_music;
+// sounds
+static Sound clickSound;
+// textures
+static Texture2D monke;
+
+void InitMenu(void);
+GameScreen UpdateMenu(void);
+void DrawMenu(void);
+void UnloadMenu(void);
 
 bool hovered(Vector2 mousePos, Rectangle rec);
 bool clicked(int mouseBtn, Vector2 mousePos, Rectangle rec);
 void button(char hover_color[], char color[], char name[], char text[], Vector2 mousePos);
 
-void MenuDraw(void) {
+void DrawMenu(void) {
 
-  // init
-  GameScreen current = MAIN_MENU;
-
-  InitWindow(1280, 720, "monke cooks");
-  InitAudioDevice();
-  SetTargetFPS(60);
+  PlayMusicStream(menu_music);
 
   // -- VARIABLES --
-
+  
   // music
-  // Music menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
-  // PlayMusicStream(menu_music);
-
+  menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
+  
   // sounds
-  // Sound clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
-
+  clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
+  
   // textures
-  // Texture2D monke = LoadTexture("assets/monke_front.png");
+  monke = LoadTexture("assets/monke_front.png");
 
   // buttons
-  Rectangle playBtn = { 15, 70, 200, 50 };
-  Rectangle settingsBtn = { 15, 150, 200, 50 };
-  Rectangle quitBtn = { 15, 230, 200, 50 };
+  Rectangle campaignBtn = { 15, 70, 200, 50 };
+  Rectangle multiplayerBtn = { 15, 150, 200, 50 };
+  Rectangle settingsBtn = { 15, 230, 200, 50 };
+  Rectangle quitBtn = { 15, 310, 200, 50 };
 
   // run
 
@@ -50,15 +52,24 @@ void MenuDraw(void) {
       break;
     }
 
+    if (clicked(MOUSE_BUTTON_LEFT, mousePos, campaignBtn)) {
+      continue;
+    }
+
    BeginDrawing();
 
     ClearBackground(RAYWHITE);
     DrawText("monke cooks", 15, 15, 35, BLACK);
 
-    // playBtn
-    Color playBtnColor = hovered(mousePos, playBtn) ? DARKGRAY : GRAY;
-    DrawRectangleRec(playBtn, playBtnColor);
-    DrawText("play", playBtn.x + 45, playBtn.y + 15, 20, WHITE);
+    // campaignBtn
+    Color campaignBtnColor = hovered(mousePos, campaignBtn) ? DARKGRAY : GRAY;
+    DrawRectangleRec(campaignBtn, campaignBtnColor);
+    DrawText("campaign", campaignBtn.x + 45,campaignBtn.y + 15, 20, WHITE);
+
+    // campaignBtn
+    Color multiplayerBtnColor = hovered(mousePos, multiplayerBtn) ? DARKGRAY : GRAY;
+    DrawRectangleRec(multiplayerBtn, multiplayerBtnColor);
+    DrawText("multiplayer", multiplayerBtn.x + 45,multiplayerBtn.y + 15, 20, WHITE);
 
     // settingsBtn
     Color settingsBtnColor = hovered(mousePos, settingsBtn) ? DARKGRAY : GRAY;
@@ -75,10 +86,15 @@ void MenuDraw(void) {
  
 }
 
-void MenuUnload() {
-    CloseWindow();
+void UnloadMenu() {
+    UnloadMusicStream(menu_music);
+    UnloadTexture(monke);
+    UnloadSound(clickSound);
 }
 
+GameScreen MenuUpdate(void) {
+    
+}
 
 bool hovered(Vector2 mousePos, Rectangle rec) {
   return CheckCollisionPointRec(mousePos, rec); 

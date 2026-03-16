@@ -28,29 +28,19 @@ void UpdateMainMenu() {
      shouldQuit = true;
    }
 
-   if (clicked(MOUSE_BUTTON_LEFT, campaignBtn)) {
-<<<<<<< HEAD
-     current = CAMPAIGN_MENU;
-   }
-}
-
-void DrawMenu(void) {
-   
- ClearBackground(RAYWHITE);
- DrawText("monke cooks", 15, 15, 35, BLACK);
-=======
+  if (clicked(MOUSE_LEFT_BUTTON, campaignBtn)) {
      PlaySound(clickSound);
      current = CAMPAIGN_MENU;
    }
 
   if (clicked(MOUSE_BUTTON_LEFT, settingsBtn)) {
      PlaySound(clickSound);
-    //  current = SETTINGS_MENU;
+     // current = SETTINGS_MENU;
    }
 
   if (clicked(MOUSE_BUTTON_LEFT, multiplayerBtn)) {
      PlaySound(clickSound);
-    //  current = MULTIPLAYER_MENU;
+     // current = MULTIPLAYER_MENU;
    }
 }
 
@@ -62,7 +52,6 @@ void DrawMainMenu(void) {
   Color campaignBtnColor = hovered(campaignBtn) ? DARKGRAY : GRAY;
   DrawRectangleRec(campaignBtn, campaignBtnColor);
   DrawText("campaign", campaignBtn.x + 45,campaignBtn.y + 15, 20, WHITE);
->>>>>>> 4ea13adaf3c8320379951093900f2ae1604e8211
 
   // multiplayerBtn
   Color multiplayerBtnColor = hovered(multiplayerBtn) ? DARKGRAY : GRAY;

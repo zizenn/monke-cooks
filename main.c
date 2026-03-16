@@ -25,6 +25,15 @@ int main() {
     switch (current) {
       case MAIN_MENU:
         UpdateMenu(); break;
+      case SETTINGS_MENU:
+        break;
+      case CAMPAIGN_MENU:
+        break;
+      case MULTIPLAYER_MENU:
+        break;
+      case ADVANCEMENTS_MENU:
+        break;
+
     }
 
     BeginDrawing();

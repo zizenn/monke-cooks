@@ -62,10 +62,10 @@ DrawText("quit", quitBtn.x + 45, quitBtn.y + 15, 20, WHITE);
 }
 
 void InitMenu() {
-  PlayMusicStream(menu_music);
   menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
   clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
   monke = LoadTexture("assets/monke_front.png");
+  PlayMusicStream(menu_music);
 }
 
 void UnloadMenu() {

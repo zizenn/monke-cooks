@@ -7,4 +7,13 @@
 extern Vector2 mousePos;
 extern GameScreen current;
 
+//Sakif PLEASE why'd you define "hovered" and "clicked" differently within main.c and m_menu.c???
+static inline bool hovered(Rectangle rec) {
+  return CheckCollisionPointRec(mousePos, rec); 
+}
+
+static inline bool clicked(int mouseBtn, Rectangle rec) {
+  return IsMouseButtonPressed(mouseBtn) && hovered(rec);
+}
+
 #endif

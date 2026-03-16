@@ -6,9 +6,8 @@
 // globals
 Vector2 mousePos = { 0 };
 GameScreen current = MAIN_MENU;
+bool shouldQuit = false;
 
-static inline bool hovered(Rectangle rec); //no longer includes additional parameter mousePos
-static inline bool clicked(int mouseBtn, Rectangle rec); //no longer includes additional parameter mousePos
 void button(char hover_color[], char color[], char name[], char text[], Vector2 mousePos);
 
 int main() {
@@ -19,7 +18,7 @@ int main() {
   InitMainMenu();
   InitCampaignMenu();
 
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose() && !shouldQuit) {
     // variable setting
     mousePos = GetMousePosition();
 

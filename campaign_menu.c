@@ -17,8 +17,6 @@ void UpdateCampaignMenu(void);
 void DrawCampaignMenu(void);
 void UnloadCampaignMenu(void);
 
-static inline bool hovered(Rectangle rec);
-static inline bool clicked(int mouseBtn, Rectangle rec);
 void button(char hover_color[], char color[], char name[], char text[]);
 
 

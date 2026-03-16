@@ -17,8 +17,6 @@ void UpdateMainMenu(void);
 void DrawMainMenu(void);
 void UnloadMainMenu(void);
 
-static inline bool hovered(Rectangle rec);
-static inline bool clicked(int mouseBtn, Rectangle rec);
 void button(char hover_color[], char color[], char name[], char text[]);
 
 
@@ -27,7 +25,7 @@ void UpdateMainMenu() {
   UpdateMusicStream(menu_music);
    if (clicked(MOUSE_BUTTON_LEFT, quitBtn)) {
      PlaySound(clickSound);
-     CloseWindow();
+     shouldQuit = true;
    }
 
    if (clicked(MOUSE_BUTTON_LEFT, campaignBtn)) {

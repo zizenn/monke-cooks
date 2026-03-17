@@ -1,6 +1,5 @@
 -I
-C:/raylib/raylib/src
-include
+./include
 -L
 C:/raylib/raylib/src
 -lraylib

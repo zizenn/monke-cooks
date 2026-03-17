@@ -1,7 +1,7 @@
 #include "raylib.h"
 
-const int WORLD_WIDTH = 1280;
-const int WORLD_HEIGHT = 720;
+const int VIRTUAL_WIDTH = 1280;
+const int VIRTUAL_HEIGHT = 720;
 
 RenderTexture2D canvas;
 
@@ -13,17 +13,17 @@ bool shouldQuit = false;
 Vector2 playerPos;
 
 int main() {
-  // start with world width initially
-  int screenWidth = WORLD_WIDTH;
-  int screenHeight = WORLD_HEIGHT;
+  // start with VIRTUAL width initially
+  int screenWidth = VIRTUAL_WIDTH;
+  int screenHeight = VIRTUAL_HEIGHT;
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-  InitWindow(WORLD_WIDTH, WORLD_HEIGHT, "monke cooks");
+  InitWindow(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, "monke cooks");
   InitAudioDevice();
   SetTargetFPS(60);
 
   // the "virtual screen" init
-  RenderTexture2D canvas = LoadRenderTexture(WORLD_WIDTH, WORLD_HEIGHT);
+  RenderTexture2D canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
   // variables
   Texture2D monke_front = LoadTexture("assets/monke_front.png");
@@ -57,7 +57,7 @@ int main() {
 
     EndTextureMode();
 
-    // stretching / scaling the canvas (world screen) onto the physical screen
+    // stretching / scaling the canvas (VIRTUAL screen) onto the physical screen
     Rectangle source = {0, 0, canvas.texture.width, -canvas.texture.height }; // the minus symbol b4 the height is there bc raylib flips the y axis (starts from top instead of bottm)
     Rectangle dest = { 0, 0, GetScreenWidth(), GetScreenHeight() };
     Vector2 origin = { 0, 0 }; // says what the origin of the screen is (top-left corner)

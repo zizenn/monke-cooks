@@ -12,8 +12,6 @@ bool shouldQuit = false;
 // player
 Vector2 playerPos;
 
-void button(char hover_color[], char color[], char name[], char text[], Vector2 mousePos);
-
 int main() {
   // start with world width initially
   int screenWidth = WORLD_WIDTH;
@@ -29,8 +27,6 @@ int main() {
 
   // variables
   Texture2D monke_front = LoadTexture("assets/monke_front.png");
-
-  // player movement variables
   Vector2 playerPos = (Vector2){ 640, 360 };
 
   while (!WindowShouldClose() && !shouldQuit) {

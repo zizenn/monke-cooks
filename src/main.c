@@ -13,21 +13,17 @@ bool shouldQuit = false;
 Vector2 playerPos;
 
 int main() {
-  // start with VIRTUAL width initially
-  int screenWidth = VIRTUAL_WIDTH;
-  int screenHeight = VIRTUAL_HEIGHT;
-
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, "monke cooks");
   InitAudioDevice();
   SetTargetFPS(60);
 
   // the "virtual screen" init
-  RenderTexture2D canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+  canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
   // variables
   Texture2D monke_front = LoadTexture("assets/monke_front.png");
-  Vector2 playerPos = (Vector2){ 640, 360 };
+  playerPos = (Vector2){ 640, 360 };
 
   while (!WindowShouldClose() && !shouldQuit) {
     // variable setting
@@ -59,7 +55,7 @@ int main() {
 
     // stretching / scaling the canvas (VIRTUAL screen) onto the physical screen
     Rectangle source = {0, 0, canvas.texture.width, -canvas.texture.height }; // the minus symbol b4 the height is there bc raylib flips the y axis (starts from top instead of bottm)
-    Rectangle dest = { 0, 0, GetScreenWidth(), GetScreenHeight() };
+    Rectangle dest = { 0, 0, screenWidth, screenHeight };
     Vector2 origin = { 0, 0 }; // says what the origin of the screen is (top-left corner)
 
     // this shouldnt be changed unless u really need to which wont happen (this basically draws the whole BeginTextureMode but scales it so it works)
@@ -73,6 +69,7 @@ int main() {
   // close
 
   // textures
+  UnloadRenderTexture(canvas);
   UnloadTexture(monke_front);
 
   // the stuff idk wat to call it

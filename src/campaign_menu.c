@@ -1,7 +1,7 @@
-#include "include/screen_menu.h"
+#include "screen_menu.h"
 #include "raylib.h"
-#include "include/screen_manager.h"
-#include "include/globals.h"
+#include "screen_manager.h"
+#include "globals.h"
 
 static Music menu_music;
 static Sound clickSound;
@@ -12,15 +12,12 @@ static Rectangle advancementBtn = { 230, 650, 200, 50 };
 static Rectangle restartBtn     = { 445, 650, 200, 50 };
 static Rectangle quitBtn        = { 660, 650, 200, 50 };
 
-void InitCampaignMenu(void);
-void UpdateCampaignMenu(void);
-void DrawCampaignMenu(void);
-void UnloadCampaignMenu(void);
-
 void button(char hover_color[], char color[], char name[], char text[]);
 
 
 //Sakif pls add implementation to detect more buttons more efficiently
+// raygui!!!
+
 void UpdateCampaignMenu() {
   UpdateMusicStream(menu_music);
    if (clicked(MOUSE_BUTTON_LEFT, quitBtn)) {
@@ -39,6 +36,7 @@ void UpdateCampaignMenu() {
 
    if (clicked(MOUSE_BUTTON_LEFT, loadBtn)) {
     PlaySound(clickSound);
+    current = GAME;
    }
 }
 

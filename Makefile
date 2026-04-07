@@ -1,2 +1,2 @@
 default:
-	gcc -o game.exe main.c main_menu.c campaign_menu.c -I include -L lib -lraylib -lgdi32 -lwinmm
+	gcc -o game.exe src\main.c src\main_menu.c src\campaign_menu.c src\game.c -Iinclude -Llib -lraylib -lgdi32 -lwinmm

@@ -1,7 +1,8 @@
-#include "include/screen_menu.h"
+#include "screen_menu.h"
 #include "raylib.h"
-#include "include/screen_manager.h"
-#include "include/globals.h"
+#include "screen_manager.h"
+#include "globals.h"
+#include "game.h"
 
 // globals
 Vector2 mousePos = { 0 };
@@ -17,6 +18,7 @@ int main() {
 
   InitMainMenu();
   InitCampaignMenu();
+  InitGame();
 
   while (!WindowShouldClose() && !shouldQuit) {
     // variable setting
@@ -33,6 +35,8 @@ int main() {
         break;
       case ADVANCEMENTS_MENU:
         break;
+      case GAME:
+        UpdateGame(); break;
     }
 
     BeginDrawing();
@@ -48,6 +52,8 @@ int main() {
           break;
         case ADVANCEMENTS_MENU:
           break;
+        case GAME:
+          DrawGame(); break;
       }
 
     EndDrawing();
@@ -57,6 +63,7 @@ int main() {
   // close
   UnloadMainMenu();
   UnloadCampaignMenu(); //optimise unloading so it doesn't RE-unload everything when more menus added
+  UnloadGame();
   CloseAudioDevice();
   CloseWindow();
 

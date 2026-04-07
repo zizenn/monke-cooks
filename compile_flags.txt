@@ -1,7 +1,5 @@
--I
-C:/raylib/raylib/src
--L
-C:/raylib/raylib/src
+-Iinclude
+-Llib
 -lraylib
 -lgdi32
 -lwinmm

@@ -1,7 +1,7 @@
-#include "include/screen_menu.h"
+#include "screen_menu.h"
 #include "raylib.h"
-#include "include/screen_manager.h"
-#include "include/globals.h"
+#include "screen_manager.h"
+#include "globals.h"
 
 static Music menu_music;
 static Sound clickSound;

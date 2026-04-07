@@ -11,4 +11,9 @@ void UpdateCampaignMenu(void);
 void DrawCampaignMenu(void);
 void UnloadCampaignMenu(void);
 
+void InitGame(void);
+void UpdateGame(void);
+void DrawGame(void);
+void UnloadGame(void);
+
 #endif

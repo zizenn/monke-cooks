@@ -10,8 +10,8 @@ currently we are at a VERY BASIC level of development. currently the core game m
 1. Sakif (Lead Dev / Founder)
 2. Marcus (Co-Founder / Artist)
 3. Eaton (Dev)
-5. Sameer (Lead Artist)
-7. Ryan (Lead Musician)
+4. Sameer (Lead Artist)
+5. Ryan (Lead Musician)
 
 # Wanted Features
 1. cooking (ofc)

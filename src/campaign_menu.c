@@ -1,5 +1,6 @@
 #include "screen_menu.h"
 #include "raylib.h"
+#include <raygui.h>
 #include "screen_manager.h"
 #include "globals.h"
 
@@ -12,57 +13,32 @@ static Rectangle advancementBtn = { 230, 650, 200, 50 };
 static Rectangle restartBtn     = { 445, 650, 200, 50 };
 static Rectangle quitBtn        = { 660, 650, 200, 50 };
 
-void button(char hover_color[], char color[], char name[], char text[]);
-
-
-//Sakif pls add implementation to detect more buttons more efficiently
-// raygui!!!
-
 void UpdateCampaignMenu() {
   UpdateMusicStream(menu_music);
-   if (clicked(MOUSE_BUTTON_LEFT, quitBtn)) {
-    PlaySound(clickSound);
-    current = MAIN_MENU;
-   }
-   
-   if (clicked(MOUSE_BUTTON_LEFT, restartBtn)) {
-    PlaySound(clickSound);
-   }
-
-    if (clicked(MOUSE_BUTTON_LEFT, advancementBtn)) {
-    PlaySound(clickSound);
-    // current = ADVANCEMENTS_MENU;
-   }
-
-   if (clicked(MOUSE_BUTTON_LEFT, loadBtn)) {
-    PlaySound(clickSound);
-    current = GAME;
-   }
 }
 
 void DrawCampaignMenu(void) {
-  ClearBackground(RAYWHITE);
-  DrawText("Campaign Mode", 15, 15, 35, BLACK);
+    ClearBackground(RAYWHITE);
+    DrawText("Campaign Mode", 15, 15, 35, BLACK);
 
-  // loadBtn
-  Color startBtnColor = hovered(loadBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(loadBtn, startBtnColor);
-  DrawText("Start/Continue", loadBtn.x + 20,loadBtn.y + 15, 20, WHITE); //implement first-time detection when save states are added
+    if (GuiButton(loadBtn, "Start/Continue")) {
+        PlaySound(clickSound);
+        current = GAME;
+    }
 
-  // advancementBtn
-  Color multiplayerBtnColor = hovered(advancementBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(advancementBtn, multiplayerBtnColor);
-  DrawText("Advancements", advancementBtn.x + 25,advancementBtn.y + 15, 20, WHITE);
+    if (GuiButton(advancementBtn, "Advancements")) {
+        PlaySound(clickSound);
+        // current = ADVANCEMENTS_MENU;
+    }
 
-  // restartBtn
-  Color settingsBtnColor = hovered(restartBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(restartBtn, settingsBtnColor);
-  DrawText("[DANGER] Reset", restartBtn.x + 20, restartBtn.y + 15, 20, WHITE); 
+    if (GuiButton(restartBtn, "[DANGER] Reset")) {
+        PlaySound(clickSound);
+    }
 
-  // quitBtn
-  Color quitBtnColor = hovered(quitBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(quitBtn, quitBtnColor);
-  DrawText("Back", quitBtn.x + 45, quitBtn.y + 15, 20, WHITE);
+    if (GuiButton(quitBtn, "Back")) {
+        PlaySound(clickSound);
+        current = MAIN_MENU;
+    }
 }
 
 void InitCampaignMenu() {

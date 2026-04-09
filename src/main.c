@@ -9,8 +9,6 @@ Vector2 mousePos = { 0 };
 GameScreen current = MAIN_MENU;
 bool shouldQuit = false;
 
-void button(char hover_color[], char color[], char name[], char text[], Vector2 mousePos);
-
 int main() {
   InitWindow(1280, 720, "monke cooks");
   InitAudioDevice();

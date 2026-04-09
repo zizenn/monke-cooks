@@ -1,5 +1,6 @@
 #include "screen_menu.h"
 #include "raylib.h"
+#include "raygui.h"
 #include "screen_manager.h"
 #include "globals.h"
 
@@ -17,56 +18,33 @@ void UpdateMainMenu(void);
 void DrawMainMenu(void);
 void UnloadMainMenu(void);
 
-void button(char hover_color[], char color[], char name[], char text[]);
-
-
-//Sakif pls add implementation to detect more buttons more efficiently
 void UpdateMainMenu() {
-  UpdateMusicStream(menu_music);
-   if (clicked(MOUSE_BUTTON_LEFT, quitBtn)) {
-     PlaySound(clickSound);
-     shouldQuit = true;
-   }
-
-  if (clicked(MOUSE_LEFT_BUTTON, campaignBtn)) {
-     PlaySound(clickSound);
-     current = CAMPAIGN_MENU;
-   }
-
-  if (clicked(MOUSE_BUTTON_LEFT, settingsBtn)) {
-     PlaySound(clickSound);
-     // current = SETTINGS_MENU;
-   }
-
-  if (clicked(MOUSE_BUTTON_LEFT, multiplayerBtn)) {
-     PlaySound(clickSound);
-     // current = MULTIPLAYER_MENU;
-   }
+    UpdateMusicStream(menu_music);
 }
 
 void DrawMainMenu(void) {
-  ClearBackground(RAYWHITE);
-  DrawText("monke cooks", 15, 15, 35, BLACK);
+    ClearBackground(RAYWHITE);
+    DrawText("monke cooks", 15, 15, 35, BLACK);
 
-  // campaignBtn
-  Color campaignBtnColor = hovered(campaignBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(campaignBtn, campaignBtnColor);
-  DrawText("campaign", campaignBtn.x + 45,campaignBtn.y + 15, 20, WHITE);
+    if (GuiButton(campaignBtn, "Campaign")) {
+        PlaySound(clickSound);
+        current = CAMPAIGN_MENU;
+    }
 
-  // multiplayerBtn
-  Color multiplayerBtnColor = hovered(multiplayerBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(multiplayerBtn, multiplayerBtnColor);
-  DrawText("multiplayer", multiplayerBtn.x + 45,multiplayerBtn.y + 15, 20, WHITE);
+    if (GuiButton(multiplayerBtn, "Multiplayer")) {
+        PlaySound(clickSound);
+        // current = MULTIPLAYER_MENU;
+    }
 
-  // settingsBtn
-  Color settingsBtnColor = hovered(settingsBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(settingsBtn, settingsBtnColor);
-  DrawText("settings", settingsBtn.x + 45, settingsBtn.y + 15, 20, WHITE); 
+    if (GuiButton(settingsBtn, "Settings")) {
+        PlaySound(clickSound);
+        // current = SETTINGS_MENU;
+    }
 
-  // quitBtn
-  Color quitBtnColor = hovered(quitBtn) ? DARKGRAY : GRAY;
-  DrawRectangleRec(quitBtn, quitBtnColor);
-  DrawText("quit", quitBtn.x + 45, quitBtn.y + 15, 20, WHITE);
+    if (GuiButton(quitBtn, "Quit")) {
+        PlaySound(clickSound);
+        shouldQuit = true;
+    }
 }
 
 void InitMainMenu() {

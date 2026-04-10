@@ -4,8 +4,8 @@
 #include "raylib.h"
 #include "screen_manager.h"
 
-extern Vector2 mousePos;
 extern GameScreen current;
 extern bool shouldQuit;
+
 
 #endif

@@ -1,9 +1,13 @@
 #include "raylib.h"
+#include "stdio.h"
+#include "stdlib.h"
+
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
+
+#include "screen_menu.h"
 #include "screen_manager.h"
 #include "globals.h"
-#include "game.h"
 
 typedef enum {
   LEFT,
@@ -14,7 +18,6 @@ typedef enum {
 
 typedef enum {
   WALKABLE,
-  NON_WALKABLE,
   COUNTER,
   STOVE,
   FRIDGE
@@ -33,6 +36,13 @@ typedef enum {
   EGG
 } HELD_ITEM;
 
+// Function prototypes
+static void movePlayer(int DIR);
+static void interact(void);
+static int menuNavigation(Rectangle *rects, int count, int *selected);
+static void loadMap(const char *filePath);
+
+
 static RenderTexture2D canvas;
 static bool isMoving = false;
 static bool isMenuOpen = false;
@@ -41,28 +51,19 @@ static bool spaceWasPressed = false;
 // tiling system
 static const int TILE_SIZE = 64;
 static const int VISIBLE_ROWS = 9;
-static const int VISIBLE_COLS = 16;
-static const int VIRTUAL_WIDTH = 64*16;
-static const int VIRTUAL_HEIGHT = 64*9;
+
+static const int mapRows = 9;
+static const int mapCols = 16;
+
+static const int VIRTUAL_WIDTH = TILE_SIZE*16;
+static const int VIRTUAL_HEIGHT = TILE_SIZE*9;
 
 static float moveSpeed = 1.0f;
 static int currentTileX;
 static int currentTileY;
 
 // tile-based movement
-static TILE_TYPE worldTile[][18] = {
-    { NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,    NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,     COUNTER,    NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     FRIDGE,       WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     STOVE,        WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,     WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,    WALKABLE,   NON_WALKABLE},
-    { NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE, NON_WALKABLE},
-};
+static TILE_TYPE *map = NULL;
 
 // player
 static Vector2 playerPos;
@@ -73,14 +74,9 @@ static HELD_ITEM holding = EMPTY;
 static MENU_TYPE currentMenu = NONE;
 static int selected = 0;
 
-// Function prototypes
-static void movePlayer(int DIR);
-static void interact(void);
-static int menuNavigation(Rectangle *rects, int count, int *selected);
-
 void InitGame(void) {
-  currentTileX = 5;
-  currentTileY = 5;
+  currentTileX = 4;
+  currentTileY = 4;
   playerPos = (Vector2){ currentTileX * TILE_SIZE, currentTileY * TILE_SIZE };
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   selected = 0;
@@ -90,6 +86,7 @@ void InitGame(void) {
   isMoving = false;
   isMenuOpen = false;
   spaceWasPressed = false;
+  loadMap("assets/maps/map1.txt");
 }
 
 void UpdateGame(void) {
@@ -150,41 +147,36 @@ void DrawGame(void) {
   BeginTextureMode(canvas);
     ClearBackground(WHITE);
 
-    int x = 0;
-    int y = 0;
+   // draw tiles from map
+  for (int row = 0; row < mapRows; row++) {
+    for (int col = 0; col < mapCols; col++) {
+      TILE_TYPE tile = map[row * mapCols + col];
+      int tx = col * TILE_SIZE;
+      int ty = row * TILE_SIZE;
 
-    for (int i = 1; i <= VISIBLE_ROWS; i++) {
-      for (int j = 1; j <= VISIBLE_COLS; j++) {
-        // top
-        DrawRectangle(x, y, TILE_SIZE, 1, GRAY);
-        // bottom
-        DrawRectangle(x, y+TILE_SIZE, TILE_SIZE, 1, GRAY);
-        // left
-        DrawRectangle(x, y, 1, TILE_SIZE, GRAY);
-        // right
-        DrawRectangle(x+TILE_SIZE, y, 1, TILE_SIZE, GRAY);
-
-        x += TILE_SIZE;
+      switch (tile) {
+        case WALKABLE:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RAYWHITE);
+          break;
+        case COUNTER:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
+          DrawText("counter", tx+4, ty+4, 16, WHITE);
+          break;
+        case STOVE:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
+          DrawText("stove", tx+4, ty+4, 16, BLACK);
+          break;
+        case FRIDGE:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
+          DrawText("fridge", tx+4, ty+4, 16, BLACK);
+          break;
       }
-      x = 0;
-      y += TILE_SIZE;
+
+      // grid lines
+      DrawRectangle(tx, ty, TILE_SIZE, 1, GRAY);
+      DrawRectangle(tx, ty, 1, TILE_SIZE, GRAY);
     }
-
-    // sidebar (place holder)
-    DrawRectangle(TILE_SIZE*0, TILE_SIZE*2, TILE_SIZE*0.5, TILE_SIZE*1, BLACK);
-    DrawText("sidebar", TILE_SIZE*0, TILE_SIZE*2, 26, GREEN);
-
-    // counter (place holder)
-    DrawRectangle(TILE_SIZE*8, TILE_SIZE*0, TILE_SIZE*8, TILE_SIZE*2, GRAY);
-    DrawText("counter", TILE_SIZE*10, TILE_SIZE*0.5, 26, WHITE);
-
-    // stove
-    DrawRectangle(TILE_SIZE*1, TILE_SIZE*7, TILE_SIZE*1, TILE_SIZE*1, GREEN);
-    DrawText("stove", TILE_SIZE*1, TILE_SIZE*7, 16, BLACK);
-
-    // fridge
-    DrawRectangle(TILE_SIZE*1, TILE_SIZE*6, TILE_SIZE*1, TILE_SIZE*1, BLUE);
-    DrawText("fridge", TILE_SIZE*1, TILE_SIZE*6, 16, BLACK);
+  } 
 
     // player
     switch (holding) {
@@ -202,7 +194,7 @@ void DrawGame(void) {
         break;
     }
 
-    DrawRectangle((currentTileX - 1)*TILE_SIZE, (currentTileY - 1)*TILE_SIZE, TILE_SIZE, TILE_SIZE, playerColor);     
+    DrawRectangle(currentTileX*TILE_SIZE, currentTileY*TILE_SIZE, TILE_SIZE, TILE_SIZE, playerColor);     
 
     // dialog_menus
     int selection = 0;
@@ -323,6 +315,25 @@ void DrawGame(void) {
 
 void UnloadGame(void) {
   UnloadRenderTexture(canvas);
+  free(map);
+}
+
+static void loadMap(const char *filePath) {
+  FILE *mapFile = fopen(filePath, "r");
+  if (mapFile == NULL) {
+    TraceLog(LOG_ERROR, "could not open map file %s", filePath);
+    return;
+  }
+
+  map = malloc(mapCols * mapRows * sizeof(TILE_TYPE));
+
+  int value;
+  for (int y = 0; y < mapRows; y++) {
+    for (int x = 0; x < mapCols; x++) {
+      fscanf(mapFile, "%d", &value);
+      map[y * mapCols + x] = (TILE_TYPE)value;
+    }
+  }
 }
 
 static void movePlayer(int DIR) {
@@ -344,8 +355,8 @@ static void movePlayer(int DIR) {
       break;
   }
 
-  if (nextTileY >= 1 && nextTileY <= VISIBLE_ROWS && nextTileX >= 1 && nextTileX <= VISIBLE_COLS) {
-    if (worldTile[nextTileY][nextTileX] == WALKABLE) {
+  if (nextTileX >= 0 && nextTileX < mapCols && nextTileY >= 0 && nextTileY < mapRows) {
+    if (map[nextTileY * mapCols + nextTileX] == WALKABLE) {
       currentTileX = nextTileX;
       currentTileY = nextTileY;
     }
@@ -399,7 +410,7 @@ static void interact(void) {
       break;
   }
 
-  facingType = worldTile[facingTileY][facingTileX];
+  facingType = map[facingTileY * mapCols + facingTileX];
 
   switch (facingType) {
     default:

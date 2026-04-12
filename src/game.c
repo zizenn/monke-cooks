@@ -58,6 +58,14 @@ static const int mapCols = 16;
 static const int VIRTUAL_WIDTH = TILE_SIZE*16;
 static const int VIRTUAL_HEIGHT = TILE_SIZE*9;
 
+static inline int TileToPixels(int tiles) {
+  return tiles * TILE_SIZE;
+}
+
+static inline float TilesToPixels(float tiles) {
+  return tiles * (float)TILE_SIZE;
+}
+
 static float moveSpeed = 1.0f;
 static int currentTileX;
 static int currentTileY;
@@ -77,7 +85,7 @@ static int selected = 0;
 void InitGame(void) {
   currentTileX = 4;
   currentTileY = 4;
-  playerPos = (Vector2){ currentTileX * TILE_SIZE, currentTileY * TILE_SIZE };
+  playerPos = (Vector2){ TileToPixels(currentTileX), TileToPixels(currentTileY) };
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   selected = 0;
   facing = DOWN;
@@ -138,10 +146,10 @@ void DrawGame(void) {
   int screenHeight = GetScreenHeight();
   Color playerColor = BROWN;
 
-  int dialogPosX = TILE_SIZE*5;
-  int dialogPosY = TILE_SIZE*5;
-  int dialogWidth = TILE_SIZE*5;
-  int dialogHeight = TILE_SIZE*3;
+  int dialogPosX = TileToPixels(5);
+  int dialogPosY = TileToPixels(5);
+  int dialogWidth = TileToPixels(5);
+  int dialogHeight = TileToPixels(3);
 
   // all drawing goes in this PUT YOUR DRAWING IN THIS DO NOT PUT IN BEGIN DRAWING
   BeginTextureMode(canvas);
@@ -151,8 +159,8 @@ void DrawGame(void) {
   for (int row = 0; row < mapRows; row++) {
     for (int col = 0; col < mapCols; col++) {
       TILE_TYPE tile = map[row * mapCols + col];
-      int tx = col * TILE_SIZE;
-      int ty = row * TILE_SIZE;
+      int tx = TileToPixels(col);
+      int ty = TileToPixels(row);
 
       switch (tile) {
         case WALKABLE:
@@ -194,7 +202,7 @@ void DrawGame(void) {
         break;
     }
 
-    DrawRectangle(currentTileX*TILE_SIZE, currentTileY*TILE_SIZE, TILE_SIZE, TILE_SIZE, playerColor);     
+    DrawRectangle(TileToPixels(currentTileX), TileToPixels(currentTileY), TILE_SIZE, TILE_SIZE, playerColor);     
 
     // dialog_menus
     int selection = 0;
@@ -205,14 +213,14 @@ void DrawGame(void) {
       case FRIDGE_MENU:
         isMenuOpen = true;
 
-        dialogPosX = TILE_SIZE*2+7;
-        dialogPosY = TILE_SIZE*4+32;
-        dialogWidth = TILE_SIZE*3-32;
-        dialogHeight = TILE_SIZE*2-32;
+        dialogPosX = TileToPixels(2) + 7;
+        dialogPosY = TileToPixels(4) + 32;
+        dialogWidth = TileToPixels(3) - 32;
+        dialogHeight = TileToPixels(2) - 32;
 
         Rectangle fridgeRects[] = {
-          { dialogPosX+TILE_SIZE/2, dialogPosY+TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE/2 }, // milk
-          { dialogPosX+TILE_SIZE*1.5, dialogPosY+TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE/2 } // rice
+          { dialogPosX + TilesToPixels(0.5f), dialogPosY + TilesToPixels(0.5f), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
+          { dialogPosX + TilesToPixels(1.5f), dialogPosY + TilesToPixels(0.5f), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
         };
 
         // drawing
@@ -256,14 +264,14 @@ void DrawGame(void) {
       case STOVE_MENU:
         isMenuOpen = true;
 
-        dialogPosX = TILE_SIZE*2;
-        dialogPosY = TILE_SIZE*5;
-        dialogWidth = TILE_SIZE*3;
-        dialogHeight = TILE_SIZE*2;
+        dialogPosX = TileToPixels(2);
+        dialogPosY = TileToPixels(5);
+        dialogWidth = TileToPixels(3);
+        dialogHeight = TileToPixels(2);
 
         Rectangle stoveRects[] = {
-          { dialogPosX+TILE_SIZE/2, dialogPosY+TILE_SIZE, TILE_SIZE/2, TILE_SIZE/2 }, // milk
-          { dialogPosX+TILE_SIZE*1.5, dialogPosY+TILE_SIZE, TILE_SIZE/2, TILE_SIZE/2 } // rice
+          { dialogPosX + TilesToPixels(0.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
+          { dialogPosX + TilesToPixels(1.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
         };
 
         // drawing

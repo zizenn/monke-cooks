@@ -6,8 +6,8 @@
 #include "raygui.h"
 
 #include "screen_menu.h"
-#include "screen_manager.h"
-#include "globals.h"
+// #include "screen_manager.h"
+// #include "globals.h"
 
 typedef enum {
   LEFT,
@@ -17,10 +17,10 @@ typedef enum {
 } DIRECTION;
 
 typedef enum {
-  WALKABLE,
-  COUNTER,
-  STOVE,
-  FRIDGE
+  WALKABLE, // basiaclly just 0
+  COUNTER, // this is 1
+  STOVE, // this is 2
+  FRIDGE // this is 3
 } TILE_TYPE;
 
 typedef enum {
@@ -47,6 +47,8 @@ static RenderTexture2D canvas;
 static bool isMoving = false;
 static bool isMenuOpen = false;
 static bool spaceWasPressed = false;
+static Texture2D playerTexture[4] = {0};
+static Texture2D currentPlayerTex;
 
 // tiling system
 static const int TILE_SIZE = 64;
@@ -95,6 +97,13 @@ void InitGame(void) {
   isMenuOpen = false;
   spaceWasPressed = false;
   loadMap("assets/maps/map1.txt");
+
+  // textures
+  playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
+  playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
+  playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
+  playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
+  currentPlayerTex = playerTexture[1];
 }
 
 void UpdateGame(void) {
@@ -127,6 +136,21 @@ void UpdateGame(void) {
       movePlayer(RIGHT);
       isMoving = false;
     }
+  }
+
+  switch (facing) {
+    case UP:
+      currentPlayerTex = playerTexture[0];
+      break;
+    case DOWN:
+      currentPlayerTex = playerTexture[1];
+      break;
+    case LEFT:
+      currentPlayerTex = playerTexture[2];
+      break;
+    case RIGHT:
+      currentPlayerTex = playerTexture[3];
+      break;
   }
 
   // interact
@@ -202,7 +226,9 @@ void DrawGame(void) {
         break;
     }
 
-    DrawRectangle(TileToPixels(currentTileX), TileToPixels(currentTileY), TILE_SIZE, TILE_SIZE, playerColor);     
+    Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
+    Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
+    DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
     // dialog_menus
     int selection = 0;
@@ -323,6 +349,10 @@ void DrawGame(void) {
 
 void UnloadGame(void) {
   UnloadRenderTexture(canvas);
+  UnloadTexture(playerTexture[0]);
+  UnloadTexture(playerTexture[1]);
+  UnloadTexture(playerTexture[2]);
+  UnloadTexture(playerTexture[3]);
   free(map);
 }
 

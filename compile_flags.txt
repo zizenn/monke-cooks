@@ -1,5 +1,2 @@
 -Iinclude
--Llib
--lraylib
--lgdi32
--lwinmm
+-Ilib

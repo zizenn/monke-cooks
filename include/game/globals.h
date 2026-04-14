@@ -7,5 +7,4 @@
 extern GameScreen current;
 extern bool shouldQuit;
 
-
 #endif

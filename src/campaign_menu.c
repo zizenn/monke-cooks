@@ -13,6 +13,13 @@ static Rectangle advancementBtn = { 230, 650, 200, 50 };
 static Rectangle restartBtn     = { 445, 650, 200, 50 };
 static Rectangle quitBtn        = { 660, 650, 200, 50 };
 
+void InitCampaignMenu() {
+  menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
+  clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
+  monke = LoadTexture("assets/monke_front.png");
+  PlayMusicStream(menu_music);
+}
+
 void UpdateCampaignMenu() {
   UpdateMusicStream(menu_music);
 }
@@ -39,13 +46,6 @@ void DrawCampaignMenu(void) {
         PlaySound(clickSound);
         current = MAIN_MENU;
     }
-}
-
-void InitCampaignMenu() {
-  menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
-  clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
-  monke = LoadTexture("assets/monke_front.png");
-  PlayMusicStream(menu_music);
 }
 
 void UnloadCampaignMenu() {

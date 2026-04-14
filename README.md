@@ -11,8 +11,10 @@ This repo is set up to build from local project files only.
 
 - `include/` is for project headers only.
 - raylib/raygui headers and raylib libraries live under `lib/`.
-- **Windows:** includes local `lib/libraylib.a`, so `make` then `make run`.
-- **Linux/macOS:** on first `make`, raylib is cloned into `third_party/raylib` and built locally, then the game links against `lib/linux/libraylib.a` or `lib/macos/libraylib.a`.
+- **Windows:** uses local `lib/libraylib.a`.
+- **Linux:** uses local `lib/linux/libraylib.a`.
+- **macOS:** uses local `lib/macos/libraylib.a`.
+- The Makefile does not download raylib. If a platform library is missing, `make` stops with an error telling you which file to add.
 
 After that, anyone can run:
 

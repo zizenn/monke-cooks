@@ -1,8 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "raylib.h"
-#include "screen_manager.h"
+#include "external/raylib.h"
+#include "game/screens.h"
 
 extern GameScreen current;
 extern bool shouldQuit;

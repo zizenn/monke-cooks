@@ -1,8 +1,7 @@
-#include "screen_menu.h"
-#include "raylib.h"
-#include "screen_manager.h"
-#include "screen_menu.h"
-#include "globals.h"
+#include "game/display_screen.h"
+#include "external/raylib.h"
+#include "game/screens.h"
+#include "game/globals.h"
 
 // globals
 Vector2 mousePos = { 0 };

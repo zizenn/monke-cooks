@@ -1,5 +1,5 @@
 CC ?= gcc
-SOURCES := $(wildcard src/*.c)
+SOURCES := $(wildcard src/*.c) $(wildcard src/external/*.c)
 TARGET := game
 RAYLIB_HEADERS := raylib.h raymath.h rlgl.h
 
@@ -31,20 +31,22 @@ $(error Missing $(RAYLIB_LIB). Add Windows raylib binaries under lib/)
 endif
 else ifeq ($(TARGET_OS),linux)
 EXE := $(TARGET)
-RAYLIB_VERSION ?= 5.5
-RAYLIB_SRC_DIR := third_party/raylib
 RAYLIB_LIB := lib/linux/libraylib.a
 RAYLIB_INCLUDE := lib
 PLATFORM_LIBS := -lm -ldl -lpthread -lGL -lrt -lX11
 RUN_CMD := ./$(EXE)
+ifeq ($(wildcard $(RAYLIB_LIB)),)
+$(error Missing $(RAYLIB_LIB). Add Linux raylib binaries under lib/linux/)
+endif
 else ifeq ($(TARGET_OS),macos)
 EXE := $(TARGET)
-RAYLIB_VERSION ?= 5.5
-RAYLIB_SRC_DIR := third_party/raylib
 RAYLIB_LIB := lib/macos/libraylib.a
 RAYLIB_INCLUDE := lib
 PLATFORM_LIBS := -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
 RUN_CMD := ./$(EXE)
+ifeq ($(wildcard $(RAYLIB_LIB)),)
+$(error Missing $(RAYLIB_LIB). Add macOS raylib binaries under lib/macos/)
+endif
 endif
 
 CPPFLAGS := -Iinclude -I$(RAYLIB_INCLUDE)
@@ -59,13 +61,12 @@ all: $(RAYLIB_LIB)
 ifeq ($(TARGET_OS),windows)
 $(RAYLIB_LIB):
 	@echo "Using local Windows raylib at $(RAYLIB_LIB)"
-else
+else ifeq ($(TARGET_OS),linux)
 $(RAYLIB_LIB):
-	@mkdir -p lib/$(TARGET_OS)
-	@if [ ! -d "$(RAYLIB_SRC_DIR)" ]; then git clone --depth 1 --branch $(RAYLIB_VERSION) https://github.com/raysan5/raylib "$(RAYLIB_SRC_DIR)"; fi
-	@$(MAKE) -C "$(RAYLIB_SRC_DIR)/src" PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=STATIC
-	@cp "$(RAYLIB_SRC_DIR)/src/libraylib.a" "$(RAYLIB_LIB)"
-	@for h in $(RAYLIB_HEADERS); do cp "$(RAYLIB_SRC_DIR)/src/$$h" "lib/$$h"; done
+	@echo "Using local Linux raylib at $(RAYLIB_LIB)"
+else ifeq ($(TARGET_OS),macos)
+$(RAYLIB_LIB):
+	@echo "Using local macOS raylib at $(RAYLIB_LIB)"
 endif
 
 run: all

@@ -1,13 +1,13 @@
-#include "raylib.h"
+#include "external/raylib.h"
 #include "stdio.h"
 #include "stdlib.h"
 
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#include "external/raygui.h"
 
-#include "screen_menu.h"
-// #include "screen_manager.h"
-// #include "globals.h"
+#include "game/screens.h"
+#include "game/display_screen.h"
+#include "game/globals.h"
 
 typedef enum {
   LEFT,
@@ -17,7 +17,7 @@ typedef enum {
 } DIRECTION;
 
 typedef enum {
-  WALKABLE, // basiaclly just 0
+  WALKABLE, // this is 0
   COUNTER, // this is 1
   STOVE, // this is 2
   FRIDGE // this is 3
@@ -238,56 +238,11 @@ void DrawGame(void) {
 
       case FRIDGE_MENU:
         isMenuOpen = true;
-
-        dialogPosX = TileToPixels(2) + 7;
-        dialogPosY = TileToPixels(4) + 32;
-        dialogWidth = TileToPixels(3) - 32;
-        dialogHeight = TileToPixels(2) - 32;
-
-        Rectangle fridgeRects[] = {
-          { dialogPosX + TilesToPixels(0.5f), dialogPosY + TilesToPixels(0.5f), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
-          { dialogPosX + TilesToPixels(1.5f), dialogPosY + TilesToPixels(0.5f), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
-        };
-
-        // drawing
-        DrawRectangle(dialogPosX, dialogPosY, dialogWidth, dialogHeight, BLACK);
-
-        // menu nav b4 drawing buttons
-        selection = menuNavigation(fridgeRects, 2, &selected);
-
-        // --- handling logic ---
-
-        // mouse input
-        if (GuiButton(fridgeRects[0], "milk")) {
-          holding = MILK;
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
-
-        if (GuiButton(fridgeRects[1], "rice")) {
-          holding = RICE;
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
-
-        // keyboard input
-        if (selection == 1) {
-          holding = MILK;
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        } else if (selection == 2) {
-          holding = RICE;
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
+        current = FRIDGE_SCREEN;
 
         break;
 
-      case STOVE_MENU:
+      case STOVE_MENU: // do wat i did with fridge
         isMenuOpen = true;
 
         dialogPosX = TileToPixels(2);

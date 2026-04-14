@@ -1,8 +1,8 @@
-#include "screen_menu.h"
-#include "raylib.h"
-#include "raygui.h"
-#include "screen_manager.h"
-#include "globals.h"
+#include "game/display_screen.h"
+#include "external/raylib.h"
+#include "external/raygui.h"
+#include "game/screens.h"
+#include "game/globals.h"
 
 static Music menu_music;
 static Sound clickSound;

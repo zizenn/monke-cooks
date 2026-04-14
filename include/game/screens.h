@@ -7,7 +7,9 @@ typedef enum {
   CAMPAIGN_MENU,
   MULTIPLAYER_MENU,
   ADVANCEMENTS_MENU,
-  GAME
+  GAME,
+  FRIDGE_SCREEN,
+  STOVE_SCREEN
 } GameScreen;
 
 #endif

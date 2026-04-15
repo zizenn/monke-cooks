@@ -8,37 +8,26 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+typedef enum {
+  WALKABLE, // this is 0
+  COUNTER, // this is 1
+  STOVE, // this is 2
+  FRIDGE // this is 3
+} TILE_TYPE;
+
+
 // Function prototypes
 static void movePlayer(int DIR);
 static void interact(void);
 static int menuNavigation(Rectangle *rects, int count, int *selected);
 static void loadMap(const char *filePath);
 
-
-static RenderTexture2D canvas;
 static bool isMoving = false;
 static bool isMenuOpen = false;
 static bool spaceWasPressed = false;
+static MENU_TYPE currentMenu = NONE;
 static Texture2D playerTexture[4] = {0};
 static Texture2D currentPlayerTex;
-
-// tiling system
-static const int TILE_SIZE = 64;
-static const int VISIBLE_ROWS = 9;
-
-static const int mapRows = 9;
-static const int mapCols = 16;
-
-static const int VIRTUAL_WIDTH = TILE_SIZE*16;
-static const int VIRTUAL_HEIGHT = TILE_SIZE*9;
-
-static inline int TileToPixels(int tiles) {
-  return tiles * TILE_SIZE;
-}
-
-static inline float TilesToPixels(float tiles) {
-  return tiles * (float)TILE_SIZE;
-}
 
 static float moveSpeed = 1.0f;
 static int currentTileX;
@@ -53,7 +42,6 @@ static DIRECTION facing = DOWN;
 static ITEM holding = EMPTY;
 
 // dialog_menus
-static MENU_TYPE currentMenu = NONE;
 static int selected = 0;
 
 void InitGame(void) {
@@ -210,7 +198,7 @@ void DrawGame(void) {
 
       case FRIDGE_MENU:
         isMenuOpen = true;
-        current = FRIDGE_SCREEN;
+        currentScreen = FRIDGE_SCREEN;
 
         break;
 
@@ -270,7 +258,6 @@ void DrawGame(void) {
   Vector2 origin = { 0, 0 };
 
   // this shouldnt be changed unless u really need to which wont happen (this basically draws the whole BeginTextureMode but scales it so it works)
-  ClearBackground(WHITE);
   DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
 }
 

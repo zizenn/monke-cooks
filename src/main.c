@@ -4,8 +4,9 @@
 #include "game/globals.h"
 
 // globals
-GameScreen current = MAIN_MENU;
+GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
+RenderTexture2D canvas = {0};
 
 static void EnterScene(GameScreen scene) {
   switch (scene) {
@@ -83,8 +84,26 @@ static void DrawScene(GameScreen scene) {
   }
 }
 
+static bool KeepGameLoadedBetweenScenes(GameScreen from, GameScreen to) {
+  return (from == GAME && to == FRIDGE_SCREEN) || (from == FRIDGE_SCREEN && to == GAME);
+}
+
+static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
+  bool keepGameLoaded = KeepGameLoadedBetweenScenes(*activeScene, nextScene);
+
+  if (!keepGameLoaded) {
+    ExitScene(*activeScene);
+  }
+
+  *activeScene = nextScene;
+
+  if (!keepGameLoaded) {
+    EnterScene(*activeScene);
+  }
+}
+
 int main() {
-  GameScreen activeScene = current;
+  GameScreen activeScene = currentScreen;
 
   InitWindow(1280, 720, "monke cooks");
   InitAudioDevice();
@@ -93,18 +112,14 @@ int main() {
   EnterScene(activeScene);
 
   while (!WindowShouldClose() && !shouldQuit) {
-    if (current != activeScene) {
-      ExitScene(activeScene);
-      activeScene = current;
-      EnterScene(activeScene);
+    if (currentScreen != activeScene) {
+      SwitchScene(&activeScene, currentScreen);
     }
 
     UpdateScene(activeScene);
 
-    if (current != activeScene) {
-      ExitScene(activeScene);
-      activeScene = current;
-      EnterScene(activeScene);
+    if (currentScreen != activeScene) {
+      SwitchScene(&activeScene, currentScreen);
     }
 
     BeginDrawing();
@@ -113,6 +128,9 @@ int main() {
   }
 
   ExitScene(activeScene);
+  if (activeScene == FRIDGE_SCREEN) {
+    ExitScene(GAME);
+  }
   CloseAudioDevice();
   CloseWindow();
 

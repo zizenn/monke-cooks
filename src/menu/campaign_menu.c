@@ -30,7 +30,7 @@ void DrawCampaignMenu(void) {
 
     if (GuiButton(loadBtn, "Start/Continue")) {
         PlaySound(clickSound);
-        current = GAME;
+        currentScreen = GAME;
     }
 
     if (GuiButton(advancementBtn, "Advancements")) {
@@ -44,7 +44,7 @@ void DrawCampaignMenu(void) {
 
     if (GuiButton(quitBtn, "Back")) {
         PlaySound(clickSound);
-        current = MAIN_MENU;
+        currentScreen = MAIN_MENU;
     }
 }
 

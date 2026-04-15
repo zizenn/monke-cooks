@@ -14,17 +14,42 @@ ITEM stockedItems[] = {
   EGG
 };
 
+// function prototypes
+static void loadMap(const char *filePath);
+
+// variables
+static bool confirm;
+
 void InitFridge() {
-  
+  confirm = false;
 }
 
 void UpdateFridge() {
-  
+
 }
 
 void DrawFridge() {
-  // placeholder rectangles to act as shelves
+  int screenWidth = GetScreenWidth();
+  int screenHeight = GetScreenHeight();
+
+  BeginTextureMode(canvas);
+  ClearBackground(WHITE);
+
+  Rectangle background = {50, 50, 924, 476};
+  Rectangle fridgeRecs[] = {
+    {10, 20, 10, 10} // item 1
+  };
+
+  DrawRectangleRec(background, LIGHTGRAY);
   
+  EndTextureMode();
+
+  Rectangle source = {0, 0, canvas.texture.width, -canvas.texture.height };
+  Rectangle dest = { 0, 0, screenWidth, screenHeight };
+  Vector2 origin = { 0, 0 };
+
+  // this shouldnt be changed unless u really need to which wont happen (this basically draws the whole BeginTextureMode but scales it so it works)
+  DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
 }
 
 void UnloadFridge() {

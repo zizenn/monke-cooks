@@ -1,7 +1,12 @@
 #ifndef ITEMS
 #define ITEMS
 
-#include "game.h"
+typedef enum {
+  EMPTY,
+  RICE,
+  MILK,
+  EGG
+} ITEM;
 
 extern ITEM stockedItems[];
 

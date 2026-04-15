@@ -21,11 +21,5 @@ typedef enum {
   STOVE_MENU
 } MENU_TYPE;
 
-typedef enum {
-  EMPTY,
-  RICE,
-  MILK,
-  EGG
-} ITEM;
 
 #endif

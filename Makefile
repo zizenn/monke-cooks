@@ -1,5 +1,6 @@
 CC ?= gcc
-SOURCES := $(wildcard src/*.c) $(wildcard src/external/*.c)
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+SOURCES := $(call rwildcard,src/,*.c)
 TARGET := game
 RAYLIB_HEADERS := raylib.h raymath.h rlgl.h
 

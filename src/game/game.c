@@ -4,6 +4,7 @@
 #include "game/display_screen.h"
 #include "game/globals.h"
 #include "game/game.h"
+#include "game/items.h"
 #include "stdio.h"
 #include "stdlib.h"
 

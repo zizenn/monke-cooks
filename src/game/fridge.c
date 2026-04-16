@@ -15,7 +15,7 @@ ITEM stockedItems[] = {
 };
 
 // function prototypes
-static void loadMap(const char *filePath);
+
 
 // variables
 static bool confirm;

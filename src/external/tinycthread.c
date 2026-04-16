@@ -22,8 +22,8 @@ freely, subject to the following restrictions:
     distribution.
 */
 
-#include "external/tinycthread.h"
 #include <stdlib.h>
+#include "external/tinycthread.h"
 
 /* Platform specific includes */
 #if defined(_TTHREAD_POSIX_)

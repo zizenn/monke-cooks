@@ -458,7 +458,9 @@ int tss_set(tss_t key, void *val);
   #define ONCE_FLAG_INIT {0,}
 #else
   #define once_flag pthread_once_t
-  #define ONCE_FLAG_INIT PTHREAD_ONCE_INIT
+  #ifndef ONCE_FLAG_INIT
+    #define ONCE_FLAG_INIT PTHREAD_ONCE_INIT
+  #endif
 #endif
 
 /** Invoke a callback exactly once

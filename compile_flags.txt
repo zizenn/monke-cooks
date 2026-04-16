@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -I
 ./include
 -L
@@ -5,3 +6,7 @@ C:/raylib/raylib/src
 -lraylib
 -lgdi32
 -lwinmm
+=======
+-Iinclude
+-Ilib
+>>>>>>> fa9d53e84ee9a4e5205540dc04a273fc50f4e6a1

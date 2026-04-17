@@ -84,27 +84,27 @@ static void DrawScene(GameScreen scene) {
   }
 }
 
-static bool KeepGameLoadedBetweenScenes(GameScreen from, GameScreen to) {
-  return (from == GAME && to == FRIDGE_SCREEN) || (from == FRIDGE_SCREEN && to == GAME);
-}
-
 static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
-  bool keepGameLoaded = KeepGameLoadedBetweenScenes(*activeScene, nextScene);
+  GameScreen from = *activeScene;
 
-  if (!keepGameLoaded) {
-    ExitScene(*activeScene);
+  if (from == GAME && nextScene == FRIDGE_SCREEN) {
+    // Keep GAME resources alive while still initializing fridge assets/UI.
+    EnterScene(FRIDGE_SCREEN);
+  } else if (from == FRIDGE_SCREEN && nextScene == GAME) {
+    // Return to GAME without reinitializing it, but release fridge resources.
+    ExitScene(FRIDGE_SCREEN);
+  } else {
+    ExitScene(from);
+    EnterScene(nextScene);
   }
 
   *activeScene = nextScene;
-
-  if (!keepGameLoaded) {
-    EnterScene(*activeScene);
-  }
 }
 
 int main() {
   GameScreen activeScene = currentScreen;
 
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(1280, 720, "monke cooks");
   InitAudioDevice();
   SetTargetFPS(60);

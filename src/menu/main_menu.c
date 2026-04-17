@@ -9,7 +9,6 @@ static int menuNavigation(Rectangle *rects, int count, int *selected);
 
 static Music menu_music;
 static Sound clickSound;
-static Texture2D monke;
 
 static bool isMenuOpen = false;
 static bool spaceWasPressed = false;
@@ -54,13 +53,11 @@ void DrawMainMenu(void) {
 void InitMainMenu() {
   menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
   clickSound = LoadSound("assets/brackeys/sounds/tap.wav");
-  monke = LoadTexture("assets/monke_front.png");
   PlayMusicStream(menu_music);
 }
 
 void UnloadMainMenu() {
   UnloadMusicStream(menu_music);
-  UnloadTexture(monke);
   UnloadSound(clickSound);
 }
 

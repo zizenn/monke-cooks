@@ -77,6 +77,7 @@ static void DrawScene(GameScreen scene) {
       DrawGame();
       break;
     case FRIDGE_SCREEN:
+      DrawGame();
       DrawFridge();
       break;
     default:

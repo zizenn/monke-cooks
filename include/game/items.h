@@ -3,11 +3,16 @@
 
 typedef enum {
   EMPTY,
-  RICE,
-  MILK,
+  BURRITO,
+  BAGUETTE,
   EGG
 } ITEM;
 
-extern ITEM stockedItems[];
+typedef struct{
+  ITEM item;
+  int amnt;
+} inventorySlot;
+
+extern inventorySlot stockedItems[];
 
 #endif

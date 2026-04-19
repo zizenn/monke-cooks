@@ -9,11 +9,14 @@
 #include "stdlib.h"
 
 // defining stuff
-Item stockedItems[] = {
+stockItemIngredient stockedIngredients[] = {
+  { RAW_RICE, 2 },
+  { RAW_RICE, 1 },
+  { RAW_SHIITAKE, 3 }
 };
 
 // textures
-Texture2D foodTextures[3] = {};
+Texture2D foodTextures[sizeof(stockedIngredients) / sizeof(stockedIngredients[0])] = {};
 
 // rectangles || vector2s
 
@@ -40,9 +43,9 @@ void InitFridge() {
   searchEditMode = true;
 
   // textures
-  foodTextures[0] = LoadTexture("assets/food/38_friedegg.png");
-  foodTextures[1] = LoadTexture("assets/food/18_burrito.png");
-  foodTextures[2] = LoadTexture("assets/food/09_baguette.png");
+  for (int i = 0; i < sizeof(stockedIngredients) / sizeof(stockedIngredients[0]); i++) {
+    foodTextures[i] = LoadTexture(allIngredients[i].filePath);
+  }
 
   // raygui
   GuiSetStyle(SCROLLBAR, SCROLLBAR_WIDTH, 3);
@@ -70,7 +73,7 @@ void DrawFridge() {
 }
 
 void UnloadFridge() {
-  UnloadTexture(foodTextures[0]);
-  UnloadTexture(foodTextures[1]);
-  UnloadTexture(foodTextures[2]);
+  for (int i = 0; i < sizeof(stockedIngredients) / sizeof(stockedIngredients[0]); i++) {
+    UnloadTexture(foodTextures[i]);
+  }
 }

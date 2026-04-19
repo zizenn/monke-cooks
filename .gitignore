@@ -1,2 +1,5 @@
 *.exe
-game
+/game
+.DS_Store
+.vscode
+.clangd

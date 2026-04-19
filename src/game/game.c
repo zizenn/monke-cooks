@@ -39,7 +39,6 @@ static TILE_TYPE *map = NULL;
 // player
 static Vector2 playerPos;
 static DIRECTION facing = DOWN;
-static ITEM holding = EMPTY;
 
 // dialog_menus
 static int selected = 0;
@@ -181,7 +180,8 @@ void DrawGame(void) {
       break;
 
     case FRIDGE_MENU:
-      isMenuOpen = true;
+      isMenuOpen = false;
+      currentMenu = NONE;
       currentScreen = FRIDGE_SCREEN;
 
       break;

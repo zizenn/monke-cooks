@@ -5,10 +5,10 @@
 #include "game/cooking.h"
 
 typedef enum {
-  EMPTY = -1,
   RAW_EGG,
   RAW_RICE,
-  RAW_SHIITAKE
+  RAW_SHIITAKE,
+  EMPTY = -1
 } ITEM;
 
 typedef struct {

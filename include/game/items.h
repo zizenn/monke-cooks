@@ -4,10 +4,21 @@
 #include "external/raylib.h"
 #include "game/cooking.h"
 
+typedef enum {
+  RAW_EGG,
+  RAW_RICE,
+  RAW_SHIITAKE
+} INGREDIENT;
+
 typedef struct {
   int foodIndex;
   int quantity;
-} stockItem;
+} stockItemIngredient;
+
+typedef struct {
+  int foodIndex;
+  int quantity;
+} stockItemFood;
 
 typedef struct {
   const char *name;
@@ -17,6 +28,7 @@ typedef struct {
 } Foods;
 
 extern Foods allFoods[];
-extern stockItem stockedItems[];
+extern Foods allIngredients[];
+extern stockItemIngredient stockedIngredients[];
 
 #endif

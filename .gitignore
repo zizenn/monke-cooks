@@ -1,5 +1,2 @@
 *.exe
 game
-.DS_Store
-.clangd
-.vscode

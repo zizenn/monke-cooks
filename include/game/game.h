@@ -28,6 +28,6 @@ static inline float TilesToPixels(float tiles) {
   return tiles * (float)TILE_SIZE;
 }
 
-static ITEM holding = EMPTY;
+extern ITEM holding;
 
 #endif

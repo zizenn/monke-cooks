@@ -170,85 +170,69 @@ void DrawGame(void) {
     }
   } 
 
-    // player
-    switch (holding) {
-      case EMPTY:
-        playerColor = BROWN;
-        break;
-      case MILK:
-        playerColor = GREEN;
-        break;
-      case EGG:
-        playerColor = BLUE;
-        break;
-      case RICE:
-        playerColor = YELLOW;
-        break;
-    }
+  Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
+  Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
+  DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
-    Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
-    Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
-    DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+  // dialog_menus
+  int selection = 0;
+  switch (currentMenu) {
+    case NONE:
+      break;
 
-    // dialog_menus
-    int selection = 0;
-    switch (currentMenu) {
-      case NONE:
-        break;
+    case FRIDGE_MENU:
+      isMenuOpen = true;
+      currentScreen = FRIDGE_SCREEN;
 
-      case FRIDGE_MENU:
-        isMenuOpen = true;
-        currentScreen = FRIDGE_SCREEN;
+      break;
 
-        break;
+    case STOVE_MENU: // do wat i did with fridge
+      isMenuOpen = true;
 
-      case STOVE_MENU: // do wat i did with fridge
-        isMenuOpen = true;
+      dialogPosX = TileToPixels(2);
+      dialogPosY = TileToPixels(5);
+      dialogWidth = TileToPixels(3);
+      dialogHeight = TileToPixels(2);
 
-        dialogPosX = TileToPixels(2);
-        dialogPosY = TileToPixels(5);
-        dialogWidth = TileToPixels(3);
-        dialogHeight = TileToPixels(2);
+      Rectangle stoveRects[] = {
+        { dialogPosX + TilesToPixels(0.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
+        { dialogPosX + TilesToPixels(1.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
+      };
 
-        Rectangle stoveRects[] = {
-          { dialogPosX + TilesToPixels(0.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
-          { dialogPosX + TilesToPixels(1.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
-        };
+      // drawing
+      DrawRectangle(dialogPosX, dialogPosY, dialogWidth, dialogHeight, BLACK);
 
-        // drawing
-        DrawRectangle(dialogPosX, dialogPosY, dialogWidth, dialogHeight, BLACK);
+      // menu nav b4 drawing buttons
+      selection = menuNavigation(stoveRects, 2, &selected);
 
-        // menu nav b4 drawing buttons
-        selection = menuNavigation(stoveRects, 2, &selected);
+      // --- handling logic ---
 
-        // --- handling logic ---
+      // mouse input
+      if (GuiButton(stoveRects[0], "cook")) {
+        currentMenu = NONE;
+        isMenuOpen = false;
+        selected = 0;
+      }
 
-        // mouse input
-        if (GuiButton(stoveRects[0], "cook")) {
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
+      if (GuiButton(stoveRects[1], "monke")) {
+        currentMenu = NONE;
+        isMenuOpen = false;
+        selected = 0;
+      }
 
-        if (GuiButton(stoveRects[1], "monke")) {
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
+      // keyboard input
+      if (selection == 1) {
+        currentMenu = NONE;
+        isMenuOpen = false;
+        selected = 0;
+      } else if (selection == 2) {
+        currentMenu = NONE;
+        isMenuOpen = false;
+        selected = 0;
+      }
 
-        // keyboard input
-        if (selection == 1) {
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        } else if (selection == 2) {
-          currentMenu = NONE;
-          isMenuOpen = false;
-          selected = 0;
-        }
-
-        break;
-    }
+      break;
+  }
 
   EndTextureMode();
 

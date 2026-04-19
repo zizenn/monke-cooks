@@ -1,18 +1,22 @@
 #ifndef ITEMS
 #define ITEMS
 
-typedef enum {
-  EMPTY,
-  BURRITO,
-  BAGUETTE,
-  EGG
-} ITEM;
+#include "external/raylib.h"
+#include "game/cooking.h"
 
-typedef struct{
-  ITEM item;
-  int amnt;
-} inventorySlot;
+typedef struct {
+  int foodIndex;
+  int quantity;
+} stockItem;
 
-extern inventorySlot stockedItems[];
+typedef struct {
+  const char *name;
+  COOK_TYPE cook_type;
+  float price;
+  const char *filePath;
+} Foods;
+
+extern Foods allFoods[];
+extern stockItem stockedItems[];
 
 #endif

@@ -9,8 +9,7 @@
 #include "stdlib.h"
 
 // defining stuff
-inventorySlot stockedItems[] = {
-  {EGG, 2}
+Item stockedItems[] = {
 };
 
 // textures
@@ -71,7 +70,6 @@ void DrawFridge() {
 }
 
 void UnloadFridge() {
-  // add textures here when i get textures for this
   UnloadTexture(foodTextures[0]);
   UnloadTexture(foodTextures[1]);
   UnloadTexture(foodTextures[2]);

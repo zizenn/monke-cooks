@@ -8,4 +8,6 @@ typedef enum{
   GRILL
 } COOK_TYPE;
 
+extern COOK_TYPE currentCookType;
+
 #endif

@@ -1,5 +1,6 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
+#include "game/cooking.h"
 #include "game/screens.h"
 #include "game/display_screen.h"
 #include "game/globals.h"
@@ -7,13 +8,17 @@
 #include "game/items.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include <stdbool.h>
 
 // enums
 typedef enum {
   WALKABLE, // this is 0
   COUNTER, // this is 1
-  STOVE, // this is 2
-  FRIDGE // this is 3
+  FRIDGE, // this is 2
+  STOVE_STATION, // this is 3
+  OVEN_STATION, // 4
+  DEEP_FRY_STATION, // 5
+  GRILL_STATION // 6
 } TILE_TYPE;
 
 
@@ -138,7 +143,7 @@ void DrawGame(void) {
   BeginTextureMode(canvas);
     ClearBackground(WHITE);
 
-   // draw tiles from map
+  // draw tiles from map
   for (int row = 0; row < mapRows; row++) {
     for (int col = 0; col < mapCols; col++) {
       TILE_TYPE tile = map[row * mapCols + col];
@@ -153,13 +158,25 @@ void DrawGame(void) {
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
           DrawText("counter", tx+4, ty+4, 16, WHITE);
           break;
-        case STOVE:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
-          DrawText("stove", tx+4, ty+4, 16, BLACK);
-          break;
         case FRIDGE:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
           DrawText("fridge", tx+4, ty+4, 16, BLACK);
+          break;
+        case STOVE_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
+          DrawText("stove", tx+4, ty+4, 16, BLACK);
+          break;
+        case OVEN_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, YELLOW);
+          DrawText("oven", tx+4, ty+4, 16, BLACK);
+          break;
+        case DEEP_FRY_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, ORANGE);
+          DrawText("deep fry", tx+4, ty+4, 16, BLACK);
+          break;
+        case GRILL_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
+          DrawText("grill", tx+4, ty+4, 16, WHITE);
           break;
       }
 
@@ -183,14 +200,34 @@ void DrawGame(void) {
       isMenuOpen = false;
       currentMenu = NONE;
       currentScreen = FRIDGE_SCREEN;
-
       break;
 
     case STOVE_MENU: 
-      isMenuOpen = true;
+      isMenuOpen = false;
       currentMenu = NONE;
+      currentCookType = PAN;
       currentScreen = STOVE_SCREEN;
+      break;
 
+    case OVEN_MENU: 
+      isMenuOpen = false;
+      currentMenu = NONE;
+      currentCookType = OVEN;
+      currentScreen = OVEN_SCREEN;
+      break;
+
+    case DEEP_FRY_MENU: 
+      isMenuOpen = false;
+      currentMenu = NONE;
+      currentCookType = DEEP_FRY;
+      currentScreen = DEEP_FRY_SCREEN;
+      break;
+
+    case GRILL_MENU: 
+      isMenuOpen = false;
+      currentMenu = NONE;
+      currentCookType = GRILL;
+      currentScreen = GRILL_SCREEN;
       break;
   }
 
@@ -274,7 +311,7 @@ static int menuNavigation(Rectangle *rects, int count, int *selected) {
   };
   DrawRectangleRec(selectionRect, YELLOW);
 
-  if (IsKeyPressed(KEY_C)) {
+  if (IsKeyPressed(KEY_ESCAPE)) {
     isMenuOpen = false;
     currentMenu = NONE;
     return -1;
@@ -314,8 +351,17 @@ static void interact(void) {
     case FRIDGE:
       currentMenu = FRIDGE_MENU;
       break;
-    case STOVE:
+    case STOVE_STATION:
       currentMenu = STOVE_MENU;
+      break;
+    case OVEN_STATION:
+      currentMenu = OVEN_MENU;
+      break;
+    case DEEP_FRY_STATION:
+      currentMenu = DEEP_FRY_MENU;
+      break;
+    case GRILL_STATION:
+      currentMenu = GRILL_MENU;
       break;
   }
 }

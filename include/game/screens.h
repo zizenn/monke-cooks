@@ -9,7 +9,10 @@ typedef enum {
   ADVANCEMENTS_MENU,
   GAME,
   FRIDGE_SCREEN,
-  STOVE_SCREEN
+  STOVE_SCREEN,
+  OVEN_SCREEN,
+  DEEP_FRY_SCREEN,
+  GRILL_SCREEN
 } GameScreen;
 
 #endif

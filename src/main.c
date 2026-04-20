@@ -10,6 +10,17 @@ GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas = {0};
 
+// screens
+GameScreen screensToNotUnloadFromGame[] = {
+  FRIDGE_SCREEN,
+  STOVE_SCREEN,
+  OVEN_SCREEN,
+  DEEP_FRY_SCREEN,
+  GRILL_SCREEN
+};
+
+bool returnToGameAndUnload = false;
+
 static void EnterScene(GameScreen scene) {
   switch (scene) {
     case MAIN_MENU:
@@ -24,8 +35,11 @@ static void EnterScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       InitFridge();
       break;
-    case BARMINIGAME_SCREEN:
-      InitBarMinigame();
+    case STOVE_SCREEN:
+    case OVEN_SCREEN:
+    case DEEP_FRY_SCREEN:
+    case GRILL_SCREEN:
+      InitCook();
       break;
     default:
       break;
@@ -71,6 +85,12 @@ static void UpdateScene(GameScreen scene) {
     case BARMINIGAME_SCREEN:
       UpdateBarMinigame();
       break;
+    case STOVE_SCREEN:
+    case OVEN_SCREEN:
+    case DEEP_FRY_SCREEN:
+    case GRILL_SCREEN:
+      UpdateCook();
+      break;
     default:
       break;
   }
@@ -94,6 +114,23 @@ static void DrawScene(GameScreen scene) {
     case BARMINIGAME_SCREEN:
       DrawBarMinigame();
       break;
+    case STOVE_SCREEN:
+      DrawGame();
+      DrawCook();
+      break;
+    case OVEN_SCREEN:
+      DrawGame();
+      DrawCook();
+      break;
+    case DEEP_FRY_SCREEN:
+      DrawGame();
+      DrawCook();
+      break;
+    case GRILL_SCREEN:
+      DrawGame();
+      DrawCook();
+      break;
+
     default:
       break;
   }
@@ -101,13 +138,40 @@ static void DrawScene(GameScreen scene) {
 
 static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
   GameScreen from = *activeScene;
+  bool unloadGame = true;
+ 
+  switch (from) {
+    case FRIDGE_SCREEN:
+      returnToGameAndUnload = true;
+      break;
+    case STOVE_SCREEN:
+      returnToGameAndUnload = true;
+      break;
+    case OVEN_SCREEN:
+      returnToGameAndUnload = true;
+      break;
+    case DEEP_FRY_SCREEN:
+      returnToGameAndUnload = true;
+      break;
+    case GRILL_SCREEN:
+      returnToGameAndUnload = true;
+      break;
 
-  if (from == GAME && nextScene == FRIDGE_SCREEN) {
-    // Keep GAME resources alive while still initializing fridge assets/UI.
-    EnterScene(FRIDGE_SCREEN);
-  } else if (from == FRIDGE_SCREEN && nextScene == GAME) {
-    // Return to GAME without reinitializing it, but release fridge resources.
-    ExitScene(FRIDGE_SCREEN);
+    default:
+      returnToGameAndUnload = false;
+      break;
+  }
+
+  for (int i = 0; i < sizeof(screensToNotUnloadFromGame) / sizeof(screensToNotUnloadFromGame[0]); i++) {
+    if (nextScene == screensToNotUnloadFromGame[i]) {
+      unloadGame = false;
+    }
+  }
+
+  if (from == GAME && unloadGame == false) {
+    EnterScene(nextScene);
+  } else if (returnToGameAndUnload == true && nextScene == GAME) {
+    ExitScene(from);
   } else {
     ExitScene(from);
     EnterScene(nextScene);

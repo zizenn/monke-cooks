@@ -11,7 +11,10 @@ extern RenderTexture2D canvas;
 typedef enum {
   NONE,
   FRIDGE_MENU,
-  STOVE_MENU
+  STOVE_MENU,
+  OVEN_MENU,
+  DEEP_FRY_MENU,
+  GRILL_MENU
 } MENU_TYPE;
 
 #endif

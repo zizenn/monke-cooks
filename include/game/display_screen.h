@@ -30,10 +30,10 @@ void DrawFridge(void);
 void UnloadFridge(void);
 
 // stove
-void InitCook(void);
-void UpdateCook(void);
-void DrawCook(void);
-void UnloadCook(void);
+void InitCook();
+void UpdateCook();
+void DrawCook();
+void UnloadCook();
 
 // minigame
 void InitBarMinigame(void);

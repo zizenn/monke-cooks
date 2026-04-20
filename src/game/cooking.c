@@ -12,6 +12,7 @@
 
 COOK_TYPE currentCookType;
 static char panelTitle[9] = "";
+int minigameSelection;
 
 void InitCook() {
   switch (currentCookType) {
@@ -26,6 +27,14 @@ void InitCook() {
       break;
     case GRILL:
       strcpy(panelTitle, "grill");
+      break;
+  }
+
+  minigameSelection = GetRandomValue(0, 0);
+
+  switch (minigameSelection) {
+    case 0:
+      InitBarMinigame();
       break;
   }
 }
@@ -48,8 +57,19 @@ void DrawCook() {
   Rectangle panelBounds = {totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
 
   GuiPanel(panelBounds, panelTitle);
+
+  switch (minigameSelection) {
+    case 0:
+      DrawBarMinigame();
+      break;
+  }
+
 }
 
 void UnloadCook() {
-
+  switch (minigameSelection) {
+    case 0:
+      UnloadBarMinigame();
+      break;
+  }
 }

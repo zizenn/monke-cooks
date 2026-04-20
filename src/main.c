@@ -4,6 +4,7 @@
 #include "game/screens.h"
 #include "game/globals.h"
 #include "stdbool.h"
+#include "game/timingbar.h"
 
 // globals
 GameScreen currentScreen = MAIN_MENU;
@@ -34,6 +35,8 @@ static void EnterScene(GameScreen scene) {
       break;
     case FRIDGE_SCREEN:
       InitFridge();
+    case BARMINIGAME_SCREEN:
+      InitBarMinigame();
       break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:

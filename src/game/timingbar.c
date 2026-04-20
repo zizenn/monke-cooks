@@ -82,13 +82,28 @@ void UpdateBarMinigame() {
 
     if (inZone) {
         safeTime += DeltaTime;
+        if (safeTime >= WIN_TIME) {
+            timingBarResult = TIMING_BAR_WIN;
+            currentScreen = GAME;
+        }
     } else {
-
+        safeTime = 0.0f;
     }
 }
 
 void DrawBarMinigame() {
+    ClearBackground(BLACK);
+    //background
+    DrawRectangle(BAR_X, BAR_Y, BAR_WIDTH, BAR_HEIGHT, DARKGRAY);
+    
+    //safe zone
+    DrawRectangle((int)safezoneX, BAR_Y, SAFEZONE_WIDTH, BAR_HEIGHT, GREEN);
 
+    //player indicator
+    DrawRectangle((int)playerX, BAR_Y - 5, PLAYER_WIDTH, BAR_HEIGHT + 10, WHITE);
+
+    //% progress
+    DrawText(TextFormat("Hold: %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, WHITE);
 }
 
 void UnloadBarMinigame() {

@@ -1,5 +1,7 @@
-#ifndef GAME
-#define GAME
+#ifndef GAME_H
+#define GAME_H
+
+#include "game/items.h"
 
 typedef enum {
   LEFT,
@@ -25,5 +27,7 @@ static inline int TileToPixels(int tiles) {
 static inline float TilesToPixels(float tiles) {
   return tiles * (float)TILE_SIZE;
 }
+
+extern ITEM holding;
 
 #endif

@@ -8,6 +8,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+// enums
 typedef enum {
   WALKABLE, // this is 0
   COUNTER, // this is 1
@@ -16,18 +17,20 @@ typedef enum {
 } TILE_TYPE;
 
 
-// Function prototypes
+// function prototypes
 static void movePlayer(int DIR);
 static void interact(void);
 static int menuNavigation(Rectangle *rects, int count, int *selected);
 static void loadMap(const char *filePath);
 
+// variables
 static bool isMoving = false;
 static bool isMenuOpen = false;
 static bool spaceWasPressed = false;
 static MENU_TYPE currentMenu = NONE;
-static Texture2D playerTexture[4] = {0};
+static Texture2D playerTexture[7] = {0};
 static Texture2D currentPlayerTex;
+ITEM holding;
 
 static float moveSpeed = 1.0f;
 static int currentTileX;
@@ -39,7 +42,6 @@ static TILE_TYPE *map = NULL;
 // player
 static Vector2 playerPos;
 static DIRECTION facing = DOWN;
-static ITEM holding = EMPTY;
 
 // dialog_menus
 static int selected = 0;
@@ -63,6 +65,9 @@ void InitGame(void) {
   playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
   playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
   playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
+  playerTexture[4] = LoadTexture(allIngredients[0].filePath);
+  playerTexture[5] = LoadTexture(allIngredients[1].filePath);
+  playerTexture[6] = LoadTexture(allIngredients[2].filePath);
   currentPlayerTex = playerTexture[1];
 }
 
@@ -170,6 +175,23 @@ void DrawGame(void) {
     }
   } 
 
+  switch (holding) {
+    case EMPTY:
+      break;
+
+    case RAW_EGG:  
+      currentPlayerTex = playerTexture[4]; 
+      break;
+    
+    case RAW_RICE:
+      currentPlayerTex = playerTexture[5];
+      break;
+    
+    case RAW_SHIITAKE:
+      currentPlayerTex = playerTexture[6];
+      break;
+  }
+
   Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
   Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
@@ -181,55 +203,16 @@ void DrawGame(void) {
       break;
 
     case FRIDGE_MENU:
-      isMenuOpen = true;
+      isMenuOpen = false;
+      currentMenu = NONE;
       currentScreen = FRIDGE_SCREEN;
 
       break;
 
-    case STOVE_MENU: // do wat i did with fridge
+    case STOVE_MENU: 
       isMenuOpen = true;
-
-      dialogPosX = TileToPixels(2);
-      dialogPosY = TileToPixels(5);
-      dialogWidth = TileToPixels(3);
-      dialogHeight = TileToPixels(2);
-
-      Rectangle stoveRects[] = {
-        { dialogPosX + TilesToPixels(0.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) }, // milk
-        { dialogPosX + TilesToPixels(1.5f), dialogPosY + TileToPixels(1), TilesToPixels(0.5f), TilesToPixels(0.5f) } // rice
-      };
-
-      // drawing
-      DrawRectangle(dialogPosX, dialogPosY, dialogWidth, dialogHeight, BLACK);
-
-      // menu nav b4 drawing buttons
-      selection = menuNavigation(stoveRects, 2, &selected);
-
-      // --- handling logic ---
-
-      // mouse input
-      if (GuiButton(stoveRects[0], "cook")) {
-        currentMenu = NONE;
-        isMenuOpen = false;
-        selected = 0;
-      }
-
-      if (GuiButton(stoveRects[1], "monke")) {
-        currentMenu = NONE;
-        isMenuOpen = false;
-        selected = 0;
-      }
-
-      // keyboard input
-      if (selection == 1) {
-        currentMenu = NONE;
-        isMenuOpen = false;
-        selected = 0;
-      } else if (selection == 2) {
-        currentMenu = NONE;
-        isMenuOpen = false;
-        selected = 0;
-      }
+      currentMenu = NONE;
+      currentScreen = STOVE_SCREEN;
 
       break;
   }
@@ -251,6 +234,9 @@ void UnloadGame(void) {
   UnloadTexture(playerTexture[1]);
   UnloadTexture(playerTexture[2]);
   UnloadTexture(playerTexture[3]);
+  UnloadTexture(playerTexture[4]);
+  UnloadTexture(playerTexture[5]);
+  UnloadTexture(playerTexture[6]);
   free(map);
 }
 

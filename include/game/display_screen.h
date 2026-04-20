@@ -1,8 +1,6 @@
 #ifndef SCREEN_MENU_H
 #define SCREEN_MENU_H
 
-#include "cooking.h"
-
 // --- MENUS ---
 
 // main menu
@@ -32,9 +30,9 @@ void DrawFridge(void);
 void UnloadFridge(void);
 
 // stove
-void InitCook(COOK_TYPE type);
-void UpdateCook(COOK_TYPE type);
-void DrawCook(COOK_TYPE type);
-void UnloadCook(COOK_TYPE type);
+void InitCook(void);
+void UpdateCook(void);
+void DrawCook(void);
+void UnloadCook(void);
 
 #endif

@@ -9,8 +9,18 @@
 #include "stdlib.h"
 
 
+void InitCook() {
 
-void InitCook();
-void UpdateCook();
-void DrawCook();
-void UnloadCook();
+}
+
+void UpdateCook() {
+
+}
+
+void DrawCook() {
+
+}
+
+void UnloadCook() {
+
+}

@@ -28,7 +28,7 @@ static Vector2 scrollOffset = {0, 0};
 static bool confirm;
 static char searchBarText[64] = "";
 static bool searchEditMode = false;
-static int matchedIndicies[sizeof(stockedIngredients) / sizeof(stockedIngredients[0])];
+static int matchedItems[sizeof(stockedIngredients) / sizeof(stockedIngredients[0])];
 static int matchCount = 0;
 static char lastSearchText[64] = "";
 static int selectedItem;
@@ -56,7 +56,7 @@ void InitFridge() {
   for (int i = 0; i < ingredientCount; i++) {
     int foodIndex = stockedIngredients[i].foodIndex;
     if (fuzzyFinder(searchBarText, allIngredients[foodIndex].name)) {
-      matchedIndicies[matchCount++] = i;
+      matchedItems[matchCount++] = i;
     }
   }
   strcpy(lastSearchText, searchBarText);
@@ -66,10 +66,29 @@ void InitFridge() {
 }
 
 void UpdateFridge() {
-  if (IsKeyPressed(KEY_ENTER)) {
-    int selectedStockIndex = matchedIndicies[0];
-    int selectedIngredientIndex = stockedIngredients[selectedStockIndex].foodIndex;
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    searchEditMode = false;
+    UnloadFridge();
+    currentScreen = GAME;
+  } else if (IsKeyPressed(KEY_ENTER)) {
+    int selectedStockedIndex = matchedItems[0];
+    int selectedIngredientIndex = stockedIngredients[selectedStockedIndex].foodIndex;
     holding = (ITEM)selectedIngredientIndex;
+
+    const char *filePath = allIngredients[selectedIngredientIndex].filePath;
+
+    // unloading the textures
+    for (int i = 0; i < 4; i++) {
+      if (playerTexture[i].id != 0) {
+        UnloadTexture(playerTexture[i]);
+      }
+    }
+
+    // loading the new textures
+    for (int i = 0; i < 4; i++) {
+      playerTexture[i] = LoadTexture(filePath);
+    }
+
     searchEditMode = false;
     UnloadFridge();
     currentScreen = GAME;
@@ -81,7 +100,7 @@ void UpdateFridge() {
     for (int i = 0; i < ingredientCount; i++) {
       int foodIndex = stockedIngredients[i].foodIndex;
       if (fuzzyFinder(searchBarText, allIngredients[foodIndex].name)) {
-        matchedIndicies[matchCount++] = i;
+        matchedItems[matchCount++] = i;
       }
     }
 
@@ -112,7 +131,7 @@ void DrawFridge() {
  
   if (matchCount != 0) {
     for (int i = 0; i < matchCount; i++) {
-      int ingredientIdx = matchedIndicies[i];
+      int ingredientIdx = matchedItems[i];
       int row = i / COLUMNS;
       int col = i % COLUMNS;
 

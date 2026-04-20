@@ -109,6 +109,7 @@ int main() {
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(1280, 720, "monke cooks");
+  SetExitKey(KEY_NULL);
   InitAudioDevice();
   SetTargetFPS(60);
 

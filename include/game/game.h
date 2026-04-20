@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "external/raylib.h"
 #include "game/items.h"
 
 typedef enum {
@@ -28,6 +29,8 @@ static inline float TilesToPixels(float tiles) {
   return tiles * (float)TILE_SIZE;
 }
 
+// player
 extern ITEM holding;
+extern Texture2D playerTexture[4];
 
 #endif

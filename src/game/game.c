@@ -28,7 +28,7 @@ static bool isMoving = false;
 static bool isMenuOpen = false;
 static bool spaceWasPressed = false;
 static MENU_TYPE currentMenu = NONE;
-static Texture2D playerTexture[7] = {0};
+Texture2D playerTexture[4];
 static Texture2D currentPlayerTex;
 ITEM holding;
 
@@ -57,7 +57,8 @@ void InitGame(void) {
   currentMenu = NONE;
   isMoving = false;
   isMenuOpen = false;
-  spaceWasPressed = false;
+
+  // mapfile
   loadMap("assets/maps/map1.txt");
 
   // textures
@@ -65,18 +66,11 @@ void InitGame(void) {
   playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
   playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
   playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
-  playerTexture[4] = LoadTexture(allIngredients[0].filePath);
-  playerTexture[5] = LoadTexture(allIngredients[1].filePath);
-  playerTexture[6] = LoadTexture(allIngredients[2].filePath);
   currentPlayerTex = playerTexture[1];
 }
 
 void UpdateGame(void) {
-  if (isMenuOpen) {
-    // keep empty makes sure the player doesnt move while in a menu
-    // also all menu logic is declared where the menu is declared
-  }
-  else {
+  if (!isMenuOpen) {
     if (IsKeyPressed(KEY_W) && !isMoving) {
       isMoving = true;
       facing = UP;
@@ -175,23 +169,6 @@ void DrawGame(void) {
     }
   } 
 
-  switch (holding) {
-    case EMPTY:
-      break;
-
-    case RAW_EGG:  
-      currentPlayerTex = playerTexture[4]; 
-      break;
-    
-    case RAW_RICE:
-      currentPlayerTex = playerTexture[5];
-      break;
-    
-    case RAW_SHIITAKE:
-      currentPlayerTex = playerTexture[6];
-      break;
-  }
-
   Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
   Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
@@ -234,9 +211,6 @@ void UnloadGame(void) {
   UnloadTexture(playerTexture[1]);
   UnloadTexture(playerTexture[2]);
   UnloadTexture(playerTexture[3]);
-  UnloadTexture(playerTexture[4]);
-  UnloadTexture(playerTexture[5]);
-  UnloadTexture(playerTexture[6]);
   free(map);
 }
 

@@ -3,14 +3,15 @@
 #include "external/raygui.h"
 #include "game/screens.h"
 #include "game/globals.h"
+#include "game/buttons.h"
 
 static Music menu_music;
 static Sound clickSound;
 
-static Rectangle loadBtn        = { 15, 650,  200, 50 };
-static Rectangle advancementBtn = { 230, 650, 200, 50 };
-static Rectangle restartBtn     = { 445, 650, 200, 50 };
-static Rectangle quitBtn        = { 660, 650, 200, 50 };
+static Rectangle rectangles[] = {{ 15, 650,  200, 50 }, //Enter
+                                 { 230, 650, 200, 50 }, //Advanced
+                                 { 445, 650, 200, 50 }, //Reset
+                                 { 660, 650, 200, 50 }}; //Back
 
 void InitCampaignMenu() {
   menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");
@@ -26,21 +27,21 @@ void DrawCampaignMenu(void) {
     ClearBackground(RAYWHITE);
     DrawText("Campaign Mode", 15, 15, 35, BLACK);
 
-    if (GuiButton(loadBtn, "Start/Continue")) {
+    if (DrawTexturedButton(rectangles[0], "Play Campaign", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         currentScreen = GAME;
     }
 
-    if (GuiButton(advancementBtn, "Advancements")) {
+    if (DrawTexturedButton(rectangles[1], "Advancements", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         // current = ADVANCEMENTS_MENU;
     }
 
-    if (GuiButton(restartBtn, "[DANGER] Reset")) {
+    if (DrawTexturedButton(rectangles[2], "RESET", BUTTON_STYLE_DANGER)) {
         PlaySound(clickSound);
     }
 
-    if (GuiButton(quitBtn, "Back")) {
+    if (DrawTexturedButton(rectangles[3], "Back", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         currentScreen = MAIN_MENU;
     }

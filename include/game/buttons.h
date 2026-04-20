@@ -16,7 +16,17 @@ typedef struct {
     Texture2D   texture;
     bool        hasTexture;
     Color       tint;
+    Color       textColor;
+    Color       textFocused;
+    //nine-slice border sizes
+    int         borderTop;
+    int         borderBottom;
+    int         borderLeft;
+    int         borderRight;
+    bool        nineSlice;
 } ButtonStyle;
+
+void DrawNineSlice(Texture2D texture, Rectangle dest, int bTop, int bBottom, int bLeft, int bRight, Color tint);
 
 extern ButtonStyle ButtonStyles[BUTTON_LEN_COUNT];
 

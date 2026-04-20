@@ -3,6 +3,7 @@
 #include "external/raygui.h"
 #include "game/screens.h"
 #include "game/globals.h"
+#include "game/buttons.h"
 
 // function prototypes
 static int menuNavigation(Rectangle *rects, int count, int *selected);
@@ -29,22 +30,22 @@ void DrawMainMenu(void) {
     ClearBackground(RAYWHITE);
     DrawText("monke cooks", 15, 15, 35, BLACK);
 
-    if (GuiButton(rectangles[0], "Campaign")) {
+    if (DrawTexturedButton(rectangles[0], "Campaign", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         currentScreen = CAMPAIGN_MENU;
     }
 
-    if (GuiButton(rectangles[1], "Multiplayer")) {
+    if (DrawTexturedButton(rectangles[1], "Multiplayer", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         // current = MULTIPLAYER_MENU;
     }
 
-    if (GuiButton(rectangles[2], "Settings")) {
+    if (DrawTexturedButton(rectangles[2], "Settings", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
         // current = SETTINGS_MENU;
     }
 
-    if (GuiButton(rectangles[3], "Quit")) {
+    if (DrawTexturedButton(rectangles[3], "Quit", BUTTON_STYLE_DANGER)) {
         PlaySound(clickSound);
         shouldQuit = true;
     }

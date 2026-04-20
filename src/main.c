@@ -4,7 +4,7 @@
 #include "game/screens.h"
 #include "game/globals.h"
 #include "stdbool.h"
-#include "game/timingbar.h"
+#include "minigames/timingbar.h"
 
 // globals
 GameScreen currentScreen = MAIN_MENU;

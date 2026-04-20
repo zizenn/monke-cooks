@@ -5,9 +5,10 @@
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
+#include "minigames/minigame.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "game/timingbar.h"
+#include "minigames/timingbar.h"
 
 TimingBarResult timingBarResult = TIMING_BAR_RUNNING;
 
@@ -36,6 +37,8 @@ static bool movingRight = true;
 
 void InitBarMinigame() {
     timingBarResult = TIMING_BAR_RUNNING;
+    BAR_X = panelBounds.x + (panelBounds.width/2) - (BAR_WIDTH/2);
+    BAR_Y = panelBounds.y + (panelBounds.height/2) - (BAR_HEIGHT/2);
     playerX = BAR_X;
     safezoneX = BAR_X + BAR_WIDTH / 2 - SAFEZONE_WIDTH / 2;
     safezoneDir = 1.0f;
@@ -51,10 +54,10 @@ void UpdateBarMinigame() {
     float DeltaTime = GetFrameTime();
 
     //inputs
-    if (IsKeyDown(KEY_RIGHT)) {
+    if (IsKeyDown(KEY_D)) {
         playerX += PLAYER_SPEED * DeltaTime;
     }
-    if (IsKeyDown(KEY_LEFT)) {
+    if (IsKeyDown(KEY_A)) {
         playerX -= PLAYER_SPEED * DeltaTime;
     }
 
@@ -92,7 +95,6 @@ void UpdateBarMinigame() {
 }
 
 void DrawBarMinigame() {
-    ClearBackground(BLACK);
     //background
     DrawRectangle(BAR_X, BAR_Y, BAR_WIDTH, BAR_HEIGHT, DARKGRAY);
     
@@ -100,10 +102,10 @@ void DrawBarMinigame() {
     DrawRectangle((int)safezoneX, BAR_Y, SAFEZONE_WIDTH, BAR_HEIGHT, GREEN);
 
     //player indicator
-    DrawRectangle((int)playerX, BAR_Y - 5, PLAYER_WIDTH, BAR_HEIGHT + 10, WHITE);
+    DrawRectangle((int)playerX, BAR_Y - 5, PLAYER_WIDTH, BAR_HEIGHT + 10, BLACK);
 
     //% progress
-    DrawText(TextFormat("Hold: %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, WHITE);
+    DrawText(TextFormat("Hold: %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, BLACK);
 }
 
 void UnloadBarMinigame() {

@@ -1,8 +1,5 @@
 # monke-cooks
 
-## this is the dev branch for the actual game
-
-
 ## description
 This game is about cooking at your peak and serving as many customers as possible while making sure your food stays at an immaculate standard to maintain a high review.
 
@@ -30,7 +27,6 @@ make run
 1. Sakif (Lead Dev / Founder)
 2. Marcus (Co-Founder / Artist)
 3. Eaton (Dev)
-4. Sameer (Lead Artist)
 5. Ryan (Lead Musician)
 
 # Wanted Features

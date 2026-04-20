@@ -83,7 +83,7 @@ void DrawNineSlice(Texture2D texture, Rectangle dest, int bTop, int bBottom, int
     //bl
     DrawTexturePro(texture, (Rectangle){0,           sh - bBottom, bLeft,  bBottom}, (Rectangle){dest.x,                       dest.y + dest.height - bBottom, bLeft,  bBottom}, (Vector2){0}, 0, tint);
     //br
-    DrawTexturePro(texture, (Rectangle){sw - bRight, sh - bBottom, bRight, bTop}, (Rectangle){dest.x + dest.width - bRight, dest.y + dest.height - bBottom, bRight, bBottom}, (Vector2){0}, 0, tint);
+    DrawTexturePro(texture, (Rectangle){sw - bRight, sh - bBottom, bRight, bBottom}, (Rectangle){dest.x + dest.width - bRight, dest.y + dest.height - bBottom, bRight, bBottom}, (Vector2){0}, 0, tint);
 
     //edges
     //t

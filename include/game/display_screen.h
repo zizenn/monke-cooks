@@ -35,4 +35,10 @@ void UpdateCook(void);
 void DrawCook(void);
 void UnloadCook(void);
 
+// minigame
+void InitBarMinigame(void);
+void UpdateBarMinigame(void);
+void DrawBarMinigame(void);
+void UnloadBarMinigame(void);
+
 #endif

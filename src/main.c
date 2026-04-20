@@ -24,6 +24,9 @@ static void EnterScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       InitFridge();
       break;
+    case BARMINIGAME_SCREEN:
+      InitBarMinigame();
+      break;
     default:
       break;
   }
@@ -42,6 +45,9 @@ static void ExitScene(GameScreen scene) {
       break;
     case FRIDGE_SCREEN:
       UnloadFridge();
+      break;
+    case BARMINIGAME_SCREEN:
+      UnloadBarMinigame();
       break;
     default:
       break;
@@ -62,6 +68,9 @@ static void UpdateScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       UpdateFridge();
       break;
+    case BARMINIGAME_SCREEN:
+      UpdateBarMinigame();
+      break;
     default:
       break;
   }
@@ -81,6 +90,9 @@ static void DrawScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       DrawGame();
       DrawFridge();
+      break;
+    case BARMINIGAME_SCREEN:
+      DrawBarMinigame();
       break;
     default:
       break;

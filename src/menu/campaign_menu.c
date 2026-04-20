@@ -32,9 +32,9 @@ void DrawCampaignMenu(void) {
         currentScreen = GAME;
     }
 
-    if (DrawTexturedButton(rectangles[1], "Advancements", BUTTON_STYLE_PRIMARY)) {
+    if (DrawTexturedButton(rectangles[1], "MinigameTEST", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
-        // current = ADVANCEMENTS_MENU;
+        currentScreen = BARMINIGAME_SCREEN;
     }
 
     if (DrawTexturedButton(rectangles[2], "RESET", BUTTON_STYLE_DANGER)) {

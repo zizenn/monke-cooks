@@ -12,24 +12,24 @@
 TimingBarResult timingBarResult = TIMING_BAR_RUNNING;
 
 //bar dimensions
-#define BAR_X      200.0f
-#define BAR_Y      260.0f
-#define BAR_WIDTH  400.0f
-#define BAR_HEIGHT 40.0f
+float BAR_X = 200.0f;
+float BAR_Y = 260.0f;
+const int BAR_WIDTH = 400;
+const int BAR_HEIGHT = 40;
 
 //player
-#define PLAYER_WIDTH 10
-#define PLAYER_SPEED 300.0f
+const int PLAYER_WIDTH = 10;
+const float PLAYER_SPEED = 300.0f;
 
 //safe zone
-#define SAFEZONE_WIDTH 80.0f
-#define SAFEZONE_SPEED 150.0f
+const int SAFEZONE_WIDTH = 80;
+const float SAFEZONE_SPEED = 150.0f;
 
 //win condition
-#define WIN_TIME 5.0f
+const int WIN_TIME = 5.0f;
 
-static float playerX = BAR_X;
-static float safezoneX = BAR_X;
+static float playerX;
+static float safezoneX;
 static float safezoneDir = 1.0f;
 static float safeTime = 0.0f;
 static bool movingRight = true;

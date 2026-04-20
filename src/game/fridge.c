@@ -2,6 +2,7 @@
 #include "external/raygui.h"
 #include "game/screens.h"
 #include "game/display_screen.h"
+#include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
@@ -46,6 +47,10 @@ void InitFridge() {
   searchBarText[0] = '\0';
   searchEditMode = true;
   selectedItem = holding;
+
+  totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
+  panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
+
   // textures
   for (int i = 0; i < ingredientCount; i++) {
     foodTextures[i] = LoadTexture(allIngredients[stockedIngredients[i].foodIndex].filePath);
@@ -112,9 +117,7 @@ void DrawFridge() {
   int screenWidth = GetScreenWidth();
   int screenHeight = GetScreenHeight();
   
-  Rectangle totalArea = {(screenWidth/2)-346.5, (screenHeight/2)-178.5, 693, 357};
-  Rectangle panelBounds = {totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
-  Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
+    Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
   Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16 };
   int startX = panelBounds.x + 5; // padding for each item
   int startY = panelBounds.y + 5; // same as above

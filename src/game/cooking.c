@@ -4,6 +4,7 @@
 #include "game/screens.h"
 #include "game/display_screen.h"
 #include "game/globals.h"
+#include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/items.h"
 #include "stdio.h"
@@ -47,15 +48,15 @@ void UpdateCook() {
     UnloadCook();
     currentScreen = GAME;
   }
+
+  switch (minigameSelection) {
+    case 0:
+      UpdateBarMinigame();
+      break;
+  }
 }
 
 void DrawCook() {
-  int screenWidth = GetScreenWidth();
-  int screenHeight = GetScreenHeight();
-
-  Rectangle totalArea = {(screenWidth/2)-346.5, (screenHeight/2)-178.5, 693, 357};
-  Rectangle panelBounds = {totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
-
   GuiPanel(panelBounds, panelTitle);
 
   switch (minigameSelection) {

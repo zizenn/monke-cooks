@@ -4,10 +4,6 @@
 #include "external/raylib.h"
 #include "game/screens.h"
 
-extern GameScreen currentScreen;
-extern bool shouldQuit;
-extern RenderTexture2D canvas;
-
 typedef enum {
   NONE,
   FRIDGE_MENU,
@@ -16,5 +12,23 @@ typedef enum {
   DEEP_FRY_MENU,
   GRILL_MENU
 } MENU_TYPE;
+
+typedef enum {
+  INFO,
+  WARNING,
+  ERROR,
+  SUCCESS
+} NOTIF_TYPE;
+
+extern GameScreen currentScreen;
+extern bool shouldQuit;
+extern RenderTexture2D canvas;
+extern int targetFPS;
+
+extern Rectangle notifPanelBounds;
+
+void summonNotif(const char* text, NOTIF_TYPE notifType);
+void UpdateNotifications();
+void DrawNotifications();
 
 #endif

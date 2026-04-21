@@ -10,6 +10,7 @@
 GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas = {0};
+int targetFPS = 60;
 
 // screens
 GameScreen screensToNotUnloadFromGame[] = {
@@ -190,7 +191,7 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
-  SetTargetFPS(60);
+  SetTargetFPS(targetFPS);
 
   //temporary button setup figure this one out later
   ButtonStyles[BUTTON_STYLE_PRIMARY] = (ButtonStyle){
@@ -228,12 +229,15 @@ int main() {
 
     UpdateScene(activeScene);
 
+    UpdateNotifications();
+
     if (currentScreen != activeScene) {
       SwitchScene(&activeScene, currentScreen);
     }
 
     BeginDrawing();
     DrawScene(activeScene);
+    DrawNotifications();
     EndDrawing();
   }
 

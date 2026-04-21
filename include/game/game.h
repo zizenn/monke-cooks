@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "external/raylib.h"
+#include "game/cooking.h"
 #include "game/items.h"
 
 typedef enum {
@@ -30,7 +31,7 @@ static inline float TilesToPixels(float tiles) {
 }
 
 // player
-extern ITEM holding;
+extern HoldingItem holding;
 extern Texture2D playerTexture[4];
 
 #endif

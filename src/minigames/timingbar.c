@@ -50,13 +50,14 @@ void InitBarMinigame() {
     gameTime = 0.0f;
 }
 
-void UpdateBarMinigame() {
+bool UpdateBarMinigame() {
   if (gameTime >= 120) {
     timingBarResult = TIMING_BAR_LOSE;
   }
   if (timingBarResult == TIMING_BAR_LOSE) {
     summonNotif("YOU LOSE!", ERROR);
-    return;
+    currentScreen = GAME;
+    return false;
   }
 
   float DeltaTime = GetFrameTime();
@@ -106,6 +107,7 @@ void UpdateBarMinigame() {
       timingBarResult = TIMING_BAR_WIN;
       summonNotif("YOU WIN!", SUCCESS);
       currentScreen = GAME;
+      return true;
     }
   }
   else {

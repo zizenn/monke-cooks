@@ -18,7 +18,8 @@ typedef enum {
   STOVE_STATION, // this is 3
   OVEN_STATION, // 4
   DEEP_FRY_STATION, // 5
-  GRILL_STATION // 6
+  GRILL_STATION, // 6
+  ASSEMBLY
 } TILE_TYPE;
 
 
@@ -29,20 +30,18 @@ static int menuNavigation(Rectangle *rects, int count, int *selected);
 static void loadMap(const char *filePath);
 
 // variables
-static bool isMoving = false;
 static bool isMenuOpen = false;
-static bool spaceWasPressed = false;
 static MENU_TYPE currentMenu = NONE;
 Texture2D playerTexture[4];
 static Texture2D currentPlayerTex;
-ITEM holding;
-
-static float moveSpeed = 1.0f;
-static int currentTileX;
-static int currentTileY;
 
 // tile-based movement
 static TILE_TYPE *map = NULL;
+static float moveSpeed = 1.0f;
+static int currentTileX;
+static int currentTileY;
+static bool isMoving = false;
+static bool spaceWasPressed = false;
 
 // player
 static Vector2 playerPos;
@@ -58,7 +57,7 @@ void InitGame(void) {
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   selected = 0;
   facing = DOWN;
-  holding = EMPTY;
+  holding = (HoldingItem){ -1, -1, 0 };
   currentMenu = NONE;
   isMoving = false;
   isMenuOpen = false;
@@ -155,28 +154,32 @@ void DrawGame(void) {
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RAYWHITE);
           break;
         case COUNTER:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
-          DrawText("counter", tx+4, ty+4, 16, WHITE);
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, LIGHTGRAY);
+          DrawText("counter", tx+4, ty+4, 14, WHITE);
           break;
         case FRIDGE:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
-          DrawText("fridge", tx+4, ty+4, 16, BLACK);
+          DrawText("fridge", tx+4, ty+4, 14, BLACK);
           break;
         case STOVE_STATION:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
-          DrawText("stove", tx+4, ty+4, 16, BLACK);
+          DrawText("stove", tx+4, ty+4, 14, BLACK);
           break;
         case OVEN_STATION:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, YELLOW);
-          DrawText("oven", tx+4, ty+4, 16, BLACK);
+          DrawText("oven", tx+4, ty+4, 14, BLACK);
           break;
         case DEEP_FRY_STATION:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, ORANGE);
-          DrawText("deep fry", tx+4, ty+4, 16, BLACK);
+          DrawText("deep fry", tx+4, ty+4, 14, BLACK);
           break;
         case GRILL_STATION:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
-          DrawText("grill", tx+4, ty+4, 16, WHITE);
+          DrawText("grill", tx+4, ty+4, 14, WHITE);
+          break;
+        case ASSEMBLY:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
+          DrawText("assembly", tx+4, ty+4, 14, WHITE);
           break;
       }
 
@@ -205,29 +208,33 @@ void DrawGame(void) {
     case STOVE_MENU: 
       isMenuOpen = false;
       currentMenu = NONE;
-      currentCookType = PAN;
-      currentScreen = STOVE_SCREEN;
+      if (holding.cookType == PAN) {
+        currentScreen = STOVE_SCREEN;
+      }
       break;
 
     case OVEN_MENU: 
       isMenuOpen = false;
       currentMenu = NONE;
-      currentCookType = OVEN;
-      currentScreen = OVEN_SCREEN;
+      if (holding.cookType == OVEN) {
+        currentScreen = OVEN_SCREEN;
+      }
       break;
 
     case DEEP_FRY_MENU: 
       isMenuOpen = false;
       currentMenu = NONE;
-      currentCookType = DEEP_FRY;
-      currentScreen = DEEP_FRY_SCREEN;
+       if (holding.cookType == DEEP_FRY) {
+        currentScreen = DEEP_FRY_SCREEN;
+      }
       break;
 
     case GRILL_MENU: 
       isMenuOpen = false;
       currentMenu = NONE;
-      currentCookType = GRILL;
-      currentScreen = GRILL_SCREEN;
+      if (holding.cookType == GRILL) {
+        currentScreen = GRILL_SCREEN;
+      }
       break;
   }
 

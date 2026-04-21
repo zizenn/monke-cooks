@@ -12,18 +12,17 @@
 #include "string.h"
 
 // textures
-static const int INGREDIENT_COUNT = 11;
-static Texture2D foodTextures[11] = {};
+static const int PANTRY_ITEM_COUNT = 10;
+static Texture2D pantryTextures[10] = {};
 
 // vector2s
-
 static Vector2 scrollOffset = {0, 0};
 
 // variables
 static bool confirm;
 static char searchBarText[64] = "";
 static bool searchEditMode = false;
-static int matchedItems[11];
+static int matchedItems[10];
 static int matchCount = 0;
 static char lastSearchText[64] = "";
 static int selectedItem;
@@ -31,11 +30,14 @@ static int selectedItem;
 static const int COLUMNS = 8;
 static const int ITEM_WIDTH = 84;
 static const int ITEM_HEIGHT = 84;
-static int ingredientCount = 11;
+static int pantryCount = 10;
 
 static bool fuzzyFinder(const char* search, const char* name);
 
-void InitFridge() {
+// Forward declaration of UnloadPantry
+void UnloadPantry();
+
+void InitPantry() {
   // variable setting
   confirm = false;
   searchBarText[0] = '\0';
@@ -45,17 +47,17 @@ void InitFridge() {
   totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
   panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
 
-  // textures - load variant 0 (RAW) of each category
-  for (int i = 0; i < ingredientCount; i++) {
-    int categoryId = stockedIngredients[i].categoryId;
-    foodTextures[i] = LoadTexture(allFoods[categoryId].variants[0].filePath);
+  // textures - load variant 0 (first) of each category
+  for (int i = 0; i < pantryCount; i++) {
+    int categoryId = stockedPantry[i].categoryId;
+    pantryTextures[i] = LoadTexture(allPantry[categoryId].variants[0].filePath);
   }
 
   // init the filter at the start
   matchCount = 0;
-  for (int i = 0; i < ingredientCount; i++) {
-    int categoryId = stockedIngredients[i].categoryId;
-    const char* categoryName = allFoods[categoryId].categoryName;
+  for (int i = 0; i < pantryCount; i++) {
+    int categoryId = stockedPantry[i].categoryId;
+    const char* categoryName = allPantry[categoryId].categoryName;
     if (fuzzyFinder(searchBarText, categoryName)) {
       matchedItems[matchCount++] = i;
     }
@@ -66,21 +68,21 @@ void InitFridge() {
   GuiSetStyle(SCROLLBAR, SCROLLBAR_WIDTH, 3);
 }
 
-void UpdateFridge() {
+void UpdatePantry() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     searchEditMode = false;
-    UnloadFridge();
+    UnloadPantry();
     currentScreen = GAME;
   } else if (IsKeyPressed(KEY_ENTER)) {
     if (matchCount > 0) {
       int selectedStockedIndex = matchedItems[0];
-      int categoryId = stockedIngredients[selectedStockedIndex].categoryId;
-      int variantId = 0;  // Start with first variant (RAW)
-      COOK_TYPE cookType = allFoods[categoryId].variants[variantId].cook_type;
+      int categoryId = stockedPantry[selectedStockedIndex].categoryId;
+      int variantId = 0;  // Start with first variant
+      COOK_TYPE cookType = allPantry[categoryId].variants[variantId].cook_type;
       
       holding = (HoldingItem){ categoryId, variantId, cookType };
 
-      const char *filePath = allFoods[categoryId].variants[variantId].filePath;
+      const char *filePath = allPantry[categoryId].variants[variantId].filePath;
 
       // unloading the textures
       for (int i = 0; i < 4; i++) {
@@ -95,7 +97,7 @@ void UpdateFridge() {
       }
 
       searchEditMode = false;
-      UnloadFridge();
+      UnloadPantry();
       currentScreen = GAME;
     }
   }
@@ -103,9 +105,9 @@ void UpdateFridge() {
   if (strcmp(searchBarText,lastSearchText) != 0) {
     matchCount = 0;
 
-    for (int i = 0; i < ingredientCount; i++) {
-      int categoryId = stockedIngredients[i].categoryId;
-      const char* categoryName = allFoods[categoryId].categoryName;
+    for (int i = 0; i < pantryCount; i++) {
+      int categoryId = stockedPantry[i].categoryId;
+      const char* categoryName = allPantry[categoryId].categoryName;
       if (fuzzyFinder(searchBarText, categoryName)) {
         matchedItems[matchCount++] = i;
       }
@@ -115,11 +117,11 @@ void UpdateFridge() {
   }
 }
 
-void DrawFridge() {
+void DrawPantry() {
   int screenWidth = GetScreenWidth();
   int screenHeight = GetScreenHeight();
   
-    Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
+  Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
   Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16 };
   int startX = panelBounds.x + 5; // padding for each item
   int startY = panelBounds.y + 5; // same as above
@@ -127,9 +129,9 @@ void DrawFridge() {
   GuiScrollPanel(panelBounds, NULL, panelContent, &scrollOffset,NULL);
   if (GuiTextBox(searchBounds, searchBarText, 64, searchEditMode)) {
     searchEditMode = !searchEditMode;
-    // if no matches and textbox was just deselected (enter pressed), close fridge
+    // if no matches and textbox was just deselected (enter pressed), close pantry
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
-      UnloadFridge();
+      UnloadPantry();
       currentScreen = GAME;
     }
   }
@@ -149,14 +151,14 @@ void DrawFridge() {
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
 
       char quantityStr[10];
-      snprintf(quantityStr, sizeof(quantityStr), "%d", stockedIngredients[ingredientIdx].quantity);
-      DrawTextureEx(foodTextures[ingredientIdx], (Vector2){xPos, yPos}, 0, 5.25, WHITE);
+      snprintf(quantityStr, sizeof(quantityStr), "%d", stockedPantry[ingredientIdx].quantity);
+      DrawTextureEx(pantryTextures[ingredientIdx], (Vector2){xPos, yPos}, 0, 5.25, WHITE);
       DrawRectangleRec((Rectangle){ xPos, yPos, 20, 20 }, LIGHTGRAY);
       DrawText(quantityStr, xPos+2, yPos+2, 16, BLACK);
       
       // Draw category name below the item with background
-      int categoryId = stockedIngredients[ingredientIdx].categoryId;
-      const char* categoryName = allFoods[categoryId].categoryName;
+      int categoryId = stockedPantry[ingredientIdx].categoryId;
+      const char* categoryName = allPantry[categoryId].categoryName;
       int textWidth = MeasureText(categoryName, 10);
       int textX = xPos + (ITEM_WIDTH / 2) - (textWidth / 2);
       int textY = yPos + 68;
@@ -168,15 +170,15 @@ void DrawFridge() {
       
       // Draw text on top of background
       DrawText(categoryName, textX, textY, 10, BLACK);
-      }
+    }
   }
 
   EndScissorMode();
 }
 
-void UnloadFridge() {
-  for (int i = 0; i < ingredientCount; i++) {
-    UnloadTexture(foodTextures[i]);
+void UnloadPantry() {
+  for (int i = 0; i < pantryCount; i++) {
+    UnloadTexture(pantryTextures[i]);
   }
 }
 

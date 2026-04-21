@@ -29,6 +29,8 @@ void InitCook() {
     case GRILL:
       strcpy(panelTitle, "grill");
       break;
+    case 0:
+      break;
   }
 
   minigameSelection = GetRandomValue(0, 0);

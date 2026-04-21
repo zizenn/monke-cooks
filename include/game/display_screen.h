@@ -1,6 +1,8 @@
 #ifndef SCREEN_MENU_H
 #define SCREEN_MENU_H
 
+#include "external/raylib.h"
+
 // --- MENUS ---
 
 // main menu
@@ -37,7 +39,7 @@ void UnloadCook();
 
 // minigame
 void InitBarMinigame(void);
-void UpdateBarMinigame(void);
+bool UpdateBarMinigame(void);
 void DrawBarMinigame(void);
 void UnloadBarMinigame(void);
 

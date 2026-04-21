@@ -15,6 +15,10 @@
 static char panelTitle[9] = "";
 int minigameSelection;
 static bool minigameWin = false;
+static whereIsItemFrom newItemFrom;
+Texture2D fridgeItemTex;
+Texture2D pantryItemTex;
+itemType newHolding;
 
 void InitCook() {
   minigameWin = false;
@@ -22,21 +26,29 @@ void InitCook() {
   switch (currentCookType) {
     case PAN:
       strcpy(panelTitle, "stove");
+      newItemFrom = FROM_STOVE;
       break;
     case DEEP_FRY:
       strcpy(panelTitle, "deep fry");
+      newItemFrom = FROM_DEEP_FRY;
       break;
     case OVEN:
       strcpy(panelTitle, "oven");
+      newItemFrom = FROM_OVEN;
       break;
     case GRILL:
       strcpy(panelTitle, "grill");
+      newItemFrom = FROM_GRILL;
       break;
     case 0:
       break;
   }
 
   minigameSelection = GetRandomValue(0, 0);
+
+  newHolding = (itemType){holding.categoryId, holding.variantId++, 0};
+  fridgeItemTex = LoadTexture(allFoods[newHolding.categoryId].variants[newHolding.variantId].filePath);
+  pantryItemTex = LoadTexture(allPantry[newHolding.categoryId].variants[newHolding.variantId].filePath);
 
   switch (minigameSelection) {
     case 0:
@@ -65,15 +77,13 @@ void UpdateCook() {
   }
 
   if (minigameWin) {
-    itemType newHolding = (itemType){holding.categoryId, holding.variantId++, 0};
-
     if (itemFrom == FROM_FRIDGE) {
       for (int i = 0; i < 4; i++) {
-        playerTexture[i] = LoadTexture(allFoods[newHolding.categoryId].variants[newHolding.variantId].filePath);
+        playerTexture[i] = fridgeItemTex;
       }
     } else if (itemFrom == FROM_PANTRY) {
       for (int i = 0; i < 4; i++) {
-        playerTexture[i] = LoadTexture(allPantry[newHolding.categoryId].variants[newHolding.variantId].filePath);
+        playerTexture[i] = pantryItemTex;
       }
     }
 

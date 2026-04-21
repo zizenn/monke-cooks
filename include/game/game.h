@@ -15,6 +15,10 @@ typedef enum {
 typedef enum {
   FROM_FRIDGE,
   FROM_PANTRY,
+  FROM_STOVE,
+  FROM_OVEN,
+  FROM_DEEP_FRY,
+  FROM_GRILL,
   FROM_NONE
 } whereIsItemFrom;
 

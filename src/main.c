@@ -15,6 +15,7 @@ int targetFPS = 60;
 // screens
 GameScreen screensToNotUnloadFromGame[] = {
   FRIDGE_SCREEN,
+  PANTRY_SCREEN,
   STOVE_SCREEN,
   OVEN_SCREEN,
   DEEP_FRY_SCREEN,
@@ -36,6 +37,10 @@ static void EnterScene(GameScreen scene) {
       break;
     case FRIDGE_SCREEN:
       InitFridge();
+       break;
+    case PANTRY_SCREEN:
+       InitPantry();
+       break;
     case BARMINIGAME_SCREEN:
       InitBarMinigame();
       break;
@@ -64,6 +69,9 @@ static void ExitScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       UnloadFridge();
       break;
+    case PANTRY_SCREEN:
+      UnloadPantry();
+      break;
     case BARMINIGAME_SCREEN:
       UnloadBarMinigame();
       break;
@@ -86,6 +94,9 @@ static void UpdateScene(GameScreen scene) {
     case FRIDGE_SCREEN:
       UpdateFridge();
       break;
+     case PANTRY_SCREEN:
+       UpdatePantry();
+       break;
     case BARMINIGAME_SCREEN:
       UpdateBarMinigame();
       break;
@@ -115,21 +126,16 @@ static void DrawScene(GameScreen scene) {
       DrawGame();
       DrawFridge();
       break;
+     case PANTRY_SCREEN:
+       DrawGame();
+       DrawPantry();
+       break;
     case BARMINIGAME_SCREEN:
       DrawBarMinigame();
       break;
     case STOVE_SCREEN:
-      DrawGame();
-      DrawCook();
-      break;
     case OVEN_SCREEN:
-      DrawGame();
-      DrawCook();
-      break;
     case DEEP_FRY_SCREEN:
-      DrawGame();
-      DrawCook();
-      break;
     case GRILL_SCREEN:
       DrawGame();
       DrawCook();
@@ -146,6 +152,9 @@ static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
  
   switch (from) {
     case FRIDGE_SCREEN:
+      returnToGameAndUnload = true;
+      break;
+    case PANTRY_SCREEN:
       returnToGameAndUnload = true;
       break;
     case STOVE_SCREEN:
@@ -243,6 +252,9 @@ int main() {
 
   ExitScene(activeScene);
   if (activeScene == FRIDGE_SCREEN) {
+    ExitScene(GAME);
+  }
+  if (activeScene == PANTRY_SCREEN) {
     ExitScene(GAME);
   }
   CloseAudioDevice();

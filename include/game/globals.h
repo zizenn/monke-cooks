@@ -7,6 +7,7 @@
 typedef enum {
   NONE,
   FRIDGE_MENU,
+  PANTRY_MENU,
   STOVE_MENU,
   OVEN_MENU,
   DEEP_FRY_MENU,
@@ -27,6 +28,7 @@ extern int targetFPS;
 
 extern Rectangle notifPanelBounds;
 
+void UpdateUILayoutRects();
 void summonNotif(const char* text, NOTIF_TYPE notifType);
 void UpdateNotifications();
 void DrawNotifications();

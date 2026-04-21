@@ -8,6 +8,7 @@
 #include "game/items.h"
 #include "stdio.h"
 #include "ctype.h"
+#include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
@@ -34,9 +35,6 @@ static int pantryCount = 10;
 
 static bool fuzzyFinder(const char* search, const char* name);
 
-// Forward declaration of UnloadPantry
-void UnloadPantry();
-
 void InitPantry() {
   // variable setting
   confirm = false;
@@ -44,8 +42,7 @@ void InitPantry() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
-  panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
+  UpdateUILayoutRects();
 
   // textures - load variant 0 (first) of each category
   for (int i = 0; i < pantryCount; i++) {
@@ -71,7 +68,6 @@ void InitPantry() {
 void UpdatePantry() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     searchEditMode = false;
-    UnloadPantry();
     currentScreen = GAME;
   } else if (IsKeyPressed(KEY_ENTER)) {
     if (matchCount > 0) {
@@ -80,24 +76,24 @@ void UpdatePantry() {
       int variantId = 0;  // Start with first variant
       COOK_TYPE cookType = allPantry[categoryId].variants[variantId].cook_type;
       
-      holding = (HoldingItem){ categoryId, variantId, cookType };
+      itemFrom = FROM_PANTRY;
+      holding = (itemType){ categoryId, variantId, cookType };
 
       const char *filePath = allPantry[categoryId].variants[variantId].filePath;
 
-      // unloading the textures
-      for (int i = 0; i < 4; i++) {
-        if (playerTexture[i].id != 0) {
-          UnloadTexture(playerTexture[i]);
-        }
+      // unload old textures (handle both cases: 4 different textures and 4 same textures)
+      uint32_t oldId = playerTexture[0].id;
+      if (oldId != 0) {
+        UnloadTexture(playerTexture[0]);
       }
 
-      // loading the new textures
+      // loading the new texture (all 4 directions use the same ingredient texture)
+      Texture2D newTexture = LoadTexture(filePath);
       for (int i = 0; i < 4; i++) {
-        playerTexture[i] = LoadTexture(filePath);
+        playerTexture[i] = newTexture;
       }
 
       searchEditMode = false;
-      UnloadPantry();
       currentScreen = GAME;
     }
   }
@@ -118,9 +114,6 @@ void UpdatePantry() {
 }
 
 void DrawPantry() {
-  int screenWidth = GetScreenWidth();
-  int screenHeight = GetScreenHeight();
-  
   Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
   Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16 };
   int startX = panelBounds.x + 5; // padding for each item
@@ -131,7 +124,6 @@ void DrawPantry() {
     searchEditMode = !searchEditMode;
     // if no matches and textbox was just deselected (enter pressed), close pantry
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
-      UnloadPantry();
       currentScreen = GAME;
     }
   }
@@ -178,7 +170,10 @@ void DrawPantry() {
 
 void UnloadPantry() {
   for (int i = 0; i < pantryCount; i++) {
-    UnloadTexture(pantryTextures[i]);
+    if (pantryTextures[i].id != 0) {
+      UnloadTexture(pantryTextures[i]);
+      pantryTextures[i] = (Texture2D){0};
+    }
   }
 }
 

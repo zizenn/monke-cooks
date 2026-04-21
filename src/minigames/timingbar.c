@@ -123,6 +123,10 @@ bool UpdateBarMinigame() {
     safeTime += DeltaTime;
     if (safeTime >= WIN_TIME) {
       timingBarResult = TIMING_BAR_WIN;
+      if (itemFrom != FROM_NONE) {
+        quantityLower(itemFrom);
+        itemFrom = FROM_NONE;
+      }
       summonNotif("YOU WIN!", SUCCESS);
       currentScreen = GAME;
       return true;

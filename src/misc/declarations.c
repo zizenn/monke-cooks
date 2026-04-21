@@ -1,5 +1,6 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
+#include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
 #include "game/cooking.h"
@@ -7,8 +8,12 @@
 #include "stdint.h"
 #include "stddef.h"
 
+// cooking
+COOK_TYPE currentCookType;
+
 // game
-HoldingItem holding;
+itemType holding;
+whereIsItemFrom itemFrom;
 
 // ===== INGREDIENT VARIANT ARRAYS =====
 
@@ -56,32 +61,32 @@ Foods oysterMushroomVariants[] = {
 
 // MOZZARELLA: Raw cheese, can be melted
 Foods mozzarellaVariants[] = {
-  { "FRESH_MOZZARELLA", 0, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
-  { "MELTED_MOZZARELLA", PAN, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
+  { "FRESH_MOZZARELLA", PAN, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
+  { "MELTED_MOZZARELLA", 0, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
 };
 
 // PARMIGIANO: Raw cheese, can be melted
 Foods parmiganoVariants[] = {
-  { "FRESH_PARMIGIANO", 0, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
-  { "MELTED_PARMIGIANO", PAN, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
+  { "FRESH_PARMIGIANO", PAN, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
+  { "MELTED_PARMIGIANO", 0, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
 };
 
 // CHEDDAR: Raw cheese, can be melted
 Foods cheddarVariants[] = {
-  { "FRESH_CHEDDAR", 0, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
-  { "MELTED_CHEDDAR", PAN, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
+  { "FRESH_CHEDDAR", PAN, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
+  { "MELTED_CHEDDAR", 0, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
 };
 
 // SPICES (PEPPER): Can be mixed/used raw or heated
 Foods pepperVariants[] = {
-  { "RAW_PEPPER", 0, 2.50, "assets/food/ingredients/spices/pepper.png" },
-  { "GROUND_PEPPER", PAN, 2.50, "assets/food/ingredients/spices/pepper.png" },
+  { "RAW_PEPPER", PAN, 2.50, "assets/food/ingredients/spices/pepper.png" },
+  { "GROUND_PEPPER", 0, 2.50, "assets/food/ingredients/spices/pepper.png" },
 };
 
 // CUMIN: Can be dry roasted
 Foods cuminVariants[] = {
-  { "RAW_CUMIN", 0, 3.00, "assets/food/ingredients/spices/cumin.png" },
-  { "ROASTED_CUMIN", PAN, 3.00, "assets/food/ingredients/spices/cumin.png" },
+  { "RAW_CUMIN", PAN, 3.00, "assets/food/ingredients/spices/cumin.png" },
+  { "ROASTED_CUMIN", 0, 3.00, "assets/food/ingredients/spices/cumin.png" },
 };
 
 // All food categories with variants
@@ -99,7 +104,7 @@ FoodCategory allFoods[] = {
   { "CUMIN", cuminVariants, 2 },
 };
 
-stockItemIngredient stockedIngredients[] = {
+stockItem stockedFridge[] = {
   { 0, 2 },   // 2x EGG (category 0)
   { 1, 1 },   // 1x RICE (category 1)
   { 2, 3 },   // 3x SHIITAKE (category 2)
@@ -117,50 +122,50 @@ stockItemIngredient stockedIngredients[] = {
 
 // TURMERIC: Spice that can be used raw or heated
 Foods turmericVariants[] = {
-  { "RAW_TURMERIC", 0, 4.50, "assets/food/ingredients/spices/turmeric.png" },
-  { "GROUND_TURMERIC", PAN, 4.50, "assets/food/ingredients/spices/turmeric.png" },
+  { "RAW_TURMERIC", PAN, 4.50, "assets/food/ingredients/spices/turmeric.png" },
+  { "GROUND_TURMERIC", 0, 4.50, "assets/food/ingredients/spices/turmeric.png" },
 };
 
 // VANILLA: Flavoring that can be raw or processed
 Foods vanillaVariants[] = {
-  { "RAW_VANILLA", 0, 8.00, "assets/food/ingredients/spices/vanilla.png" },
-  { "PROCESSED_VANILLA", PAN, 8.00, "assets/food/ingredients/spices/vanilla.png" },
+  { "RAW_VANILLA", PAN, 8.00, "assets/food/ingredients/spices/vanilla.png" },
+  { "PROCESSED_VANILLA", 0, 8.00, "assets/food/ingredients/spices/vanilla.png" },
 };
 
 // STAR ANISE: Spice that can be whole or ground
 Foods starAniseVariants[] = {
-  { "WHOLE_STAR_ANISE", 0, 5.00, "assets/food/ingredients/spices/star_anise.png" },
-  { "GROUND_STAR_ANISE", PAN, 5.00, "assets/food/ingredients/spices/star_anise.png" },
+  { "WHOLE_STAR_ANISE", PAN, 5.00, "assets/food/ingredients/spices/star_anise.png" },
+  { "GROUND_STAR_ANISE", 0, 5.00, "assets/food/ingredients/spices/star_anise.png" },
 };
 
 // CLOVES: Spice that can be whole or ground
 Foods clovesVariants[] = {
-  { "WHOLE_CLOVES", 0, 6.00, "assets/food/ingredients/spices/cloves.png" },
-  { "GROUND_CLOVES", PAN, 6.00, "assets/food/ingredients/spices/cloves.png" },
+  { "WHOLE_CLOVES", PAN, 6.00, "assets/food/ingredients/spices/cloves.png" },
+  { "GROUND_CLOVES", 0, 6.00, "assets/food/ingredients/spices/cloves.png" },
 };
 
 // NUTMEG: Spice that can be whole or ground
 Foods nutmegVariants[] = {
-  { "WHOLE_NUTMEG", 0, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
-  { "GROUND_NUTMEG", PAN, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
+  { "WHOLE_NUTMEG", PAN, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
+  { "GROUND_NUTMEG", 0, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
 };
 
 // WHEAT: Grain that can be raw or processed
 Foods wheatVariants[] = {
-  { "RAW_WHEAT", 0, 3.00, "assets/food/ingredients/grains/wheat.png" },
-  { "MILLED_WHEAT", OVEN, 3.00, "assets/food/ingredients/grains/wheat.png" },
+  { "RAW_WHEAT", OVEN, 3.00, "assets/food/ingredients/grains/wheat.png" },
+  { "MILLED_WHEAT", 0, 3.00, "assets/food/ingredients/grains/wheat.png" },
 };
 
 // BARLEY: Grain for cooking
 Foods barleyVariants[] = {
-  { "RAW_BARLEY", 0, 3.50, "assets/food/ingredients/grains/barley.png" },
-  { "COOKED_BARLEY", OVEN, 3.50, "assets/food/ingredients/grains/barley.png" },
+  { "RAW_BARLEY", OVEN, 3.50, "assets/food/ingredients/grains/barley.png" },
+  { "COOKED_BARLEY", 0, 3.50, "assets/food/ingredients/grains/barley.png" },
 };
 
 // NORI: Seaweed for sushi
 Foods noriVariants[] = {
-  { "DRIED_NORI", 0, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
-  { "TOASTED_NORI", PAN, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
+  { "DRIED_NORI", PAN, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
+  { "TOASTED_NORI", 0, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
 };
 
 // WAKAME: Seaweed for soups
@@ -171,8 +176,8 @@ Foods wakameVariants[] = {
 
 // MILK: Dairy for cooking
 Foods milkVariants[] = {
-  { "FRESH_MILK", 0, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
-  { "HEATED_MILK", OVEN, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
+  { "FRESH_MILK", OVEN, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
+  { "HEATED_MILK", 0, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
 };
 
 // All pantry categories
@@ -189,7 +194,7 @@ FoodCategory allPantry[] = {
   { "MILK", milkVariants, 2 },
 };
 
-stockItemIngredient stockedPantry[] = {
+stockItem stockedPantry[] = {
   { 0, 3 },   // 3x TURMERIC (category 0)
   { 1, 1 },   // 1x VANILLA (category 1)
   { 2, 2 },   // 2x STAR_ANISE (category 2)
@@ -204,6 +209,30 @@ stockItemIngredient stockedPantry[] = {
 Rectangle totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
 Rectangle panelBounds = (Rectangle){640-346.5, 360-178.5, 693, 341};
 Rectangle notifPanelBounds = (Rectangle){640-175, 50, 350, 50};
+
+static const float BASE_SCREEN_WIDTH = 1280.0f;
+static const float BASE_SCREEN_HEIGHT = 720.0f;
+
+static float ScaleX(float x) {
+  return x * ((float)GetScreenWidth() / BASE_SCREEN_WIDTH);
+}
+
+static float ScaleY(float y) {
+  return y * ((float)GetScreenHeight() / BASE_SCREEN_HEIGHT);
+}
+
+void UpdateUILayoutRects() {
+  float centerX = ScaleX(640.0f);
+  float centerY = ScaleY(360.0f);
+  float totalWidth = ScaleX(693.0f);
+  float totalHeight = ScaleY(357.0f);
+  float notifWidth = ScaleX(350.0f);
+  float notifHeight = ScaleY(50.0f);
+
+  totalArea = (Rectangle){centerX - (totalWidth / 2.0f), centerY - (totalHeight / 2.0f), totalWidth, totalHeight};
+  panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height - ScaleY(16.0f)};
+  notifPanelBounds = (Rectangle){centerX - (notifWidth / 2.0f), ScaleY(50.0f), notifWidth, notifHeight};
+}
 
 // notification system
 static const char* notifText = NULL;
@@ -220,6 +249,7 @@ void summonNotif(const char* text, NOTIF_TYPE notifType) {
 
 // update notifications (call once per frame)
 void UpdateNotifications() {
+  UpdateUILayoutRects();
   if (notifDuration > 0) {
     notifDuration -= GetFrameTime();
   } else {
@@ -254,4 +284,3 @@ void DrawNotifications() {
   DrawRectangle((int)notifPanelBounds.x + 5, (int)notifPanelBounds.y + 5, (int)notifPanelBounds.width - 10, (int)notifPanelBounds.height - 10, WHITE);
   DrawText(notifText, (int)notifPanelBounds.x + 10, (int)notifPanelBounds.y + (int)notifPanelBounds.height / 2 - 10, 20, notifColor);
 }
-

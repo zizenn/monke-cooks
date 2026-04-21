@@ -1,14 +1,13 @@
 #ifndef ITEMS
 #define ITEMS
 
-#include "external/raylib.h"
 #include "game/cooking.h"
 
 typedef struct {
   int categoryId;
   int variantId;
   COOK_TYPE cookType;
-} HoldingItem;
+} itemType;
 
 typedef struct {
   const char *name;
@@ -26,17 +25,11 @@ typedef struct {
 typedef struct {
   int categoryId;
   int quantity;
-} stockItemIngredient;
-
-typedef struct {
-  int categoryId;
-  int variantId;
-  int quantity;
-} stockItemFood;
+} stockItem;
 
 extern FoodCategory allFoods[];
-extern stockItemIngredient stockedIngredients[];
+extern stockItem stockedFridge[];
 extern FoodCategory allPantry[];
-extern stockItemIngredient stockedPantry[];
+extern stockItem stockedPantry[];
 
 #endif

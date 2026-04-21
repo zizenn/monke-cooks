@@ -31,11 +31,23 @@ void UpdateFridge(void);
 void DrawFridge(void);
 void UnloadFridge(void);
 
-// stove
+// pantry
+void InitPantry(void);
+void UpdatePantry(void);
+void DrawPantry(void);
+void UnloadPantry(void);
+
+// cooking surfaces (stove, oven, etc.)
 void InitCook();
 void UpdateCook();
 void DrawCook();
 void UnloadCook();
+
+// prep surfaces
+// void InitCook();
+// void UpdateCook();
+// void DrawCook();
+// void UnloadCook();
 
 // minigame
 void InitBarMinigame(void);

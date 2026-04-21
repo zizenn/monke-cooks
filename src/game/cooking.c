@@ -9,13 +9,16 @@
 #include "game/items.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "stdint.h"
 #include "string.h"
 
-COOK_TYPE currentCookType;
 static char panelTitle[9] = "";
 int minigameSelection;
+static bool minigameWin = false;
 
 void InitCook() {
+  minigameWin = false;
+
   switch (currentCookType) {
     case PAN:
       strcpy(panelTitle, "stove");
@@ -53,9 +56,30 @@ void UpdateCook() {
 
   switch (minigameSelection) {
     case 0:
-      UpdateBarMinigame();
+      if (UpdateBarMinigame()) {
+        minigameWin = true;
+      } else {
+        minigameWin = false;
+      }
       break;
   }
+
+  if (minigameWin) {
+    itemType newHolding = (itemType){holding.categoryId, holding.variantId++, 0};
+
+    if (itemFrom == FROM_FRIDGE) {
+      for (int i = 0; i < 4; i++) {
+        playerTexture[i] = LoadTexture(allFoods[newHolding.categoryId].variants[newHolding.variantId].filePath);
+      }
+    } else if (itemFrom == FROM_PANTRY) {
+      for (int i = 0; i < 4; i++) {
+        playerTexture[i] = LoadTexture(allPantry[newHolding.categoryId].variants[newHolding.variantId].filePath);
+      }
+    }
+
+    holding = newHolding;
+  }
+  
 }
 
 void DrawCook() {

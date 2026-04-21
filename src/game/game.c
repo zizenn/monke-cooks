@@ -8,7 +8,7 @@
 #include "game/items.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include <stdbool.h>
+#include "stdbool.h"
 
 // enums
 typedef enum {
@@ -19,15 +19,19 @@ typedef enum {
   OVEN_STATION, // 4
   DEEP_FRY_STATION, // 5
   GRILL_STATION, // 6
-  ASSEMBLY
+  ASSEMBLY, // 7
+  SINK, // 8
+  CUTTING_STATION, // 9
+  TRASH, // 10
+  PANTRY // 11
 } TILE_TYPE;
-
 
 // function prototypes
 static void movePlayer(int DIR);
 static void interact(void);
 static int menuNavigation(Rectangle *rects, int count, int *selected);
 static void loadMap(const char *filePath);
+void quantityLower(whereIsItemFrom type);
 
 // variables
 static bool isMenuOpen = false;
@@ -57,10 +61,11 @@ void InitGame(void) {
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   selected = 0;
   facing = DOWN;
-  holding = (HoldingItem){ -1, -1, 0 };
+  holding = (itemType){ -1, -1, 0 };
   currentMenu = NONE;
   isMoving = false;
   isMenuOpen = false;
+  itemFrom = FROM_NONE;
 
   // mapfile
   loadMap("assets/maps/map1.txt");
@@ -158,8 +163,8 @@ void DrawGame(void) {
           DrawText("counter", tx+4, ty+4, 14, WHITE);
           break;
         case FRIDGE:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
-          DrawText("fridge", tx+4, ty+4, 14, BLACK);
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKBLUE);
+          DrawText("fridge", tx+4, ty+4, 14, WHITE);
           break;
         case STOVE_STATION:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
@@ -174,12 +179,28 @@ void DrawGame(void) {
           DrawText("deep fry", tx+4, ty+4, 14, BLACK);
           break;
         case GRILL_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
-          DrawText("grill", tx+4, ty+4, 14, WHITE);
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RED);
+          DrawText("grill", tx+4, ty+4, 14, BLACK);
           break;
         case ASSEMBLY:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
           DrawText("assembly", tx+4, ty+4, 14, WHITE);
+          break;
+        case SINK:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
+          DrawText("sink", tx+4, ty+4, 14, BLACK);
+          break;
+        case CUTTING_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKPURPLE);
+          DrawText("cutting", tx+4, ty+4, 14, WHITE);
+          break;
+        case TRASH:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
+          DrawText("trash", tx+4, ty+4, 14, WHITE);
+          break;
+        case PANTRY:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BROWN);
+          DrawText("pantry", tx+4, ty+4, 14, WHITE);
           break;
       }
 
@@ -205,10 +226,17 @@ void DrawGame(void) {
       currentScreen = FRIDGE_SCREEN;
       break;
 
+    case PANTRY_MENU:
+      isMenuOpen = false;
+      currentMenu = NONE;
+      currentScreen = PANTRY_SCREEN;
+      break;
+
     case STOVE_MENU: 
       isMenuOpen = false;
       currentMenu = NONE;
       if (holding.cookType == PAN) {
+        currentCookType = PAN;
         currentScreen = STOVE_SCREEN;
       }
       break;
@@ -217,6 +245,7 @@ void DrawGame(void) {
       isMenuOpen = false;
       currentMenu = NONE;
       if (holding.cookType == OVEN) {
+        currentCookType = OVEN;
         currentScreen = OVEN_SCREEN;
       }
       break;
@@ -225,6 +254,7 @@ void DrawGame(void) {
       isMenuOpen = false;
       currentMenu = NONE;
        if (holding.cookType == DEEP_FRY) {
+        currentCookType = DEEP_FRY;
         currentScreen = DEEP_FRY_SCREEN;
       }
       break;
@@ -233,6 +263,7 @@ void DrawGame(void) {
       isMenuOpen = false;
       currentMenu = NONE;
       if (holding.cookType == GRILL) {
+        currentCookType = GRILL;
         currentScreen = GRILL_SCREEN;
       }
       break;
@@ -250,12 +281,32 @@ void DrawGame(void) {
 }
 
 void UnloadGame(void) {
-  UnloadRenderTexture(canvas);
-  UnloadTexture(playerTexture[0]);
-  UnloadTexture(playerTexture[1]);
-  UnloadTexture(playerTexture[2]);
-  UnloadTexture(playerTexture[3]);
-  free(map);
+  if (canvas.id != 0) {
+    UnloadRenderTexture(canvas);
+    canvas = (RenderTexture2D){0};
+  }
+
+  for (int i = 0; i < 4; i++) {
+    if (playerTexture[i].id == 0) continue;
+
+    bool alreadyUnloaded = false;
+    for (int j = 0; j < i; j++) {
+      if (playerTexture[j].id == playerTexture[i].id) {
+        alreadyUnloaded = true;
+        break;
+      }
+    }
+
+    if (!alreadyUnloaded) {
+      UnloadTexture(playerTexture[i]);
+    }
+    playerTexture[i] = (Texture2D){0};
+  }
+
+  if (map != NULL) {
+    free(map);
+    map = NULL;
+  }
 }
 
 static void loadMap(const char *filePath) {
@@ -274,6 +325,8 @@ static void loadMap(const char *filePath) {
       map[y * mapCols + x] = (TILE_TYPE)value;
     }
   }
+
+  fclose(mapFile);
 }
 
 static void movePlayer(int DIR) {
@@ -328,6 +381,30 @@ static int menuNavigation(Rectangle *rects, int count, int *selected) {
   return -1;
 }
 
+void quantityLower(whereIsItemFrom type) {
+  if (holding.categoryId < 0) return; // player holds nothing
+
+  switch (type) {
+    case FROM_FRIDGE:
+      for (int i = 0; i < 11; i++) { // stockedFridge item count
+        if (stockedFridge[i].categoryId == holding.categoryId) {
+          if (stockedFridge[i].quantity > 0) stockedFridge[i].quantity--;
+          break;
+        }
+      }
+      break;
+
+    case FROM_PANTRY:
+      for (int i = 0; i < 10; i++) { // stockedPantry item count
+        if (stockedPantry[i].categoryId == holding.categoryId) {
+          if (stockedPantry[i].quantity > 0) stockedPantry[i].quantity--;
+          break;
+        }
+      }
+      break;
+  }
+}
+
 static void interact(void) {
   TILE_TYPE facingType;
   int facingTileX = currentTileX;
@@ -358,6 +435,9 @@ static void interact(void) {
     case FRIDGE:
       currentMenu = FRIDGE_MENU;
       break;
+    case PANTRY:
+      currentMenu = PANTRY_MENU;
+      break;
     case STOVE_STATION:
       currentMenu = STOVE_MENU;
       break;
@@ -370,5 +450,15 @@ static void interact(void) {
     case GRILL_STATION:
       currentMenu = GRILL_MENU;
       break;
-  }
+    case TRASH:
+      if (itemFrom != FROM_NONE) {
+        playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
+        playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
+        playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
+        playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
+        holding = (itemType){ -1, -1, 0 };
+        itemFrom = FROM_NONE;
+      }
+      break;   
+}
 }

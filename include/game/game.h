@@ -12,6 +12,15 @@ typedef enum {
   DOWN
 } DIRECTION;
 
+typedef enum {
+  FROM_FRIDGE,
+  FROM_PANTRY,
+  FROM_NONE
+} whereIsItemFrom;
+
+extern whereIsItemFrom itemFrom;
+void quantityLower(whereIsItemFrom type);
+
 // tiling system
 enum {
   TILE_SIZE = 64,
@@ -31,7 +40,7 @@ static inline float TilesToPixels(float tiles) {
 }
 
 // player
-extern HoldingItem holding;
+extern itemType holding;
 extern Texture2D playerTexture[4];
 
 #endif

@@ -8,6 +8,7 @@
 #include "game/items.h"
 #include "stdio.h"
 #include "ctype.h"
+#include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
@@ -42,19 +43,18 @@ void InitFridge() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
-  panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height-16};
+  UpdateUILayoutRects();
 
   // textures - load variant 0 (RAW) of each category
   for (int i = 0; i < ingredientCount; i++) {
-    int categoryId = stockedIngredients[i].categoryId;
+    int categoryId = stockedFridge[i].categoryId;
     foodTextures[i] = LoadTexture(allFoods[categoryId].variants[0].filePath);
   }
 
   // init the filter at the start
   matchCount = 0;
   for (int i = 0; i < ingredientCount; i++) {
-    int categoryId = stockedIngredients[i].categoryId;
+    int categoryId = stockedFridge[i].categoryId;
     const char* categoryName = allFoods[categoryId].categoryName;
     if (fuzzyFinder(searchBarText, categoryName)) {
       matchedItems[matchCount++] = i;
@@ -67,35 +67,35 @@ void InitFridge() {
 }
 
 void UpdateFridge() {
+  int selectedStockedIndex = matchedItems[0];
+  int categoryId = stockedFridge[selectedStockedIndex].categoryId;
+
   if (IsKeyPressed(KEY_ESCAPE)) {
     searchEditMode = false;
-    UnloadFridge();
     currentScreen = GAME;
   } else if (IsKeyPressed(KEY_ENTER)) {
-    if (matchCount > 0) {
-      int selectedStockedIndex = matchedItems[0];
-      int categoryId = stockedIngredients[selectedStockedIndex].categoryId;
+    if (matchCount > 0 && stockedFridge[selectedStockedIndex].quantity > 0) {
       int variantId = 0;  // Start with first variant (RAW)
       COOK_TYPE cookType = allFoods[categoryId].variants[variantId].cook_type;
       
-      holding = (HoldingItem){ categoryId, variantId, cookType };
+      itemFrom = FROM_FRIDGE;
+      holding = (itemType){ categoryId, variantId, cookType };
 
       const char *filePath = allFoods[categoryId].variants[variantId].filePath;
 
-      // unloading the textures
-      for (int i = 0; i < 4; i++) {
-        if (playerTexture[i].id != 0) {
-          UnloadTexture(playerTexture[i]);
-        }
+      // unload old textures (handle both cases: 4 different textures and 4 same textures)
+      uint32_t oldId = playerTexture[0].id;
+      if (oldId != 0) {
+        UnloadTexture(playerTexture[0]);
       }
 
-      // loading the new textures
+      // loading the new texture (all 4 directions use the same ingredient texture)
+      Texture2D newTexture = LoadTexture(filePath);
       for (int i = 0; i < 4; i++) {
-        playerTexture[i] = LoadTexture(filePath);
+        playerTexture[i] = newTexture;
       }
 
       searchEditMode = false;
-      UnloadFridge();
       currentScreen = GAME;
     }
   }
@@ -104,7 +104,7 @@ void UpdateFridge() {
     matchCount = 0;
 
     for (int i = 0; i < ingredientCount; i++) {
-      int categoryId = stockedIngredients[i].categoryId;
+      int categoryId = stockedFridge[i].categoryId;
       const char* categoryName = allFoods[categoryId].categoryName;
       if (fuzzyFinder(searchBarText, categoryName)) {
         matchedItems[matchCount++] = i;
@@ -116,10 +116,7 @@ void UpdateFridge() {
 }
 
 void DrawFridge() {
-  int screenWidth = GetScreenWidth();
-  int screenHeight = GetScreenHeight();
-  
-    Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
+  Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
   Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16 };
   int startX = panelBounds.x + 5; // padding for each item
   int startY = panelBounds.y + 5; // same as above
@@ -129,7 +126,6 @@ void DrawFridge() {
     searchEditMode = !searchEditMode;
     // if no matches and textbox was just deselected (enter pressed), close fridge
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
-      UnloadFridge();
       currentScreen = GAME;
     }
   }
@@ -149,13 +145,13 @@ void DrawFridge() {
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
 
       char quantityStr[10];
-      snprintf(quantityStr, sizeof(quantityStr), "%d", stockedIngredients[ingredientIdx].quantity);
+      snprintf(quantityStr, sizeof(quantityStr), "%d", stockedFridge[ingredientIdx].quantity);
       DrawTextureEx(foodTextures[ingredientIdx], (Vector2){xPos, yPos}, 0, 5.25, WHITE);
       DrawRectangleRec((Rectangle){ xPos, yPos, 20, 20 }, LIGHTGRAY);
       DrawText(quantityStr, xPos+2, yPos+2, 16, BLACK);
       
       // Draw category name below the item with background
-      int categoryId = stockedIngredients[ingredientIdx].categoryId;
+      int categoryId = stockedFridge[ingredientIdx].categoryId;
       const char* categoryName = allFoods[categoryId].categoryName;
       int textWidth = MeasureText(categoryName, 10);
       int textX = xPos + (ITEM_WIDTH / 2) - (textWidth / 2);
@@ -176,7 +172,10 @@ void DrawFridge() {
 
 void UnloadFridge() {
   for (int i = 0; i < ingredientCount; i++) {
-    UnloadTexture(foodTextures[i]);
+    if (foodTextures[i].id != 0) {
+      UnloadTexture(foodTextures[i]);
+      foodTextures[i] = (Texture2D){0};
+    }
   }
 }
 

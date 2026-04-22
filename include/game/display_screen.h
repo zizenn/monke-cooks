@@ -57,7 +57,7 @@ void UnloadBarMinigame(void);
 
 // target minigame
 void InitTargetMinigame(void);
-bool UpdateTargetMinigame(void);
+void UpdateTargetMinigame(void);
 void DrawTargetMinigame(void);
 void UnloadTargetMinigame(void);
 

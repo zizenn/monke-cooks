@@ -206,33 +206,9 @@ stockItem stockedPantry[] = {
   { 8, 2 },   // 2x WAKAME (category 8)
   { 9, 2 },   // 2x MILK (category 9)
 };
-Rectangle totalArea = (Rectangle){640-346.5, 360-178.5, 693, 357};
-Rectangle panelBounds = (Rectangle){640-346.5, 360-178.5, 693, 341};
-Rectangle notifPanelBounds = (Rectangle){640-175, 50, 350, 50};
-
-static const float BASE_SCREEN_WIDTH = 1280.0f;
-static const float BASE_SCREEN_HEIGHT = 720.0f;
-
-static float ScaleX(float x) {
-  return x * ((float)GetScreenWidth() / BASE_SCREEN_WIDTH);
-}
-
-static float ScaleY(float y) {
-  return y * ((float)GetScreenHeight() / BASE_SCREEN_HEIGHT);
-}
-
-void UpdateUILayoutRects() {
-  float centerX = ScaleX(640.0f);
-  float centerY = ScaleY(360.0f);
-  float totalWidth = ScaleX(693.0f);
-  float totalHeight = ScaleY(357.0f);
-  float notifWidth = ScaleX(350.0f);
-  float notifHeight = ScaleY(50.0f);
-
-  totalArea = (Rectangle){centerX - (totalWidth / 2.0f), centerY - (totalHeight / 2.0f), totalWidth, totalHeight};
-  panelBounds = (Rectangle){totalArea.x, totalArea.y, totalArea.width, totalArea.height - ScaleY(16.0f)};
-  notifPanelBounds = (Rectangle){centerX - (notifWidth / 2.0f), ScaleY(50.0f), notifWidth, notifHeight};
-}
+Rectangle totalArea = (Rectangle){512-277.2f, 288-142.8f, 554.4f, 285.6f};
+Rectangle panelBounds = (Rectangle){512-277.2f, 288-142.8f, 554.4f, 272.8f};
+Rectangle notifPanelBounds = (Rectangle){512-140.0f, 40, 280, 40};
 
 // notification system
 static const char* notifText = NULL;
@@ -249,7 +225,6 @@ void summonNotif(const char* text, NOTIF_TYPE notifType) {
 
 // update notifications (call once per frame)
 void UpdateNotifications() {
-  UpdateUILayoutRects();
   if (notifDuration > 0) {
     notifDuration -= GetFrameTime();
   } else {

@@ -8,10 +8,12 @@
 static Music menu_music;
 static Sound clickSound;
 
-static Rectangle rectangles[] = {{ 12, 520, 160, 40 }, //Enter
-                                 { 184, 520, 160, 40 }, //Advanced
-                                 { 356, 520, 160, 40 }, //Reset
-                                 { 528, 520, 160, 40 }}; //Back
+static Rectangle rectangles[] = {
+  { 20, 320, 240, 50 }, // Play Campaign
+  { 20, 382, 240, 50 }, // MinigameTEST
+  { 20, 444, 240, 50 }, // RESET
+  { 20, 506, 240, 50 }  // Back
+};
 
 void InitCampaignMenu() {
   menu_music = LoadMusicStream("assets/brackeys/music/time_for_adventure.mp3");

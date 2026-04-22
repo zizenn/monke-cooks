@@ -49,7 +49,7 @@ void InitBarMinigame() {
     timingBarResult = TIMING_BAR_RUNNING;
     playerFirstInput = true;
     BAR_X = panelBounds.x + (panelBounds.width/2) - (BAR_WIDTH/2.0f);
-    BAR_Y = panelBounds.y + (panelBounds.height/2) - (BAR_HEIGHT/2.0f) + 130;
+    BAR_Y = panelBounds.y + panelBounds.height - BAR_HEIGHT - 35;
     playerX = BAR_X/2;
     safezoneX = BAR_X + BAR_WIDTH / 2.0f - SAFEZONE_WIDTH / 2.0f;
     safezoneAccel = 5.0f;

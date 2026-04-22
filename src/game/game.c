@@ -135,15 +135,7 @@ void UpdateGame(void) {
 }
 
 void DrawGame(void) {
-  int screenWidth = GetScreenWidth();
-  int screenHeight = GetScreenHeight();
   Color playerColor = BROWN;
-
-  int dialogPosX = TileToPixels(5);
-  int dialogPosY = TileToPixels(5);
-  int dialogWidth = TileToPixels(5);
-  int dialogHeight = TileToPixels(3);
-
   ClearBackground(WHITE);
 
   // draw tiles from map
@@ -390,6 +382,9 @@ void quantityLower(whereIsItemFrom type) {
         }
       }
       break;
+
+    default:
+      break;
   }
 }
 
@@ -439,7 +434,7 @@ static void interact(void) {
       currentMenu = GRILL_MENU;
       break;
     case TRASH:
-      if (itemFrom != FROM_NONE) {
+      if (holding.categoryId >= 0) {
         playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
         playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
         playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");

@@ -7,8 +7,6 @@
 #include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include "stdint.h"
 #include "string.h"
 

@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "external/raylib.h"
-#include "game/cooking.h"
 #include "game/items.h"
 
 typedef enum {

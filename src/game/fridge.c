@@ -75,11 +75,9 @@ void UpdateFridge() {
     if (matchCount > 0 && stockedFridge[selectedStockedIndex].quantity > 0) {
       int variantId = 0;  // Start with first variant (RAW)
       COOK_TYPE cookType = allFoods[categoryId].variants[variantId].cook_type;
-      PREP_TYPE prepType = allFoods[categoryId].variants[variantId].prep_type;
       
       itemFrom = FROM_FRIDGE;
       holding = (itemType){ categoryId, variantId, cookType };
-      currentPrepType = prepType;
 
       const char *filePath = allFoods[categoryId].variants[variantId].filePath;
 
@@ -154,7 +152,7 @@ void DrawFridge() {
       int categoryId = stockedFridge[ingredientIdx].categoryId;
       const char* categoryName = allFoods[categoryId].categoryName;
       int textWidth = MeasureText(categoryName, 10);
-      int textX = xPos + (ITEM_WIDTH / 2) - (textWidth / 2);
+      int textX = xPos + (ITEM_WIDTH / 2.0f) - (textWidth / 2.0f);
       int textY = yPos + 68;
       
       // Draw background rectangle

@@ -152,7 +152,7 @@ void DrawPantry() {
       int categoryId = stockedPantry[ingredientIdx].categoryId;
       const char* categoryName = allPantry[categoryId].categoryName;
       int textWidth = MeasureText(categoryName, 10);
-      int textX = xPos + (ITEM_WIDTH / 2) - (textWidth / 2);
+      int textX = xPos + (ITEM_WIDTH / 2.0f) - (textWidth / 2.0f);
       int textY = yPos + 68;
       
       // Draw background rectangle

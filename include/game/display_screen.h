@@ -49,16 +49,10 @@ void UnloadCook();
 // void DrawCook();
 // void UnloadCook();
 
-// followbar minigame
+// minigame
 void InitBarMinigame(void);
 bool UpdateBarMinigame(void);
 void DrawBarMinigame(void);
 void UnloadBarMinigame(void);
-
-// target minigame
-void InitTargetMinigame(void);
-void UpdateTargetMinigame(void);
-void DrawTargetMinigame(void);
-void UnloadTargetMinigame(void);
 
 #endif

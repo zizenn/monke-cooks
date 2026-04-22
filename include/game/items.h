@@ -12,8 +12,10 @@ typedef struct {
 typedef struct {
   const char *name;
   COOK_TYPE cook_type;
+  PREP_TYPE prep_type;
   float price;
   const char *filePath;
+  int variant;
 } Foods;
 
 typedef struct {

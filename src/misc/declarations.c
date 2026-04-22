@@ -10,6 +10,7 @@
 
 // cooking
 COOK_TYPE currentCookType;
+PREP_TYPE currentPrepType;
 
 // game
 itemType holding;
@@ -19,74 +20,74 @@ whereIsItemFrom itemFrom;
 
 // EGGS: Raw can't be cooked directly, must be cracked first
 Foods eggVariants[] = {
-  { "RAW_EGG", 0, 3.50, "assets/food/ingredients/eggs/egg_orange.png" },
-  { "CRACKED_EGG", PAN, 3.50, "assets/food/ingredients/eggs/egg_orange_cracked.png" },
-  { "FRIED_EGG", 0, 3.50, "assets/food/ingredients/eggs/egg_orange.png" },
+  { "RAW_EGG", 0, CRACK, 3.50, "assets/food/ingredients/eggs/egg_orange.png", 1 },
+  { "CRACKED_EGG", PAN, PREP_NONE, 3.50, "assets/food/ingredients/eggs/egg_orange_cracked.png", 2 },
+  { "FRIED_EGG", 0, PREP_NONE, 3.50, "assets/food/ingredients/eggs/egg_orange.png", 3 },
 };
 
 // RICE: Raw can't be cooked, must go through intermediate states
 Foods riceVariants[] = {
-  { "RAW_RICE", 0, 5.00, "assets/food/ingredients/grains/rice.png" },
-  { "WASHED_RICE", OVEN, 5.00, "assets/food/ingredients/grains/rice.png" },
-  { "COOKED_RICE", 0, 6.50, "assets/food/ingredients/grains/rice.png" },
+  { "RAW_RICE", 0, WASH, 5.00, "assets/food/ingredients/grains/rice.png", 1 },
+  { "WASHED_RICE", OVEN, PREP_NONE, 5.00, "assets/food/ingredients/grains/rice.png", 2 },
+  { "COOKED_RICE", 0, PREP_NONE, 6.50, "assets/food/ingredients/grains/rice.png", 3 },
 };
 
 // MUSHROOMS: Raw must be sliced/prepared before cooking
 Foods shiitakeVariants[] = {
-  { "RAW_SHIITAKE", 0, 5.50, "assets/food/ingredients/mushrooms/shiitake.png" },
-  { "SLICED_SHIITAKE", PAN, 5.50, "assets/food/ingredients/mushrooms/hen_of_the_woods_sliced.png" },
-  { "COOKED_SHIITAKE", 0, 7.00, "assets/food/ingredients/mushrooms/shiitake.png" },
+  { "RAW_SHIITAKE", 0, CUT, 5.50, "assets/food/ingredients/mushrooms/shiitake.png", 1 },
+  { "SLICED_SHIITAKE", PAN, PREP_NONE, 5.50, "assets/food/ingredients/mushrooms/hen_of_the_woods_sliced.png", 2 },
+  { "COOKED_SHIITAKE", 0, PREP_NONE, 7.00, "assets/food/ingredients/mushrooms/shiitake.png", 3 },
 };
 
 // CHICKPEAS: Raw can't be cooked, must be soaked/prepared
 Foods chickpeaVariants[] = {
-  { "RAW_CHICKPEA", 0, 8.00, "assets/food/ingredients/beans/chickpea.png" },
-  { "SOAKED_CHICKPEA", OVEN, 8.00, "assets/food/ingredients/beans/chickpea.png" },
-  { "COOKED_CHICKPEA", 0, 10.00, "assets/food/ingredients/beans/chickpea.png" },
+  { "RAW_CHICKPEA", 0, WASH, 8.00, "assets/food/ingredients/beans/chickpea.png", 1 },
+  { "SOAKED_CHICKPEA", OVEN, PREP_NONE, 8.00, "assets/food/ingredients/beans/chickpea.png", 2 },
+  { "COOKED_CHICKPEA", 0, PREP_NONE, 10.00, "assets/food/ingredients/beans/chickpea.png", 3 },
 };
 
 // LENTILS: Raw needs preparation before cooking
 Foods lentilVariants[] = {
-  { "RAW_LENTIL", 0, 6.00, "assets/food/ingredients/beans/lentil.png" },
-  { "RINSED_LENTIL", OVEN, 6.00, "assets/food/ingredients/beans/lentil.png" },
-  { "COOKED_LENTIL", 0, 8.00, "assets/food/ingredients/beans/lentil.png" },
+  { "RAW_LENTIL", 0, WASH, 6.00, "assets/food/ingredients/beans/lentil.png", 1 },
+  { "RINSED_LENTIL", OVEN, PREP_NONE, 6.00, "assets/food/ingredients/beans/lentil.png", 2 },
+  { "COOKED_LENTIL", 0, PREP_NONE, 8.00, "assets/food/ingredients/beans/lentil.png", 3 },
 };
 
 // OYSTER MUSHROOMS: Raw, sliced, then cooked
 Foods oysterMushroomVariants[] = {
-  { "RAW_OYSTER_MUSHROOM", 0, 7.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png" },
-  { "SLICED_OYSTER", PAN, 7.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png" },
-  { "COOKED_OYSTER", 0, 9.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png" },
+  { "RAW_OYSTER_MUSHROOM", 0, CUT, 7.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png", 1 },
+  { "SLICED_OYSTER", PAN, PREP_NONE, 7.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png", 2 },
+  { "COOKED_OYSTER", 0, PREP_NONE, 9.00, "assets/food/ingredients/mushrooms/oyster_mushroom.png", 3 },
 };
 
 // MOZZARELLA: Raw cheese, can be melted
 Foods mozzarellaVariants[] = {
-  { "FRESH_MOZZARELLA", PAN, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
-  { "MELTED_MOZZARELLA", 0, 12.00, "assets/food/ingredients/cheese/mozzarella.png" },
+  { "FRESH_MOZZARELLA", PAN, CUT, 12.00, "assets/food/ingredients/cheese/mozzarella.png", 1 },
+  { "MELTED_MOZZARELLA", 0, PREP_NONE, 12.00, "assets/food/ingredients/cheese/mozzarella.png", 2 },
 };
 
 // PARMIGIANO: Raw cheese, can be melted
 Foods parmiganoVariants[] = {
-  { "FRESH_PARMIGIANO", PAN, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
-  { "MELTED_PARMIGIANO", 0, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png" },
+  { "FRESH_PARMIGIANO", PAN, CUT, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png", 1 },
+  { "MELTED_PARMIGIANO", 0, PREP_NONE, 14.00, "assets/food/ingredients/cheese/parmigiano_reggiano.png", 2 },
 };
 
 // CHEDDAR: Raw cheese, can be melted
 Foods cheddarVariants[] = {
-  { "FRESH_CHEDDAR", PAN, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
-  { "MELTED_CHEDDAR", 0, 10.00, "assets/food/ingredients/cheese/cheddar.png" },
+  { "FRESH_CHEDDAR", PAN, CUT, 10.00, "assets/food/ingredients/cheese/cheddar.png", 1 },
+  { "MELTED_CHEDDAR", 0, PREP_NONE, 10.00, "assets/food/ingredients/cheese/cheddar.png", 2 },
 };
 
 // SPICES (PEPPER): Can be mixed/used raw or heated
 Foods pepperVariants[] = {
-  { "RAW_PEPPER", PAN, 2.50, "assets/food/ingredients/spices/pepper.png" },
-  { "GROUND_PEPPER", 0, 2.50, "assets/food/ingredients/spices/pepper.png" },
+  { "RAW_PEPPER", PAN, GROUND, 2.50, "assets/food/ingredients/spices/pepper.png", 1 },
+  { "GROUND_PEPPER", 0, PREP_NONE, 2.50, "assets/food/ingredients/spices/pepper.png", 2 },
 };
 
 // CUMIN: Can be dry roasted
 Foods cuminVariants[] = {
-  { "RAW_CUMIN", PAN, 3.00, "assets/food/ingredients/spices/cumin.png" },
-  { "ROASTED_CUMIN", 0, 3.00, "assets/food/ingredients/spices/cumin.png" },
+  { "RAW_CUMIN", PAN, CUT, 3.00, "assets/food/ingredients/spices/cumin.png", 1 },
+  { "ROASTED_CUMIN", 0, PREP_NONE, 3.00, "assets/food/ingredients/spices/cumin.png", 2 },
 };
 
 // All food categories with variants
@@ -122,62 +123,62 @@ stockItem stockedFridge[] = {
 
 // TURMERIC: Spice that can be used raw or heated
 Foods turmericVariants[] = {
-  { "RAW_TURMERIC", PAN, 4.50, "assets/food/ingredients/spices/turmeric.png" },
-  { "GROUND_TURMERIC", 0, 4.50, "assets/food/ingredients/spices/turmeric.png" },
+  { "RAW_TURMERIC", PAN, GROUND, 4.50, "assets/food/ingredients/spices/turmeric.png", 1 },
+  { "GROUND_TURMERIC", 0, PREP_NONE, 4.50, "assets/food/ingredients/spices/turmeric.png", 2 },
 };
 
 // VANILLA: Flavoring that can be raw or processed
 Foods vanillaVariants[] = {
-  { "RAW_VANILLA", PAN, 8.00, "assets/food/ingredients/spices/vanilla.png" },
-  { "PROCESSED_VANILLA", 0, 8.00, "assets/food/ingredients/spices/vanilla.png" },
+  { "RAW_VANILLA", PAN, CUT, 8.00, "assets/food/ingredients/spices/vanilla.png", 1 },
+  { "PROCESSED_VANILLA", 0, PREP_NONE, 8.00, "assets/food/ingredients/spices/vanilla.png", 2 },
 };
 
 // STAR ANISE: Spice that can be whole or ground
 Foods starAniseVariants[] = {
-  { "WHOLE_STAR_ANISE", PAN, 5.00, "assets/food/ingredients/spices/star_anise.png" },
-  { "GROUND_STAR_ANISE", 0, 5.00, "assets/food/ingredients/spices/star_anise.png" },
+  { "WHOLE_STAR_ANISE", PAN, GROUND, 5.00, "assets/food/ingredients/spices/star_anise.png", 1 },
+  { "GROUND_STAR_ANISE", 0, PREP_NONE, 5.00, "assets/food/ingredients/spices/star_anise.png", 2 },
 };
 
 // CLOVES: Spice that can be whole or ground
 Foods clovesVariants[] = {
-  { "WHOLE_CLOVES", PAN, 6.00, "assets/food/ingredients/spices/cloves.png" },
-  { "GROUND_CLOVES", 0, 6.00, "assets/food/ingredients/spices/cloves.png" },
+  { "WHOLE_CLOVES", PAN, GROUND, 6.00, "assets/food/ingredients/spices/cloves.png", 1 },
+  { "GROUND_CLOVES", 0, PREP_NONE, 6.00, "assets/food/ingredients/spices/cloves.png", 2 },
 };
 
 // NUTMEG: Spice that can be whole or ground
 Foods nutmegVariants[] = {
-  { "WHOLE_NUTMEG", PAN, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
-  { "GROUND_NUTMEG", 0, 5.50, "assets/food/ingredients/spices/nutmeg.png" },
+  { "WHOLE_NUTMEG", PAN, GROUND, 5.50, "assets/food/ingredients/spices/nutmeg.png", 1 },
+  { "GROUND_NUTMEG", 0, PREP_NONE, 5.50, "assets/food/ingredients/spices/nutmeg.png", 2 },
 };
 
 // WHEAT: Grain that can be raw or processed
 Foods wheatVariants[] = {
-  { "RAW_WHEAT", OVEN, 3.00, "assets/food/ingredients/grains/wheat.png" },
-  { "MILLED_WHEAT", 0, 3.00, "assets/food/ingredients/grains/wheat.png" },
+  { "RAW_WHEAT", OVEN, WASH, 3.00, "assets/food/ingredients/grains/wheat.png", 1 },
+  { "MILLED_WHEAT", 0, PREP_NONE, 3.00, "assets/food/ingredients/grains/wheat.png", 2 },
 };
 
 // BARLEY: Grain for cooking
 Foods barleyVariants[] = {
-  { "RAW_BARLEY", OVEN, 3.50, "assets/food/ingredients/grains/barley.png" },
-  { "COOKED_BARLEY", 0, 3.50, "assets/food/ingredients/grains/barley.png" },
+  { "RAW_BARLEY", OVEN, WASH, 3.50, "assets/food/ingredients/grains/barley.png", 1 },
+  { "COOKED_BARLEY", 0, PREP_NONE, 3.50, "assets/food/ingredients/grains/barley.png", 2 },
 };
 
 // NORI: Seaweed for sushi
 Foods noriVariants[] = {
-  { "DRIED_NORI", PAN, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
-  { "TOASTED_NORI", 0, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png" },
+  { "DRIED_NORI", PAN, PREP_NONE, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png", 1 },
+  { "TOASTED_NORI", 0, PREP_NONE, 7.00, "assets/food/ingredients/seaweeds/nori_toasted.png", 2 },
 };
 
 // WAKAME: Seaweed for soups
 Foods wakameVariants[] = {
-  { "DRIED_WAKAME", 0, 6.00, "assets/food/ingredients/seaweeds/wakame.png" },
-  { "SOAKED_WAKAME", OVEN, 6.00, "assets/food/ingredients/seaweeds/wakame.png" },
+  { "DRIED_WAKAME", 0, WASH, 6.00, "assets/food/ingredients/seaweeds/wakame.png", 1 },
+  { "SOAKED_WAKAME", OVEN, PREP_NONE, 6.00, "assets/food/ingredients/seaweeds/wakame.png", 2 },
 };
 
 // MILK: Dairy for cooking
 Foods milkVariants[] = {
-  { "FRESH_MILK", OVEN, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
-  { "HEATED_MILK", 0, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png" },
+  { "FRESH_MILK", OVEN, PREP_NONE, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png", 1 },
+  { "HEATED_MILK", 0, PREP_NONE, 4.00, "assets/food/ingredients/yogurt_and_milk/milk_bottled.png", 2 },
 };
 
 // All pantry categories

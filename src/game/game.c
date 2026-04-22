@@ -23,7 +23,8 @@ typedef enum {
   SINK, // 8
   CUTTING_STATION, // 9
   TRASH, // 10
-  PANTRY // 11
+  PANTRY, // 11
+  GRINDING_STATION // 12
 } TILE_TYPE;
 
 // function prototypes
@@ -61,6 +62,7 @@ void InitGame(void) {
   selected = 0;
   facing = DOWN;
   holding = (itemType){ -1, -1, 0 };
+  currentPrepType = PREP_NONE;
   currentMenu = NONE;
   isMoving = false;
   isMenuOpen = false;
@@ -198,6 +200,10 @@ void DrawGame(void) {
         case PANTRY:
           DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BROWN);
           DrawText("pantry", tx+4, ty+4, 14, WHITE);
+          break;
+        case GRINDING_STATION:
+          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, MAROON);
+          DrawText("grind", tx+4, ty+4, 14, WHITE);
           break;
       }
 
@@ -439,6 +445,7 @@ static void interact(void) {
         playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
         playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
         holding = (itemType){ -1, -1, 0 };
+        currentPrepType = PREP_NONE;
         itemFrom = FROM_NONE;
       }
       break;   

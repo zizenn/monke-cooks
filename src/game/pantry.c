@@ -73,9 +73,11 @@ void UpdatePantry() {
       int categoryId = stockedPantry[selectedStockedIndex].categoryId;
       int variantId = 0;  // Start with first variant
       COOK_TYPE cookType = allPantry[categoryId].variants[variantId].cook_type;
+      PREP_TYPE prepType = allPantry[categoryId].variants[variantId].prep_type;
       
       itemFrom = FROM_PANTRY;
       holding = (itemType){ categoryId, variantId, cookType };
+      currentPrepType = prepType;
 
       const char *filePath = allPantry[categoryId].variants[variantId].filePath;
 

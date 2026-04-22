@@ -200,6 +200,7 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
+  // canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   SetTargetFPS(targetFPS);
 
   //temporary button setup figure this one out later

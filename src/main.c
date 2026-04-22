@@ -41,9 +41,6 @@ static void EnterScene(GameScreen scene) {
     case PANTRY_SCREEN:
        InitPantry();
        break;
-    case BARMINIGAME_SCREEN:
-      InitBarMinigame();
-      break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:
@@ -78,9 +75,6 @@ static void ExitScene(GameScreen scene) {
     case GRILL_SCREEN:
       UnloadCook();
       break;
-    case BARMINIGAME_SCREEN:
-      UnloadBarMinigame();
-      break;
     default:
       break;
   }
@@ -103,9 +97,6 @@ static void UpdateScene(GameScreen scene) {
      case PANTRY_SCREEN:
        UpdatePantry();
        break;
-    case BARMINIGAME_SCREEN:
-      UpdateBarMinigame();
-      break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:
@@ -136,9 +127,6 @@ static void DrawScene(GameScreen scene) {
        DrawGame();
        DrawPantry();
        break;
-    case BARMINIGAME_SCREEN:
-      DrawBarMinigame();
-      break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:

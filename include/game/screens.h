@@ -14,7 +14,6 @@ typedef enum {
   OVEN_SCREEN,
   DEEP_FRY_SCREEN,
   GRILL_SCREEN,
-  BARMINIGAME_SCREEN
 } GameScreen;
 
 #endif

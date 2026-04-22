@@ -27,7 +27,7 @@ static bool playerFirstInput = true;
 
 //safe zone
 const float SAFEZONE_MAX = 200.0f;
-const int SAFEZONE_WIDTH = 80;
+const int SAFEZONE_WIDTH = 70;
 static float safezoneX;
 static float safezoneAccel = 5.0f;
 static float safezoneVel = 150.0f;
@@ -36,6 +36,9 @@ static bool isSafe;
 //win condition
 const float WIN_TIME = 5.0f;
 static float gameTime = 0.0f;
+
+//lose condition
+const float LOSE_TIME = 10.0f;
 
 static float playerX;
 static float safeTime = 0.0f;
@@ -58,28 +61,26 @@ void InitBarMinigame() {
     gameTime = 0.0f;
 }
 
-bool UpdateBarMinigame() {
-  if (gameTime >= 120) {
+void UpdateBarMinigame() {
+  if (gameTime >= LOSE_TIME) {
     timingBarResult = TIMING_BAR_LOSE;
   }
   if (timingBarResult == TIMING_BAR_LOSE) {
     SummonNotif("YOU LOSE!", ERROR);
-    currentScreen = GAME;
-    return false;
   }
 
-  float DeltaTime = GetFrameTime();
-  gameTime += DeltaTime;
+  float deltaTime = GetFrameTime();
+  gameTime += deltaTime;
 
   //inputs
   if (IsKeyDown(KEY_D)) {
     if (playerFirstInput) playerFirstInput = false;
-    playerX += PLAYER_SPEED * DeltaTime;
+    playerX += PLAYER_SPEED * deltaTime;
 
   }
   if (IsKeyDown(KEY_A)) {
     if (playerFirstInput) playerFirstInput = false;
-    playerX -= PLAYER_SPEED * DeltaTime;
+    playerX -= PLAYER_SPEED * deltaTime;
   }
 
   //clamp player indicator to bar
@@ -96,7 +97,7 @@ bool UpdateBarMinigame() {
     safezoneVel = SAFEZONE_MAX * (fabsf(safezoneVel)/safezoneVel);
   }
 
-  safezoneX += safezoneVel * DeltaTime;
+  safezoneX += safezoneVel * deltaTime;
   if (safezoneX + SAFEZONE_WIDTH > BAR_X + BAR_WIDTH) {
     safezoneX = BAR_X + BAR_WIDTH - SAFEZONE_WIDTH;
     safezoneVel = fabsf(safezoneVel)*-1.0f;
@@ -120,7 +121,7 @@ bool UpdateBarMinigame() {
   isSafe = playerX >= safezoneX && playerX + PLAYER_WIDTH <= safezoneX + SAFEZONE_WIDTH;
 
   if (isSafe) {
-    safeTime += DeltaTime;
+    safeTime += deltaTime;
     if (safeTime >= WIN_TIME) {
       timingBarResult = TIMING_BAR_WIN;
       if (itemFrom != FROM_NONE) {
@@ -128,16 +129,14 @@ bool UpdateBarMinigame() {
         itemFrom = FROM_NONE;
       }
       SummonNotif("YOU WIN!", SUCCESS);
-      return true;
     }
   }
   else {
     if (safeTime >= 0) {
-      safeTime -= DeltaTime*2.75;
+      safeTime -= deltaTime*2.75;
       safezoneVel /= 1.3;
     }
   }
-  return false;
 }
 
 void DrawBarMinigame() {
@@ -156,6 +155,9 @@ void DrawBarMinigame() {
   //% progress
   DrawText(TextFormat("Stay in the Zone! %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, BLACK);
 
+  //time remaining
+  DrawText(TextFormat("%.0fs Left", LOSE_TIME-gameTime), BAR_X + BAR_WIDTH - 80, BAR_Y - 30, 20, BLACK);
+
   //indicator before first input
   if (playerFirstInput) {
     DrawText(TextFormat("[D]"), BAR_X + 20, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
@@ -170,7 +172,7 @@ void UnloadBarMinigame() {
 static bool ChangeAccel() {
   int randomValue = GetRandomValue(1, 150);
 
-  if (randomValue < 2) {
+  if (randomValue < 5) {
     return true;
   } else {
     return false;

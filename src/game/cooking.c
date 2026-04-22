@@ -10,17 +10,25 @@
 #include "game/texture_cache.h"
 #include "stdint.h"
 #include "string.h"
+//minigames
+#include "minigames/timingbar.h"
 
 static char panelTitle[9] = "";
 int minigameSelection;
-static bool minigameWin = false;
+
+static enum {
+  RUNNING,
+  WIN,
+  LOSE
+} MinigameStatus;
+
 static whereIsItemFrom newItemFrom;
 static bool cookResultApplied = false;
 static Texture2D cookedItemTex;
 ItemType newHolding;
 
 void InitCook() {
-  minigameWin = false;
+  MinigameStatus = false;
   cookResultApplied = false;
   cookedItemTex = (Texture2D){0};
 
@@ -86,15 +94,18 @@ void UpdateCook() {
 
   switch (minigameSelection) {
     case 0:
-      if (UpdateBarMinigame()) {
-        minigameWin = true;
+      UpdateBarMinigame();
+      if (timingBarResult == TIMING_BAR_WIN) {
+        MinigameStatus = WIN;
+      } else if (timingBarResult == TIMING_BAR_LOSE) {
+        MinigameStatus = LOSE;
       } else {
-        minigameWin = false;
+        MinigameStatus = RUNNING;
       }
       break;
   }
 
-  if (minigameWin && !cookResultApplied && cookedItemTex.id != 0) {
+  if (MinigameStatus == WIN && !cookResultApplied && cookedItemTex.id != 0) {
     for (int i = 0; i < 4; i++) {
       if (playerTexture[i].id != cookedItemTex.id) {
         ReleaseTexture(playerTexture[i]);
@@ -106,7 +117,10 @@ void UpdateCook() {
     UnloadCook();
     currentScreen = GAME;
   }
-  
+  if (MinigameStatus == LOSE) {
+    UnloadCook();
+    currentScreen = GAME;
+  }
 }
 
 void DrawCook() {

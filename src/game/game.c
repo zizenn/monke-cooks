@@ -58,7 +58,6 @@ void InitGame(void) {
   currentTileX = 4;
   currentTileY = 4;
   playerPos = (Vector2){ TileToPixels(currentTileX), TileToPixels(currentTileY) };
-  canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   selected = 0;
   facing = DOWN;
   holding = (itemType){ -1, -1, 0 };
@@ -143,9 +142,7 @@ void DrawGame(void) {
   int dialogWidth = TileToPixels(5);
   int dialogHeight = TileToPixels(3);
 
-  // all drawing goes in this PUT YOUR DRAWING IN THIS DO NOT PUT IN BEGIN DRAWING
-  BeginTextureMode(canvas);
-    ClearBackground(WHITE);
+  ClearBackground(WHITE);
 
   // draw tiles from map
   for (int row = 0; row < mapRows; row++) {
@@ -268,24 +265,9 @@ void DrawGame(void) {
       }
       break;
   }
-
-  EndTextureMode();
-
-  // stretching / scaling the canvas (VIRTUAL screen) onto the physical screen
-  Rectangle source = {0, 0, canvas.texture.width, -canvas.texture.height };
-  Rectangle dest = { 0, 0, screenWidth, screenHeight };
-  Vector2 origin = { 0, 0 };
-
-  // this shouldnt be changed unless u really need to which wont happen (this basically draws the whole BeginTextureMode but scales it so it works)
-  DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
 }
 
 void UnloadGame(void) {
-  if (canvas.id != 0) {
-    UnloadRenderTexture(canvas);
-    canvas = (RenderTexture2D){0};
-  }
-
   for (int i = 0; i < 4; i++) {
     if (playerTexture[i].id == 0) continue;
 

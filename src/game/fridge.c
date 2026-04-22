@@ -43,8 +43,6 @@ void InitFridge() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  UpdateUILayoutRects();
-
   // textures - load variant 0 (RAW) of each category
   for (int i = 0; i < ingredientCount; i++) {
     int categoryId = stockedFridge[i].categoryId;

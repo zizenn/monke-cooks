@@ -48,10 +48,10 @@ static bool changeAccel();
 void InitBarMinigame() {
     timingBarResult = TIMING_BAR_RUNNING;
     playerFirstInput = true;
-    BAR_X = panelBounds.x + (panelBounds.width/2) - (BAR_WIDTH/2);
-    BAR_Y = panelBounds.y + (panelBounds.height/2) - (BAR_HEIGHT/2) + 130;
+    BAR_X = panelBounds.x + (panelBounds.width/2) - (BAR_WIDTH/2.0f);
+    BAR_Y = panelBounds.y + (panelBounds.height/2) - (BAR_HEIGHT/2.0f) + 130;
     playerX = BAR_X/2;
-    safezoneX = BAR_X + BAR_WIDTH / 2 - SAFEZONE_WIDTH / 2;
+    safezoneX = BAR_X + BAR_WIDTH / 2.0f - SAFEZONE_WIDTH / 2.0f;
     safezoneAccel = 5.0f;
     safezoneVel = 0.0f;
     safeTime = 0.0f;
@@ -158,8 +158,8 @@ void DrawBarMinigame() {
 
   //indicator before first input
   if (playerFirstInput) {
-    DrawText(TextFormat("[D]"), BAR_X + 20, BAR_Y + (BAR_HEIGHT / 2 - 10), 20, BLACK);
-    DrawText(TextFormat("[A]"), BAR_X + BAR_WIDTH - 40, BAR_Y + (BAR_HEIGHT / 2 - 10), 20, BLACK);
+    DrawText(TextFormat("[D]"), BAR_X + 20, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
+    DrawText(TextFormat("[A]"), BAR_X + BAR_WIDTH - 40, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
   }
 }
 

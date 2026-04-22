@@ -3,7 +3,6 @@
 #include "external/raylib.h"
 #include "game/screens.h"
 #include "game/globals.h"
-#include "game/game.h"
 #include "stdbool.h"
 #include "minigames/timingbar.h"
 
@@ -201,7 +200,6 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
-  canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   SetTargetFPS(targetFPS);
 
   //temporary button setup figure this one out later
@@ -234,9 +232,6 @@ int main() {
   EnterScene(activeScene);
 
   while (!WindowShouldClose() && !shouldQuit) {
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-
     if (currentScreen != activeScene) {
       SwitchScene(&activeScene, currentScreen);
     }
@@ -249,23 +244,9 @@ int main() {
       SwitchScene(&activeScene, currentScreen);
     }
 
-    BeginTextureMode(canvas);
-
+    BeginDrawing();
     DrawScene(activeScene);
     DrawNotifications();
-
-    EndTextureMode();
-
-    BeginDrawing();
-
-    // stretching / scaling the canvas (VIRTUAL screen) onto the physical screen
-    Rectangle source = {0, 0, canvas.texture.width, -canvas.texture.height };
-    Rectangle dest = { 0, 0, screenWidth, screenHeight };
-    Vector2 origin = { 0, 0 };
-
-    // this shouldnt be changed unless u really need to which wont happen (this basically draws the whole BeginTextureMode but scales it so it works)
-    DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
-   
     EndDrawing();
   }
 
@@ -275,10 +256,6 @@ int main() {
   }
   if (activeScene == PANTRY_SCREEN) {
     ExitScene(GAME);
-  }
-  if (canvas.id != 0) {
-    UnloadRenderTexture(canvas);
-    canvas = (RenderTexture2D){0};
   }
   CloseAudioDevice();
   CloseWindow();

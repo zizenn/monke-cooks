@@ -37,6 +37,9 @@ static bool isSafe;
 const float WIN_TIME = 5.0f;
 static float gameTime = 0.0f;
 
+//lose condition
+const float LOSE_TIME = 120.0f;
+
 static float playerX;
 static float safeTime = 0.0f;
 
@@ -59,7 +62,7 @@ void InitBarMinigame() {
 }
 
 bool UpdateBarMinigame() {
-  if (gameTime >= 120) {
+  if (gameTime >= LOSE_TIME) {
     timingBarResult = TIMING_BAR_LOSE;
   }
   if (timingBarResult == TIMING_BAR_LOSE) {
@@ -155,6 +158,9 @@ void DrawBarMinigame() {
 
   //% progress
   DrawText(TextFormat("Stay in the Zone! %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, BLACK);
+
+  //Time remaining
+  DrawText(TextFormat("%.0fs Left", LOSE_TIME - gameTime), BAR_X + BAR_WIDTH - 100, BAR_Y - 30, 20, BLACK);
 
   //indicator before first input
   if (playerFirstInput) {

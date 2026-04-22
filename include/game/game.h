@@ -31,8 +31,8 @@ enum {
   VISIBLE_ROWS = 9,
   mapRows = 9,
   mapCols = 16,
-  VIRTUAL_WIDTH = 1024,
-  VIRTUAL_HEIGHT = 576
+  VIRTUAL_WIDTH = TILE_SIZE * 16,
+  VIRTUAL_HEIGHT = TILE_SIZE * 9
 };
 
 static inline int TileToPixels(int tiles) {

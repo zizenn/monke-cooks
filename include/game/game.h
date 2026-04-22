@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "external/raylib.h"
-#include "game/cooking.h"
 #include "game/items.h"
 
 typedef enum {
@@ -31,8 +30,8 @@ enum {
   VISIBLE_ROWS = 9,
   mapRows = 9,
   mapCols = 16,
-  VIRTUAL_WIDTH = TILE_SIZE * 16,
-  VIRTUAL_HEIGHT = TILE_SIZE * 9
+  VIRTUAL_WIDTH = 1024,
+  VIRTUAL_HEIGHT = 576
 };
 
 static inline int TileToPixels(int tiles) {

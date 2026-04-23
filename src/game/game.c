@@ -37,7 +37,7 @@ static void DrawTile(TILE_TYPE tile, int tx, int ty);
 static void BuildStaticMapLayer(void);
 void QuantityLower(whereIsItemFrom type);
 
-// variables'
+// variables
 static bool isMenuOpen = false;
 static MENU_TYPE currentMenu = NONE;
 static RenderTexture2D staticMapLayer = {0};
@@ -461,8 +461,23 @@ static void Interact(void) {
       break;
     case ASSEMBLY:
       if (holding.categoryId >= 0) {
-        PrepFood();
+        PrepFood(ASSEMBLY);
       }
-      break;   
-}
+      break;
+    case SINK:
+      if (holding.categoryId >= 0) {
+        PrepFood(SINK);
+      }
+      break;
+    case CUTTING_STATION:
+      if (holding.categoryId >= 0) {
+        PrepFood(CUTTING_STATION);
+      }
+      break;
+    case GRINDING_STATION:
+      if (holding.categoryId >= 0) {
+        PrepFood(GRINDING_STATION);
+      }
+      break;
+  }
 }

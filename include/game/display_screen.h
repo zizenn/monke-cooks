@@ -44,7 +44,7 @@ void DrawCook();
 void UnloadCook();
 
 // prep surfaces
-void PrepFood();
+void PrepFood(int currentTile);
 
 // minigame
 void InitBarMinigame(void);

@@ -11,6 +11,7 @@
 // cooking
 COOK_TYPE currentCookType;
 PREP_TYPE currentPrepType;
+PREP_TYPE prepFrom;
 
 // game
 ItemType holding;

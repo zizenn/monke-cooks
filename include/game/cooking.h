@@ -19,5 +19,6 @@ typedef enum {
 
 extern COOK_TYPE currentCookType;
 extern PREP_TYPE currentPrepType;
+extern PREP_TYPE prepFrom;
 
 #endif

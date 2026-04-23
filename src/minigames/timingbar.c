@@ -43,7 +43,7 @@ static float safeTime = 0.0f;
 
 // function prototypes
 static bool changeDir();
-static bool changeAccel();
+static bool ChangeAccel();
 
 void InitBarMinigame() {
     timingBarResult = TIMING_BAR_RUNNING;
@@ -63,7 +63,7 @@ bool UpdateBarMinigame() {
     timingBarResult = TIMING_BAR_LOSE;
   }
   if (timingBarResult == TIMING_BAR_LOSE) {
-    summonNotif("YOU LOSE!", ERROR);
+    SummonNotif("YOU LOSE!", ERROR);
     currentScreen = GAME;
     return false;
   }
@@ -108,7 +108,7 @@ bool UpdateBarMinigame() {
     safezoneAccel = fabsf(safezoneAccel);
   }
 
-  if (changeAccel()) {
+  if (ChangeAccel()) {
     if (safezoneAccel == 5.0f) {
       safezoneAccel = -5.0f;
     } else if (safezoneAccel == -5.0f) {
@@ -124,11 +124,10 @@ bool UpdateBarMinigame() {
     if (safeTime >= WIN_TIME) {
       timingBarResult = TIMING_BAR_WIN;
       if (itemFrom != FROM_NONE) {
-        quantityLower(itemFrom);
+        QuantityLower(itemFrom);
         itemFrom = FROM_NONE;
       }
-      summonNotif("YOU WIN!", SUCCESS);
-      currentScreen = GAME;
+      SummonNotif("YOU WIN!", SUCCESS);
       return true;
     }
   }
@@ -138,6 +137,7 @@ bool UpdateBarMinigame() {
       safezoneVel /= 1.3;
     }
   }
+  return false;
 }
 
 void DrawBarMinigame() {
@@ -167,7 +167,7 @@ void UnloadBarMinigame() {
 
 }
 
-static bool changeAccel() {
+static bool ChangeAccel() {
   int randomValue = GetRandomValue(1, 150);
 
   if (randomValue < 2) {

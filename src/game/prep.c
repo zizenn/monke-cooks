@@ -7,35 +7,40 @@
 #include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
+#include "game/texture_cache.h"
 #include "stdio.h"
 #include "ctype.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
-static int currentCategoryID;
-static int currentVariantID;
-static COOK_TYPE newCookType;
-static const char* newTextureFilePath;
-static const char* currentItemName;
-static int currentItemVariant;
-
 void PrepFood() {
-  currentCategoryID = holding.categoryId;
-  currentVariantID = holding.variantId;
+  FoodCategory* categories = NULL;
 
   if (itemFrom == FROM_FRIDGE) {
-    newTextureFilePath = allFoods[currentCategoryID].variants[currentVariantID++].filePath;
-    currentItemName = allFoods[currentCategoryID].variants[currentVariantID].name;
-    currentPrepType = allFoods[currentCategoryID].variants[currentVariantID].prep_type;
-    currentItemVariant = allFoods[currentCategoryID].variants[currentVariantID].variant;
-    newCookType = allFoods[currentCategoryID].variants[currentVariantID].cook_type;
+    categories = allFoods;
   } else if (itemFrom == FROM_PANTRY) {
-    newTextureFilePath = allPantry[currentCategoryID].variants[currentVariantID++].filePath;
-    currentItemName = allPantry[currentCategoryID].variants[currentVariantID].name;
-    currentPrepType = allPantry[currentCategoryID].variants[currentVariantID].prep_type;
-    currentItemVariant = allPantry[currentCategoryID].variants[currentVariantID].variant;
-    newCookType = allPantry[currentCategoryID].variants[currentVariantID].cook_type;
+    categories = allPantry;
+  } else {
+    return;
+  }
+
+  int categoryId = holding.categoryId;
+  int currentVariantId = holding.variantId;
+  int nextVariantId = currentVariantId + 1;
+  int variantCount = categories[categoryId].variantCount;
+
+  if (currentVariantId < 0 || currentVariantId >= variantCount || nextVariantId >= variantCount) {
+    return;
+  }
+
+  Foods currentVariant = categories[categoryId].variants[currentVariantId];
+  Foods nextVariant = categories[categoryId].variants[nextVariantId];
+
+  currentPrepType = currentVariant.prep_type;
+
+  if (currentPrepType == PREP_NONE) {
+    return;
   }
 
   // actually prepping the food
@@ -52,11 +57,11 @@ void PrepFood() {
       break;
   }
 
-  // unloading and assigning textures
-  for (int i = 0; i < 4; i++) {
-    UnloadTexture(playerTexture[i]);
-    playerTexture[i] = LoadTexture(newTextureFilePath);
-  }
+  ReleaseTextureArray(playerTexture, 4);
+  Texture2D newTexture = AcquireCachedTexture(nextVariant.filePath);
+  FillTextureArray(playerTexture, 4, newTexture);
 
-  holding = (ItemType){currentCategoryID, currentVariantID++, newCookType};
+  holding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
+  TraceLog(LOG_INFO, "holding: %d = variant id", nextVariantId);
+  currentPrepType = nextVariant.prep_type;
 }

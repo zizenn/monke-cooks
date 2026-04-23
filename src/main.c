@@ -72,6 +72,12 @@ static void ExitScene(GameScreen scene) {
     case PANTRY_SCREEN:
       UnloadPantry();
       break;
+    case STOVE_SCREEN:
+    case OVEN_SCREEN:
+    case DEEP_FRY_SCREEN:
+    case GRILL_SCREEN:
+      UnloadCook();
+      break;
     case BARMINIGAME_SCREEN:
       UnloadBarMinigame();
       break;

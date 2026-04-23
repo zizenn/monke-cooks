@@ -6,6 +6,7 @@
 #include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
+#include "game/texture_cache.h"
 #include "stdio.h"
 #include "ctype.h"
 #include "stdint.h"
@@ -27,13 +28,15 @@ static int matchedItems[10];
 static int matchCount = 0;
 static char lastSearchText[64] = "";
 static int selectedItem;
+static char lowerCategoryNames[10][65] = {0};
 
 static const int COLUMNS = 8;
 static const int ITEM_WIDTH = 84;
 static const int ITEM_HEIGHT = 84;
 static int pantryCount = 10;
 
-static bool fuzzyFinder(const char* search, const char* name);
+static bool FuzzyFinder(const char* search, const char* name);
+static void ToLowerString(const char* source, char* output, int outputSize);
 
 void InitPantry() {
   // variable setting
@@ -46,14 +49,14 @@ void InitPantry() {
   for (int i = 0; i < pantryCount; i++) {
     int categoryId = stockedPantry[i].categoryId;
     pantryTextures[i] = LoadTexture(allPantry[categoryId].variants[0].filePath);
+    ToLowerString(allPantry[categoryId].categoryName, lowerCategoryNames[i], 65);
   }
 
   // init the filter at the start
   matchCount = 0;
   for (int i = 0; i < pantryCount; i++) {
     int categoryId = stockedPantry[i].categoryId;
-    const char* categoryName = allPantry[categoryId].categoryName;
-    if (fuzzyFinder(searchBarText, categoryName)) {
+    if (FuzzyFinder(searchBarText, lowerCategoryNames[i])) {
       matchedItems[matchCount++] = i;
     }
   }
@@ -81,17 +84,9 @@ void UpdatePantry() {
 
       const char *filePath = allPantry[categoryId].variants[variantId].filePath;
 
-      // unload old textures (handle both cases: 4 different textures and 4 same textures)
-      uint32_t oldId = playerTexture[0].id;
-      if (oldId != 0) {
-        UnloadTexture(playerTexture[0]);
-      }
-
-      // loading the new texture (all 4 directions use the same ingredient texture)
-      Texture2D newTexture = LoadTexture(filePath);
-      for (int i = 0; i < 4; i++) {
-        playerTexture[i] = newTexture;
-      }
+      ReleaseTextureArray(playerTexture, 4);
+      Texture2D newTexture = AcquireCachedTexture(filePath);
+      FillTextureArray(playerTexture, 4, newTexture);
 
       searchEditMode = false;
       currentScreen = GAME;
@@ -103,8 +98,7 @@ void UpdatePantry() {
 
     for (int i = 0; i < pantryCount; i++) {
       int categoryId = stockedPantry[i].categoryId;
-      const char* categoryName = allPantry[categoryId].categoryName;
-      if (fuzzyFinder(searchBarText, categoryName)) {
+      if (FuzzyFinder(searchBarText, lowerCategoryNames[i])) {
         matchedItems[matchCount++] = i;
       }
     }
@@ -116,13 +110,15 @@ void UpdatePantry() {
 void DrawPantry() {
   Rectangle panelContent = {0, 0, panelBounds.width-15,  1000};
   Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16 };
-  int startX = panelBounds.x + 5; // padding for each item
-  int startY = panelBounds.y + 5; // same as above
+  int startX = panelBounds.x + 5;
+  int startY = panelBounds.y + 5;
+  int maxWidth = panelBounds.width - 20;
+  int itemsPerRow = maxWidth / ITEM_WIDTH;
+  if (itemsPerRow < 1) itemsPerRow = 1;
 
   GuiScrollPanel(panelBounds, NULL, panelContent, &scrollOffset,NULL);
   if (GuiTextBox(searchBounds, searchBarText, 64, searchEditMode)) {
     searchEditMode = !searchEditMode;
-    // if no matches and textbox was just deselected (enter pressed), close pantry
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
       currentScreen = GAME;
     }
@@ -130,14 +126,14 @@ void DrawPantry() {
 
   BeginScissorMode(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height);
 
-  int totalRows = (matchCount + COLUMNS - 1) / COLUMNS;
+  int totalRows = (matchCount + itemsPerRow - 1) / itemsPerRow;
   panelContent.height = totalRows * ITEM_HEIGHT;
  
   if (matchCount != 0) {
     for (int i = 0; i < matchCount; i++) {
       int ingredientIdx = matchedItems[i];
-      int row = i / COLUMNS;
-      int col = i % COLUMNS;
+      int row = i / itemsPerRow;
+      int col = i % itemsPerRow;
 
       float xPos = startX + (col * ITEM_WIDTH);
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
@@ -148,19 +144,16 @@ void DrawPantry() {
       DrawRectangleRec((Rectangle){ xPos, yPos, 20, 20 }, LIGHTGRAY);
       DrawText(quantityStr, xPos+2, yPos+2, 16, BLACK);
       
-      // Draw category name below the item with background
       int categoryId = stockedPantry[ingredientIdx].categoryId;
       const char* categoryName = allPantry[categoryId].categoryName;
       int textWidth = MeasureText(categoryName, 10);
       int textX = xPos + (ITEM_WIDTH / 2.0f) - (textWidth / 2.0f);
       int textY = yPos + 68;
       
-      // Draw background rectangle
       int padding = 3;
       DrawRectangle(textX - padding, textY - padding, textWidth + (padding * 2), 16, (Color){200, 200, 200, 255});
       DrawRectangleLines(textX - padding, textY - padding, textWidth + (padding * 2), 16, BLACK);
       
-      // Draw text on top of background
       DrawText(categoryName, textX, textY, 10, BLACK);
     }
   }
@@ -177,10 +170,10 @@ void UnloadPantry() {
   }
 }
 
-static bool fuzzyFinder(const char* search, const char* name) {
+static bool FuzzyFinder(const char* search, const char* name) {
   if (search[0] == '\0') return true;
 
-  char lowerSearch[65], lowerName[65];
+  char lowerSearch[65];
 
   int i = 0;
   while (search[i]) {
@@ -189,12 +182,13 @@ static bool fuzzyFinder(const char* search, const char* name) {
   }
   lowerSearch[i] = '\0';
 
-  i = 0;
-  while (name[i]) {
-    lowerName[i] = tolower(name[i]);
-    i++;
-  }
-  lowerName[i] = '\0';
+  return strstr(name, lowerSearch) != NULL;
+}
 
-  return strstr(lowerName, lowerSearch) != NULL;
+static void ToLowerString(const char* source, char* output, int outputSize) {
+  int i = 0;
+  for (; source[i] != '\0' && i < outputSize - 1; i++) {
+    output[i] = (char)tolower((unsigned char)source[i]);
+  }
+  output[i] = '\0';
 }

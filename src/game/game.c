@@ -6,6 +6,7 @@
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
+#include "game/texture_cache.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
@@ -28,16 +29,19 @@ typedef enum {
 } TILE_TYPE;
 
 // function prototypes
-static void movePlayer(int DIR);
-static void interact(void);
-static int menuNavigation(Rectangle *rects, int count, int *selected);
-static void loadMap(const char *filePath);
-void quantityLower(whereIsItemFrom type);
+static void MovePlayer(int DIR);
+static void Interact(void);
+static int MenuNavigation(Rectangle *rects, int count, int *selected);
+static void LoadMap(const char *filePath);
+static void DrawTile(TILE_TYPE tile, int tx, int ty);
+static void BuildStaticMapLayer(void);
+void QuantityLower(whereIsItemFrom type);
 
 // variables'
 static bool isMenuOpen = false;
 static MENU_TYPE currentMenu = NONE;
-static Texture2D currentPlayerTex;
+static RenderTexture2D staticMapLayer = {0};
+static bool hasStaticMapLayer = false;
 
 // tile-based movement
 static TILE_TYPE *map = NULL;
@@ -49,7 +53,7 @@ static bool spaceWasPressed = false;
 
 // player
 static Vector2 playerPos;
-static DIRECTION facing = DOWN;
+static DIRECTION facing;
 
 // dialog_menus
 static int selected = 0;
@@ -68,14 +72,14 @@ void InitGame(void) {
   itemFrom = FROM_NONE;
 
   // mapfile
-  loadMap("assets/maps/map1.txt");
+  LoadMap("assets/maps/map1.txt");
+  BuildStaticMapLayer();
 
   // textures
   playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
   playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
   playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
   playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
-  currentPlayerTex = playerTexture[1];
 }
 
 void UpdateGame(void) {
@@ -83,47 +87,32 @@ void UpdateGame(void) {
     if (IsKeyPressed(KEY_W) && !isMoving) {
       isMoving = true;
       facing = UP;
-      movePlayer(UP);
+      MovePlayer(UP);
       isMoving = false;
     }
     if (IsKeyPressed(KEY_S) && !isMoving) {
       isMoving = true;
       facing = DOWN;
-      movePlayer(DOWN);
+      MovePlayer(DOWN);
       isMoving = false;
     }
     if (IsKeyPressed(KEY_A) && !isMoving) {
       isMoving = true;
       facing = LEFT;
-      movePlayer(LEFT);
+      MovePlayer(LEFT);
       isMoving = false;
     }
     if (IsKeyPressed(KEY_D) && !isMoving) {
       isMoving = true;
       facing = RIGHT;
-      movePlayer(RIGHT);
+      MovePlayer(RIGHT);
       isMoving = false;
     }
   }
 
-  switch (facing) {
-    case UP:
-      currentPlayerTex = playerTexture[0];
-      break;
-    case DOWN:
-      currentPlayerTex = playerTexture[1];
-      break;
-    case LEFT:
-      currentPlayerTex = playerTexture[2];
-      break;
-    case RIGHT:
-      currentPlayerTex = playerTexture[3];
-      break;
-  }
-
   // interact
   if (IsKeyPressed(KEY_SPACE) && !isMenuOpen) {
-    interact();
+    Interact();
     spaceWasPressed = true;
   }
 
@@ -134,79 +123,28 @@ void UpdateGame(void) {
 }
 
 void DrawGame(void) {
-  Color playerColor = BROWN;
   ClearBackground(WHITE);
 
-  // draw tiles from map
-  for (int row = 0; row < mapRows; row++) {
-    for (int col = 0; col < mapCols; col++) {
-      TILE_TYPE tile = map[row * mapCols + col];
-      int tx = TileToPixels(col);
-      int ty = TileToPixels(row);
-
-      switch (tile) {
-        case WALKABLE:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RAYWHITE);
-          break;
-        case COUNTER:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, LIGHTGRAY);
-          DrawText("counter", tx+4, ty+4, 14, WHITE);
-          break;
-        case FRIDGE:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKBLUE);
-          DrawText("fridge", tx+4, ty+4, 14, WHITE);
-          break;
-        case STOVE_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
-          DrawText("stove", tx+4, ty+4, 14, BLACK);
-          break;
-        case OVEN_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, YELLOW);
-          DrawText("oven", tx+4, ty+4, 14, BLACK);
-          break;
-        case DEEP_FRY_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, ORANGE);
-          DrawText("deep fry", tx+4, ty+4, 14, BLACK);
-          break;
-        case GRILL_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RED);
-          DrawText("grill", tx+4, ty+4, 14, BLACK);
-          break;
-        case ASSEMBLY:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
-          DrawText("assembly", tx+4, ty+4, 14, WHITE);
-          break;
-        case SINK:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
-          DrawText("sink", tx+4, ty+4, 14, BLACK);
-          break;
-        case CUTTING_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKPURPLE);
-          DrawText("cutting", tx+4, ty+4, 14, WHITE);
-          break;
-        case TRASH:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
-          DrawText("trash", tx+4, ty+4, 14, WHITE);
-          break;
-        case PANTRY:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BROWN);
-          DrawText("pantry", tx+4, ty+4, 14, WHITE);
-          break;
-        case GRINDING_STATION:
-          DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, MAROON);
-          DrawText("grind", tx+4, ty+4, 14, WHITE);
-          break;
+  if (hasStaticMapLayer) {
+    DrawTextureRec(
+      staticMapLayer.texture,
+      (Rectangle){0, 0, (float)staticMapLayer.texture.width, -(float)staticMapLayer.texture.height},
+      (Vector2){0, 0},
+      WHITE
+    );
+  } else if (map != NULL) {
+    for (int row = 0; row < mapRows; row++) {
+      for (int col = 0; col < mapCols; col++) {
+        TILE_TYPE tile = map[row * mapCols + col];
+        DrawTile(tile, TileToPixels(col), TileToPixels(row));
       }
-
-      // grid lines
-      DrawRectangle(tx, ty, TILE_SIZE, 1, GRAY);
-      DrawRectangle(tx, ty, 1, TILE_SIZE, GRAY);
     }
   } 
 
-  Rectangle playerSource = { 0.0f, 0.0f, (float)currentPlayerTex.width, (float)currentPlayerTex.height };
+  Texture2D playerSprite = playerTexture[facing];
+  Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
   Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
-  DrawTexturePro(currentPlayerTex, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+  DrawTexturePro(playerSprite, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
   // dialog_menus
   int selection = 0;
@@ -265,21 +203,12 @@ void DrawGame(void) {
 }
 
 void UnloadGame(void) {
-  for (int i = 0; i < 4; i++) {
-    if (playerTexture[i].id == 0) continue;
+  ReleaseTextureArray(playerTexture, 4);
 
-    bool alreadyUnloaded = false;
-    for (int j = 0; j < i; j++) {
-      if (playerTexture[j].id == playerTexture[i].id) {
-        alreadyUnloaded = true;
-        break;
-      }
-    }
-
-    if (!alreadyUnloaded) {
-      UnloadTexture(playerTexture[i]);
-    }
-    playerTexture[i] = (Texture2D){0};
+  if (hasStaticMapLayer) {
+    UnloadRenderTexture(staticMapLayer);
+    staticMapLayer = (RenderTexture2D){0};
+    hasStaticMapLayer = false;
   }
 
   if (map != NULL) {
@@ -288,7 +217,7 @@ void UnloadGame(void) {
   }
 }
 
-static void loadMap(const char *filePath) {
+static void LoadMap(const char *filePath) {
   FILE *mapFile = fopen(filePath, "r");
   if (mapFile == NULL) {
     TraceLog(LOG_ERROR, "could not open map file %s", filePath);
@@ -308,7 +237,93 @@ static void loadMap(const char *filePath) {
   fclose(mapFile);
 }
 
-static void movePlayer(int DIR) {
+static void DrawTile(TILE_TYPE tile, int tx, int ty) {
+  switch (tile) {
+    case WALKABLE:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RAYWHITE);
+      break;
+    case COUNTER:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, LIGHTGRAY);
+      DrawText("counter", tx+4, ty+4, 14, WHITE);
+      break;
+    case FRIDGE:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKBLUE);
+      DrawText("fridge", tx+4, ty+4, 14, WHITE);
+      break;
+    case STOVE_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
+      DrawText("stove", tx+4, ty+4, 14, BLACK);
+      break;
+    case OVEN_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, YELLOW);
+      DrawText("oven", tx+4, ty+4, 14, BLACK);
+      break;
+    case DEEP_FRY_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, ORANGE);
+      DrawText("deep fry", tx+4, ty+4, 14, BLACK);
+      break;
+    case GRILL_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RED);
+      DrawText("grill", tx+4, ty+4, 14, BLACK);
+      break;
+    case ASSEMBLY:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
+      DrawText("assembly", tx+4, ty+4, 14, WHITE);
+      break;
+    case SINK:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
+      DrawText("sink", tx+4, ty+4, 14, BLACK);
+      break;
+    case CUTTING_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKPURPLE);
+      DrawText("cutting", tx+4, ty+4, 14, WHITE);
+      break;
+    case TRASH:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
+      DrawText("trash", tx+4, ty+4, 14, WHITE);
+      break;
+    case PANTRY:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BROWN);
+      DrawText("pantry", tx+4, ty+4, 14, WHITE);
+      break;
+    case GRINDING_STATION:
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, MAROON);
+      DrawText("grind", tx+4, ty+4, 14, WHITE);
+      break;
+  }
+
+  DrawRectangle(tx, ty, TILE_SIZE, 1, GRAY);
+  DrawRectangle(tx, ty, 1, TILE_SIZE, GRAY);
+}
+
+static void BuildStaticMapLayer(void) {
+  if (map == NULL) return;
+
+  if (hasStaticMapLayer) {
+    UnloadRenderTexture(staticMapLayer);
+    staticMapLayer = (RenderTexture2D){0};
+    hasStaticMapLayer = false;
+  }
+
+  staticMapLayer = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+  if (staticMapLayer.texture.id == 0) {
+    TraceLog(LOG_WARNING, "Failed to create static map render texture");
+    return;
+  }
+
+  BeginTextureMode(staticMapLayer);
+  ClearBackground(WHITE);
+  for (int row = 0; row < mapRows; row++) {
+    for (int col = 0; col < mapCols; col++) {
+      TILE_TYPE tile = map[row * mapCols + col];
+      DrawTile(tile, TileToPixels(col), TileToPixels(row));
+    }
+  }
+  EndTextureMode();
+  hasStaticMapLayer = true;
+}
+
+static void MovePlayer(int DIR) {
   int nextTileX = currentTileX;
   int nextTileY = currentTileY;
 
@@ -335,7 +350,7 @@ static void movePlayer(int DIR) {
   }
 }
 
-static int menuNavigation(Rectangle *rects, int count, int *selected) {
+static int MenuNavigation(Rectangle *rects, int count, int *selected) {
   if (IsKeyPressed(KEY_D)) (*selected)++;
   if (IsKeyPressed(KEY_A)) (*selected)--;
   if (*selected < 0) *selected = 0;
@@ -360,7 +375,7 @@ static int menuNavigation(Rectangle *rects, int count, int *selected) {
   return -1;
 }
 
-void quantityLower(whereIsItemFrom type) {
+void QuantityLower(whereIsItemFrom type) {
   if (holding.categoryId < 0) return; // player holds nothing
 
   switch (type) {
@@ -387,7 +402,7 @@ void quantityLower(whereIsItemFrom type) {
   }
 }
 
-static void interact(void) {
+static void Interact(void) {
   TILE_TYPE facingType;
   int facingTileX = currentTileX;
   int facingTileY = currentTileY;
@@ -434,6 +449,7 @@ static void interact(void) {
       break;
     case TRASH:
       if (holding.categoryId >= 0) {
+        ReleaseTextureArray(playerTexture, 4);
         playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
         playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
         playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
@@ -444,7 +460,9 @@ static void interact(void) {
       }
       break;
     case ASSEMBLY:
-      PrepFood();
+      if (holding.categoryId >= 0) {
+        PrepFood();
+      }
       break;   
 }
 }

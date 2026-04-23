@@ -15,6 +15,7 @@ PREP_TYPE currentPrepType;
 // game
 ItemType holding;
 whereIsItemFrom itemFrom;
+Texture2D playerTexture[4];
 
 // ===== INGREDIENT VARIANT ARRAYS =====
 
@@ -22,7 +23,7 @@ whereIsItemFrom itemFrom;
 Foods eggVariants[] = {
   { "RAW_EGG", 0, CRACK, 3.50, "assets/food/ingredients/eggs/egg_orange.png", 1 },
   { "CRACKED_EGG", PAN, PREP_NONE, 3.50, "assets/food/ingredients/eggs/egg_orange_cracked.png", 2 },
-  { "FRIED_EGG", 0, PREP_NONE, 3.50, "assets/food/ingredients/eggs/egg_orange.png", 3 },
+  { "FRIED_EGG", 0, PREP_NONE, 3.50, "assets/food/dishes/38_friedegg.png", 3 },
 };
 
 // RICE: Raw can't be cooked, must go through intermediate states
@@ -218,7 +219,7 @@ static float notifDuration = 0.0f;
 const float NOTIF_DISPLAY_TIME = 3.0f;
 
 // notification summoner
-void summonNotif(const char* text, NOTIF_TYPE notifType) {
+void SummonNotif(const char* text, NOTIF_TYPE notifType) {
   notifText = text;
   notifTypeActive = notifType;
   notifDuration = NOTIF_DISPLAY_TIME;

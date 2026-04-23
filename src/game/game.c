@@ -34,10 +34,9 @@ static int menuNavigation(Rectangle *rects, int count, int *selected);
 static void loadMap(const char *filePath);
 void quantityLower(whereIsItemFrom type);
 
-// variables
+// variables'
 static bool isMenuOpen = false;
 static MENU_TYPE currentMenu = NONE;
-Texture2D playerTexture[4];
 static Texture2D currentPlayerTex;
 
 // tile-based movement
@@ -61,7 +60,7 @@ void InitGame(void) {
   playerPos = (Vector2){ TileToPixels(currentTileX), TileToPixels(currentTileY) };
   selected = 0;
   facing = DOWN;
-  holding = (itemType){ -1, -1, 0 };
+  holding = (ItemType){ -1, -1, 0 };
   currentPrepType = PREP_NONE;
   currentMenu = NONE;
   isMoving = false;
@@ -439,10 +438,13 @@ static void interact(void) {
         playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
         playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
         playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
-        holding = (itemType){ -1, -1, 0 };
+        holding = (ItemType){ -1, -1, 0 };
         currentPrepType = PREP_NONE;
         itemFrom = FROM_NONE;
       }
+      break;
+    case ASSEMBLY:
+      PrepFood();
       break;   
 }
 }

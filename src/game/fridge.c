@@ -77,7 +77,7 @@ void UpdateFridge() {
       COOK_TYPE cookType = allFoods[categoryId].variants[variantId].cook_type;
       
       itemFrom = FROM_FRIDGE;
-      holding = (itemType){ categoryId, variantId, cookType };
+      holding = (ItemType){ categoryId, variantId, cookType };
 
       const char *filePath = allFoods[categoryId].variants[variantId].filePath;
 

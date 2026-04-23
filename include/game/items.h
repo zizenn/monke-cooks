@@ -7,7 +7,7 @@ typedef struct {
   int categoryId;
   int variantId;
   COOK_TYPE cookType;
-} itemType;
+} ItemType;
 
 typedef struct {
   const char *name;
@@ -27,11 +27,11 @@ typedef struct {
 typedef struct {
   int categoryId;
   int quantity;
-} stockItem;
+} StockItem;
 
 extern FoodCategory allFoods[];
-extern stockItem stockedFridge[];
+extern StockItem stockedFridge[];
 extern FoodCategory allPantry[];
-extern stockItem stockedPantry[];
+extern StockItem stockedPantry[];
 
 #endif

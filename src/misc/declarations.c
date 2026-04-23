@@ -13,7 +13,7 @@ COOK_TYPE currentCookType;
 PREP_TYPE currentPrepType;
 
 // game
-itemType holding;
+ItemType holding;
 whereIsItemFrom itemFrom;
 
 // ===== INGREDIENT VARIANT ARRAYS =====
@@ -105,7 +105,7 @@ FoodCategory allFoods[] = {
   { "CUMIN", cuminVariants, 2 },
 };
 
-stockItem stockedFridge[] = {
+StockItem stockedFridge[] = {
   { 0, 2 },   // 2x EGG (category 0)
   { 1, 1 },   // 1x RICE (category 1)
   { 2, 3 },   // 3x SHIITAKE (category 2)
@@ -195,7 +195,7 @@ FoodCategory allPantry[] = {
   { "MILK", milkVariants, 2 },
 };
 
-stockItem stockedPantry[] = {
+StockItem stockedPantry[] = {
   { 0, 3 },   // 3x TURMERIC (category 0)
   { 1, 1 },   // 1x VANILLA (category 1)
   { 2, 2 },   // 2x STAR_ANISE (category 2)

@@ -43,7 +43,8 @@ static inline float TilesToPixels(float tiles) {
 }
 
 // player
-extern itemType holding;
-extern Texture2D playerTexture[4];
+static const int PLAYER_TEXTURE_COUNT = 4;
+extern ItemType holding;
+extern Texture2D playerTexture[PLAYER_TEXTURE_COUNT];
 
 #endif

@@ -76,7 +76,7 @@ void UpdatePantry() {
       PREP_TYPE prepType = allPantry[categoryId].variants[variantId].prep_type;
       
       itemFrom = FROM_PANTRY;
-      holding = (itemType){ categoryId, variantId, cookType };
+      holding = (ItemType){ categoryId, variantId, cookType };
       currentPrepType = prepType;
 
       const char *filePath = allPantry[categoryId].variants[variantId].filePath;

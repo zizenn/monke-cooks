@@ -16,7 +16,7 @@ static bool minigameWin = false;
 static whereIsItemFrom newItemFrom;
 Texture2D fridgeItemTex;
 Texture2D pantryItemTex;
-itemType newHolding;
+ItemType newHolding;
 
 void InitCook() {
   minigameWin = false;
@@ -44,7 +44,7 @@ void InitCook() {
 
   minigameSelection = GetRandomValue(0, 0);
 
-  newHolding = (itemType){holding.categoryId, holding.variantId++, 0};
+  newHolding = (ItemType){holding.categoryId, holding.variantId++, 0};
   fridgeItemTex = LoadTexture(allFoods[newHolding.categoryId].variants[newHolding.variantId].filePath);
   pantryItemTex = LoadTexture(allPantry[newHolding.categoryId].variants[newHolding.variantId].filePath);
 

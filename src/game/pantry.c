@@ -45,8 +45,6 @@ void InitPantry() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  UpdateUILayoutRects();
-
   // textures - load variant 0 (first) of each category
   for (int i = 0; i < pantryCount; i++) {
     int categoryId = stockedPantry[i].categoryId;

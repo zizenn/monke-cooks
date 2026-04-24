@@ -48,8 +48,13 @@ void PrepFood(int currentTile);
 
 // minigame
 void InitBarMinigame(void);
-bool UpdateBarMinigame(void);
+void UpdateBarMinigame(void);
 void DrawBarMinigame(void);
 void UnloadBarMinigame(void);
+
+void InitTargetMinigame(void);
+void UpdateTargetMinigame(void);
+void DrawTargetMinigame(void);
+void UnloadTargetMinigame(void);
 
 #endif

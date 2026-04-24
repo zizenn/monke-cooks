@@ -6,7 +6,7 @@
 #include "game/buttons.h"
 
 // function prototypes
-static int menuNavigation(Rectangle *rects, int count, int *selected);
+static int MenuNavigation(Rectangle *rects, int count, int *selected);
 
 static Music menu_music;
 static Sound clickSound;
@@ -62,7 +62,7 @@ void UnloadMainMenu() {
   UnloadSound(clickSound);
 }
 
-static int menuNavigation(Rectangle *rects, int count, int *selected) {
+static int MenuNavigation(Rectangle *rects, int count, int *selected) {
   if (IsKeyPressed(KEY_D)) (*selected)++;
   if (IsKeyPressed(KEY_A)) (*selected)--;
   if (*selected < 0) *selected = 0;

@@ -1,15 +1,15 @@
 #include "game/display_screen.h"
 #include "game/buttons.h"
+#include "game/game.h"
 #include "external/raylib.h"
 #include "game/screens.h"
 #include "game/globals.h"
 #include "stdbool.h"
-#include "minigames/timingbar.h"
 
 // globals
 GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
-RenderTexture2D canvas = {0};
+RenderTexture2D canvas;
 int targetFPS = 60;
 
 // screens
@@ -71,6 +71,12 @@ static void ExitScene(GameScreen scene) {
       break;
     case PANTRY_SCREEN:
       UnloadPantry();
+      break;
+    case STOVE_SCREEN:
+    case OVEN_SCREEN:
+    case DEEP_FRY_SCREEN:
+    case GRILL_SCREEN:
+      UnloadCook();
       break;
     case BARMINIGAME_SCREEN:
       UnloadBarMinigame();
@@ -200,8 +206,8 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
-  // canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
   SetTargetFPS(targetFPS);
+  canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
   //temporary button setup figure this one out later
   ButtonStyles[BUTTON_STYLE_PRIMARY] = (ButtonStyle){
@@ -233,21 +239,40 @@ int main() {
   EnterScene(activeScene);
 
   while (!WindowShouldClose() && !shouldQuit) {
+    float screenWidth = (float)GetScreenWidth();
+    float screenHeight = (float)GetScreenHeight();
+
+    SetMouseOffset(0, 0);
+    SetMouseScale((float)VIRTUAL_WIDTH / screenWidth, (float)VIRTUAL_HEIGHT / screenHeight);
+
     if (currentScreen != activeScene) {
       SwitchScene(&activeScene, currentScreen);
     }
 
     UpdateScene(activeScene);
-
     UpdateNotifications();
 
     if (currentScreen != activeScene) {
       SwitchScene(&activeScene, currentScreen);
     }
 
-    BeginDrawing();
+    BeginTextureMode(canvas);
+    ClearBackground(BLACK);
+
     DrawScene(activeScene);
     DrawNotifications();
+
+    EndTextureMode();
+
+    BeginDrawing();
+
+    ClearBackground(BLACK);
+    Rectangle source = {0.0f, 0.0f, (float)canvas.texture.width, -(float)canvas.texture.height };
+    Rectangle dest = { 0.0f, 0.0f, screenWidth, screenHeight };
+    Vector2 origin = { 0, 0 };
+
+    DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
+
     EndDrawing();
   }
 
@@ -258,6 +283,7 @@ int main() {
   if (activeScene == PANTRY_SCREEN) {
     ExitScene(GAME);
   }
+  UnloadRenderTexture(canvas);
   CloseAudioDevice();
   CloseWindow();
 

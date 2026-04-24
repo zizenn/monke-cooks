@@ -28,8 +28,7 @@ extern int targetFPS;
 
 extern Rectangle notifPanelBounds;
 
-void UpdateUILayoutRects();
-void summonNotif(const char* text, NOTIF_TYPE notifType);
+void SummonNotif(const char* text, NOTIF_TYPE notifType);
 void UpdateNotifications();
 void DrawNotifications();
 

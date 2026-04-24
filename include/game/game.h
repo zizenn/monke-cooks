@@ -5,10 +5,10 @@
 #include "game/items.h"
 
 typedef enum {
-  LEFT,
-  RIGHT,
   UP,
-  DOWN
+  DOWN,
+  LEFT,
+  RIGHT
 } DIRECTION;
 
 typedef enum {
@@ -22,7 +22,7 @@ typedef enum {
 } whereIsItemFrom;
 
 extern whereIsItemFrom itemFrom;
-void quantityLower(whereIsItemFrom type);
+void QuantityLower(whereIsItemFrom type);
 
 // tiling system
 enum {
@@ -43,7 +43,8 @@ static inline float TilesToPixels(float tiles) {
 }
 
 // player
-extern itemType holding;
+static const int PLAYER_TEXTURE_COUNT = 4;
+extern ItemType holding;
 extern Texture2D playerTexture[4];
 
 #endif

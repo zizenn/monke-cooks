@@ -7,8 +7,7 @@
 #include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "stdio.h"
-#include "stdlib.h"
+#include "game/texture_cache.h"
 #include "stdint.h"
 #include "string.h"
 
@@ -16,12 +15,14 @@ static char panelTitle[9] = "";
 int minigameSelection;
 static bool minigameWin = false;
 static whereIsItemFrom newItemFrom;
-Texture2D fridgeItemTex;
-Texture2D pantryItemTex;
-itemType newHolding;
+static bool cookResultApplied = false;
+static Texture2D cookedItemTex;
+ItemType newHolding;
 
 void InitCook() {
   minigameWin = false;
+  cookResultApplied = false;
+  cookedItemTex = (Texture2D){0};
 
   switch (currentCookType) {
     case PAN:
@@ -46,9 +47,24 @@ void InitCook() {
 
   minigameSelection = GetRandomValue(0, 0);
 
-  newHolding = (itemType){holding.categoryId, holding.variantId++, 0};
-  fridgeItemTex = LoadTexture(allFoods[newHolding.categoryId].variants[newHolding.variantId].filePath);
-  pantryItemTex = LoadTexture(allPantry[newHolding.categoryId].variants[newHolding.variantId].filePath);
+  FoodCategory *categories = NULL;
+  if (itemFrom == FROM_FRIDGE) {
+    categories = allFoods;
+  } else if (itemFrom == FROM_PANTRY) {
+    categories = allPantry;
+  } else {
+    return;
+  }
+
+  int categoryId = holding.categoryId;
+  int nextVariantId = holding.variantId + 1;
+  if (categoryId < 0 || nextVariantId >= categories[categoryId].variantCount) {
+    return;
+  }
+
+  Foods nextVariant = categories[categoryId].variants[nextVariantId];
+  newHolding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
+  cookedItemTex = AcquireCachedTexture(nextVariant.filePath);
 
   switch (minigameSelection) {
     case 0:
@@ -61,9 +77,11 @@ void UpdateCook() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     UnloadCook();
     currentScreen = GAME;
+    return;
   } else if (IsKeyPressed(KEY_ENTER)) {
     UnloadCook();
     currentScreen = GAME;
+    return;
   }
 
   switch (minigameSelection) {
@@ -76,18 +94,17 @@ void UpdateCook() {
       break;
   }
 
-  if (minigameWin) {
-    if (itemFrom == FROM_FRIDGE) {
-      for (int i = 0; i < 4; i++) {
-        playerTexture[i] = fridgeItemTex;
-      }
-    } else if (itemFrom == FROM_PANTRY) {
-      for (int i = 0; i < 4; i++) {
-        playerTexture[i] = pantryItemTex;
+  if (minigameWin && !cookResultApplied && cookedItemTex.id != 0) {
+    for (int i = 0; i < 4; i++) {
+      if (playerTexture[i].id != cookedItemTex.id) {
+        ReleaseTexture(playerTexture[i]);
       }
     }
-
+    FillTextureArray(playerTexture, 4, cookedItemTex);
     holding = newHolding;
+    cookResultApplied = true;
+    UnloadCook();
+    currentScreen = GAME;
   }
   
 }
@@ -104,6 +121,11 @@ void DrawCook() {
 }
 
 void UnloadCook() {
+  if (cookedItemTex.id != 0 && !cookResultApplied) {
+    ReleaseTexture(cookedItemTex);
+  }
+  cookedItemTex = (Texture2D){0};
+
   switch (minigameSelection) {
     case 0:
       UnloadBarMinigame();

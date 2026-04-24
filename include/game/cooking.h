@@ -9,6 +9,16 @@ typedef enum{
   GRILL
 } COOK_TYPE;
 
+typedef enum {
+  PREP_NONE,
+  CRACK,
+  WASH,
+  CUT,
+  GROUND
+} PREP_TYPE;
+
 extern COOK_TYPE currentCookType;
+extern PREP_TYPE currentPrepType;
+extern PREP_TYPE prepFrom;
 
 #endif

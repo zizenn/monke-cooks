@@ -12,6 +12,7 @@
 #include "string.h"
 //minigames
 #include "minigames/timingbar.h"
+#include "minigames/targetgame.h"
 
 static char panelTitle[9] = "";
 int minigameSelection;
@@ -53,7 +54,7 @@ void InitCook() {
       break;
   }
 
-  minigameSelection = GetRandomValue(0, 0);
+  minigameSelection = GetRandomValue(0, 1);
 
   FoodCategory *categories = NULL;
   if (itemFrom == FROM_FRIDGE) {
@@ -78,6 +79,9 @@ void InitCook() {
     case 0:
       InitBarMinigame();
       break;
+    case 1:
+      InitTargetMinigame();
+      break;
   }
 }
 
@@ -98,6 +102,16 @@ void UpdateCook() {
       if (timingBarResult == TIMING_BAR_WIN) {
         MinigameStatus = WIN;
       } else if (timingBarResult == TIMING_BAR_LOSE) {
+        MinigameStatus = LOSE;
+      } else {
+        MinigameStatus = RUNNING;
+      }
+      break;
+    case 1:
+      UpdateTargetMinigame();
+      if (targetGameResult == TARGET_GAME_WIN) {
+        MinigameStatus = WIN;
+      } else if (targetGameResult == TARGET_GAME_LOSE) {
         MinigameStatus = LOSE;
       } else {
         MinigameStatus = RUNNING;
@@ -130,6 +144,9 @@ void DrawCook() {
     case 0:
       DrawBarMinigame();
       break;
+    case 1:
+      DrawTargetMinigame();
+      break;
   }
 
 }
@@ -143,6 +160,9 @@ void UnloadCook() {
   switch (minigameSelection) {
     case 0:
       UnloadBarMinigame();
+      break;
+    case 1:
+      UnloadTargetMinigame();
       break;
   }
 }

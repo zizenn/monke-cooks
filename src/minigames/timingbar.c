@@ -38,7 +38,7 @@ const float WIN_TIME = 5.0f;
 static float gameTime = 0.0f;
 
 //lose condition
-const float LOSE_TIME = 10.0f;
+const float LOSE_TIME = 30.0f;
 
 static float playerX;
 static float safeTime = 0.0f;

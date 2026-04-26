@@ -17,28 +17,28 @@ TimingBarResult timingBarResult = TIMING_BAR_RUNNING;
 //bar dimensions
 float BAR_X = 200.0f;
 float BAR_Y = 700.0f;
-const int BAR_WIDTH = 400;
-const int BAR_HEIGHT = 20;
+static const int BAR_WIDTH = 400;
+static const int BAR_HEIGHT = 20;
 
 //player
-const int PLAYER_WIDTH = 10;
-const float PLAYER_SPEED = 300.0f;
+static const int PLAYER_WIDTH = 10;
+static const float PLAYER_SPEED = 300.0f;
 static bool playerFirstInput = true;
 
 //safe zone
-const float SAFEZONE_MAX = 200.0f;
-const int SAFEZONE_WIDTH = 70;
+static const float SAFEZONE_MAX = 200.0f;
+static const int SAFEZONE_WIDTH = 70;
 static float safezoneX;
 static float safezoneAccel = 5.0f;
 static float safezoneVel = 150.0f;
 static bool isSafe;
 
 //win condition
-const float WIN_TIME = 5.0f;
+static const float WIN_TIME = 5.0f;
 static float gameTime = 0.0f;
 
 //lose condition
-const float LOSE_TIME = 30.0f;
+static const float LOSE_TIME = 30.0f;
 
 static float playerX;
 static float safeTime = 0.0f;

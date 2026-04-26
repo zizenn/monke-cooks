@@ -57,4 +57,9 @@ void UpdateTargetMinigame(void);
 void DrawTargetMinigame(void);
 void UnloadTargetMinigame(void);
 
+void InitBasketMinigame(void);
+void UpdateBasketMinigame(void);
+void DrawBasketMinigame(void);
+void UnloadBasketMinigame(void);
+
 #endif

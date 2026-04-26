@@ -13,6 +13,7 @@
 //minigames
 #include "minigames/timingbar.h"
 #include "minigames/targetgame.h"
+#include "minigames/basketcatch.h"
 
 static char panelTitle[9] = "";
 int minigameSelection;
@@ -54,7 +55,7 @@ void InitCook() {
       break;
   }
 
-  minigameSelection = GetRandomValue(0, 1);
+  minigameSelection = GetRandomValue(0, 2);
 
   FoodCategory *categories = NULL;
   if (itemFrom == FROM_FRIDGE) {
@@ -81,6 +82,9 @@ void InitCook() {
       break;
     case 1:
       InitTargetMinigame();
+      break;
+    case 2:
+      InitBasketMinigame();
       break;
   }
 }
@@ -117,6 +121,16 @@ void UpdateCook() {
         MinigameStatus = RUNNING;
       }
       break;
+    case 2:
+      UpdateBasketMinigame();
+      if (basketCatchResult == BASKET_CATCH_WIN) {
+        MinigameStatus = WIN;
+      } else if (basketCatchResult == BASKET_CATCH_LOSE) {
+        MinigameStatus = LOSE;
+      } else {
+        MinigameStatus = RUNNING;
+      }
+      break;
   }
 
   if (MinigameStatus == WIN && !cookResultApplied && cookedItemTex.id != 0) {
@@ -147,6 +161,9 @@ void DrawCook() {
     case 1:
       DrawTargetMinigame();
       break;
+    case 2:
+      DrawBasketMinigame();
+      break;
   }
 
 }
@@ -163,6 +180,9 @@ void UnloadCook() {
       break;
     case 1:
       UnloadTargetMinigame();
+      break;
+    case 2:
+      UnloadBasketMinigame();
       break;
   }
 }

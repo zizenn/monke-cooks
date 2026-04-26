@@ -15,12 +15,13 @@
 TargetGameResult targetGameResult = TARGET_GAME_RUNNING;
 
 
-const float OUTER_RADIUS = 100.0f;
-const int SEGMENTS = 72;
+static const float OUTER_RADIUS = 100.0f;
+static const int SEGMENTS = 72;
 #define TARGET_COUNT 10
-const float SPEED = 120.0f;
-const float HIT_TOLERANCE = 12.0f;
-const float PLAYER_RADIUS = 40.0f;
+static const float SPEED = 120.0f;
+static const float HIT_TOLERANCE = 12.0f;
+static const float PLAYER_RADIUS = 40.0f;
+static const int MAX_MISSES = 2;
 
 typedef struct {
     float radius;
@@ -28,8 +29,8 @@ typedef struct {
     bool hit;
 } Target;
 
-static int CenterX = 640;
-static int CenterY = 360;
+static int CenterX = 0;
+static int CenterY = 0;
 
 static Target targets[TARGET_COUNT];
 static float playerRadius = PLAYER_RADIUS;
@@ -68,8 +69,11 @@ void UpdateTargetMinigame() {
     for (int i = 0; i < TARGET_COUNT; i++) {
         if (!targets[i].active) continue;
         anyActive = true;
-        targets[i].radius -= SPEED * deltaTime;
-
+        if (targets[i].radius >= PLAYER_RADIUS && targets[i].radius < OUTER_RADIUS) {
+            targets[i].radius -= (SPEED * (OUTER_RADIUS - targets[i].radius + PLAYER_RADIUS) / OUTER_RADIUS) * deltaTime;
+        } else {
+            targets[i].radius -= SPEED  * deltaTime;
+        }
         if (targets[i].radius <= 0.0f) {
             targets[i].active = false;
             targetsMissed++;
@@ -107,7 +111,7 @@ void UpdateTargetMinigame() {
         }
     }
 
-    if (targetsHit == TARGET_COUNT && allInactive) {
+    if (targetsHit >= TARGET_COUNT - MAX_MISSES && allInactive) {
         targetGameResult = TARGET_GAME_WIN;
         SummonNotif("YOU WIN!", SUCCESS);
     } else if (targetsHit != TARGET_COUNT && allInactive) {
@@ -120,8 +124,12 @@ void DrawTargetMinigame() {
     DrawRing((Vector2){CenterX, CenterY}, OUTER_RADIUS, OUTER_RADIUS + 5.0f, 0, 360, SEGMENTS, GRAY);
 
     for (int i = 0; i < TARGET_COUNT; i++) {
-        if (!targets[i].active||targets[i].radius >= OUTER_RADIUS) continue;
-        DrawRing((Vector2){CenterX, CenterY}, targets[i].radius - 2.5f, targets[i].radius + 2.5f, 0, 360, SEGMENTS, GREEN);
+        if (!targets[i].active || targets[i].radius >= OUTER_RADIUS) continue;
+        if (targets[i].radius < PLAYER_RADIUS - HIT_TOLERANCE || targets[i].radius > PLAYER_RADIUS + HIT_TOLERANCE) {
+            DrawRing((Vector2){CenterX, CenterY}, targets[i].radius - 1.5f, targets[i].radius + 1.5f, 0, 360, SEGMENTS, GRAY);
+        } else {
+            DrawRing((Vector2){CenterX, CenterY}, targets[i].radius - 2.5f, targets[i].radius + 2.5f, 0, 360, SEGMENTS, GREEN);
+        }
     }
 
     if (missCooldown>0.0f) {
@@ -130,7 +138,8 @@ void DrawTargetMinigame() {
         DrawRing((Vector2){CenterX, CenterY}, playerRadius - 1.0f, playerRadius + 1.0f, 0, 360, SEGMENTS, BLACK);
     }
     //hit-miss counter
-    DrawText(TextFormat("Targets Hit: %d, Missed: %d", targetsHit, targetsMissed), panelBounds.x + panelBounds.width / 2 - 70, panelBounds.y + panelBounds.height - 30, 20, BLACK);
+    Color LossColor = targetsMissed <= MAX_MISSES ? WHITE : RED;
+    DrawText(TextFormat("Strikes: %d/%d", targetsMissed, MAX_MISSES + 1), panelBounds.x + panelBounds.width / 2 - 70, panelBounds.y + panelBounds.height - 30, 20, LossColor);
 }
 
 void UnloadTargetMinigame() {

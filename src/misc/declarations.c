@@ -5,7 +5,6 @@
 #include "game/items.h"
 #include "game/cooking.h"
 #include "minigames/minigame.h"
-#include "stdint.h"
 #include "stddef.h"
 
 // cooking

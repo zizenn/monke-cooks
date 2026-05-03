@@ -5,7 +5,6 @@
 #include "game/game.h"
 #include "game/items.h"
 #include "game/texture_cache.h"
-#include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 

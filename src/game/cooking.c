@@ -8,8 +8,8 @@
 #include "game/game.h"
 #include "game/items.h"
 #include "game/texture_cache.h"
-#include "stdint.h"
 #include "string.h"
+
 //minigames
 #include "minigames/timingbar.h"
 #include "minigames/targetgame.h"

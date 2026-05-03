@@ -6,7 +6,13 @@ This game is about cooking at your peak and serving as many customers as possibl
 ## current stage
 currently we are at a VERY BASIC level of development. currently the core game mechanics like cooking and stuff are still under HEAVY work and are not ready at all for a release.
 
-## build and run
+## installation
+
+### download (recommended)
+go to the releases age and download the latest release
+
+
+### build from source
 This repo is set up to build from local project files only.
 
 - `include/` is for project headers only.

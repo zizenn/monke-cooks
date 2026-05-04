@@ -15,6 +15,7 @@ This repo is set up to build from local project files only.
 - **Linux:** uses local `lib/linux/libraylib.a`.
 - **macOS:** uses local `lib/macos/libraylib.a`.
 - The Makefile does not download raylib. If a platform library is missing, `make` stops with an error telling you which file to add.
+   - These files are already packaged inside of the game folder. Please do **not** add your own
 
 After that, anyone can run:
 

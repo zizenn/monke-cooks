@@ -1,6 +1,8 @@
 #include "game/display_screen.h"
 #include "game/buttons.h"
 #include "game/game.h"
+#include "game/texture_manager.h"
+#include "game/thread_manager.h"
 #include "external/raylib.h"
 #include "game/screens.h"
 #include "game/globals.h"
@@ -194,6 +196,11 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
+  
+  // Start async texture loading and music manager
+  StartTextureLoader();
+  StartMusicManager();
+  
   SetTargetFPS(targetFPS);
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
@@ -237,6 +244,9 @@ int main() {
       SwitchScene(&activeScene, currentScreen);
     }
 
+    // Process texture loading on main thread (converts images to textures)
+    ProcessTextureLoadingOnMainThread();
+    
     UpdateScene(activeScene);
     UpdateNotifications();
 
@@ -253,8 +263,8 @@ int main() {
     EndTextureMode();
 
     BeginDrawing();
-
     ClearBackground(BLACK);
+    
     Rectangle source = {0.0f, 0.0f, (float)canvas.texture.width, -(float)canvas.texture.height };
     Rectangle dest = { 0.0f, 0.0f, screenWidth, screenHeight };
     Vector2 origin = { 0, 0 };
@@ -271,6 +281,11 @@ int main() {
   if (activeScene == PANTRY_SCREEN) {
     ExitScene(GAME);
   }
+  
+  // Stop music manager before closing audio
+  StopMusicManager();
+  
+  UnloadAllTextures();
   UnloadRenderTexture(canvas);
   CloseAudioDevice();
   CloseWindow();

@@ -6,14 +6,28 @@
 #include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
-#include "game/texture_cache.h"
+#include "game/texture_manager.h"
 #include "stdio.h"
 #include "ctype.h"
 #include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
-// textures
+// textures - static array mapping category index to texture ID
+static const TextureID fridgeCategoryTextures[11] = {
+  EGG_RAW,
+  RICE_RAW,
+  SHIITAKE_RAW,
+  CHICKPEA_RAW,
+  LENTIL_RAW,
+  OYSTER_MUSHROOM_RAW,
+  MOZZARELLA_FRESH,
+  PARMIGIANO_FRESH,
+  CHEDDAR_FRESH,
+  PEPPER_RAW,
+  CUMIN_RAW,
+};
+
 static const int INGREDIENT_COUNT = 11;
 static Texture2D foodTextures[11] = {};
 
@@ -34,7 +48,7 @@ static char lowerCategoryNames[11][65] = {0};
 static const int COLUMNS = 8;
 static const int ITEM_WIDTH = 84;
 static const int ITEM_HEIGHT = 84;
-static int ingredientCount = 11;
+static int ingredientCount = STOCKED_FRIDGE_COUNT;
 
 static bool FuzzyFinder(const char* search, const char* name);
 static void ToLowerString(const char* source, char* output, int outputSize);
@@ -46,10 +60,10 @@ void InitFridge() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  // textures - load variant 0 (RAW) of each category
+  // textures - get preloaded textures from texture manager
   for (int i = 0; i < ingredientCount; i++) {
     int categoryId = stockedFridge[i].categoryId;
-    foodTextures[i] = LoadTexture(allFoods[categoryId].variants[0].filePath);
+    foodTextures[i] = GetTexture(fridgeCategoryTextures[categoryId]);
     ToLowerString(allFoods[categoryId].categoryName, lowerCategoryNames[i], 65);
   }
 
@@ -81,12 +95,6 @@ void UpdateFridge() {
         
         itemFrom = FROM_FRIDGE;
         holding = (ItemType){ categoryId, variantId, cookType };
-
-        const char *filePath = allFoods[categoryId].variants[variantId].filePath;
-
-        ReleaseTextureArray(playerTexture, 4);
-        Texture2D newTexture = AcquireCachedTexture(filePath);
-        FillTextureArray(playerTexture, 4, newTexture);
 
         searchEditMode = false;
         currentScreen = GAME;
@@ -163,12 +171,7 @@ void DrawFridge() {
 }
 
 void UnloadFridge() {
-  for (int i = 0; i < ingredientCount; i++) {
-    if (foodTextures[i].id != 0) {
-      UnloadTexture(foodTextures[i]);
-      foodTextures[i] = (Texture2D){0};
-    }
-  }
+  // Textures are now managed globally, no need to unload
 }
 
 static bool FuzzyFinder(const char* search, const char* name) {

@@ -6,14 +6,26 @@
 #include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
-#include "game/texture_cache.h"
+#include "game/texture_manager.h"
 #include "stdio.h"
 #include "ctype.h"
-#include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
-// textures
+// textures - static array mapping category index to texture ID
+static const TextureID pantryCategoryTextures[10] = {
+  TURMERIC_RAW,
+  VANILLA_RAW,
+  STAR_ANISE_WHOLE,
+  CLOVES_WHOLE,
+  NUTMEG_WHOLE,
+  WHEAT_RAW,
+  BARLEY_RAW,
+  NORI_DRIED,
+  WAKAME_DRIED,
+  MILK_FRESH,
+};
+
 static const int PANTRY_ITEM_COUNT = 10;
 static Texture2D pantryTextures[10] = {};
 
@@ -33,7 +45,7 @@ static char lowerCategoryNames[10][65] = {0};
 static const int COLUMNS = 8;
 static const int ITEM_WIDTH = 84;
 static const int ITEM_HEIGHT = 84;
-static int pantryCount = 10;
+static int pantryCount = STOCKED_PANTRY_COUNT;
 
 static bool FuzzyFinder(const char* search, const char* name);
 static void ToLowerString(const char* source, char* output, int outputSize);
@@ -45,10 +57,10 @@ void InitPantry() {
   searchEditMode = true;
   selectedItem = holding.categoryId;
 
-  // textures - load variant 0 (first) of each category
+  // textures - get preloaded textures from texture manager
   for (int i = 0; i < pantryCount; i++) {
     int categoryId = stockedPantry[i].categoryId;
-    pantryTextures[i] = LoadTexture(allPantry[categoryId].variants[0].filePath);
+    pantryTextures[i] = GetTexture(pantryCategoryTextures[categoryId]);
     ToLowerString(allPantry[categoryId].categoryName, lowerCategoryNames[i], 65);
   }
 
@@ -81,12 +93,6 @@ void UpdatePantry() {
       itemFrom = FROM_PANTRY;
       holding = (ItemType){ categoryId, variantId, cookType };
       currentPrepType = prepType;
-
-      const char *filePath = allPantry[categoryId].variants[variantId].filePath;
-
-      ReleaseTextureArray(playerTexture, 4);
-      Texture2D newTexture = AcquireCachedTexture(filePath);
-      FillTextureArray(playerTexture, 4, newTexture);
 
       searchEditMode = false;
       currentScreen = GAME;
@@ -162,12 +168,7 @@ void DrawPantry() {
 }
 
 void UnloadPantry() {
-  for (int i = 0; i < pantryCount; i++) {
-    if (pantryTextures[i].id != 0) {
-      UnloadTexture(pantryTextures[i]);
-      pantryTextures[i] = (Texture2D){0};
-    }
-  }
+  // Textures are now managed globally, no need to unload
 }
 
 static bool FuzzyFinder(const char* search, const char* name) {

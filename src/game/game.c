@@ -6,7 +6,8 @@
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "game/texture_cache.h"
+#include "game/texture_manager.h"
+#include "game/thread_manager.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
@@ -71,15 +72,18 @@ void InitGame(void) {
   isMenuOpen = false;
   itemFrom = FROM_NONE;
 
+  // Wait for async texture loading to finish before starting game
+  WaitForTextureLoader();
+
   // mapfile
   LoadMap("assets/maps/map1.txt");
   BuildStaticMapLayer();
 
-  // textures
-  playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
-  playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
-  playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
-  playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
+  // Set player textures from texture manager
+  playerTexture[0] = GetTexture(PLAYER_UP);
+  playerTexture[1] = GetTexture(PLAYER_DOWN);
+  playerTexture[2] = GetTexture(PLAYER_LEFT);
+  playerTexture[3] = GetTexture(PLAYER_RIGHT);
 }
 
 void UpdateGame(void) {
@@ -142,6 +146,12 @@ void DrawGame(void) {
   } 
 
   Texture2D playerSprite = playerTexture[facing];
+  
+  // If holding an item, display the item texture instead
+  if (holding.categoryId >= 0) {
+    playerSprite = GetHeldItemTexture(holding.categoryId, holding.variantId, itemFrom);
+  }
+  
   Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
   Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(playerSprite, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
@@ -203,7 +213,7 @@ void DrawGame(void) {
 }
 
 void UnloadGame(void) {
-  ReleaseTextureArray(playerTexture, 4);
+  // Textures are managed by texture_manager and cleaned up in main()
 
   if (hasStaticMapLayer) {
     UnloadRenderTexture(staticMapLayer);
@@ -449,11 +459,6 @@ static void Interact(void) {
       break;
     case TRASH:
       if (holding.categoryId >= 0) {
-        ReleaseTextureArray(playerTexture, 4);
-        playerTexture[0] = LoadTexture("assets/monkey/imgs/up.png");
-        playerTexture[1] = LoadTexture("assets/monkey/imgs/down.png");
-        playerTexture[2] = LoadTexture("assets/monkey/imgs/left.png");
-        playerTexture[3] = LoadTexture("assets/monkey/imgs/right.png");
         holding = (ItemType){ -1, -1, 0 };
         currentPrepType = PREP_NONE;
         itemFrom = FROM_NONE;

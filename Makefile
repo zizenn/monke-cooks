@@ -26,6 +26,7 @@ EXE := $(TARGET).exe
 RAYLIB_LIB := lib/libraylib.a
 RAYLIB_INCLUDE := lib
 PLATFORM_LIBS := -lgdi32 -lwinmm -lopengl32
+CFLAGS := -DNOGDI -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS
 RUN_CMD := ./$(EXE)
 ifeq ($(wildcard $(RAYLIB_LIB)),)
 $(error Missing $(RAYLIB_LIB). Add Windows raylib binaries under lib/)
@@ -57,7 +58,7 @@ CPPFLAGS := -Iinclude -I$(RAYLIB_INCLUDE)
 default: all
 
 all: $(RAYLIB_LIB)
-	$(CC) -o $(EXE) $(SOURCES) $(CPPFLAGS) $(RAYLIB_LIB) $(PLATFORM_LIBS)
+	$(CC) -o $(EXE) $(SOURCES) $(CPPFLAGS) $(CFLAGS) $(RAYLIB_LIB) $(PLATFORM_LIBS)
 
 ifeq ($(TARGET_OS),windows)
 $(RAYLIB_LIB):

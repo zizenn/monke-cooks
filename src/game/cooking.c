@@ -7,7 +7,6 @@
 #include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "game/texture_cache.h"
 #include "string.h"
 
 //minigames
@@ -26,13 +25,11 @@ static enum {
 
 static whereIsItemFrom newItemFrom;
 static bool cookResultApplied = false;
-static Texture2D cookedItemTex;
 ItemType newHolding;
 
 void InitCook() {
   MinigameStatus = false;
   cookResultApplied = false;
-  cookedItemTex = (Texture2D){0};
 
   switch (currentCookType) {
     case PAN:
@@ -74,7 +71,6 @@ void InitCook() {
 
   Foods nextVariant = categories[categoryId].variants[nextVariantId];
   newHolding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
-  cookedItemTex = AcquireCachedTexture(nextVariant.filePath);
 
   switch (minigameSelection) {
     case 0:
@@ -133,13 +129,8 @@ void UpdateCook() {
       break;
   }
 
-  if (MinigameStatus == WIN && !cookResultApplied && cookedItemTex.id != 0) {
-    for (int i = 0; i < 4; i++) {
-      if (playerTexture[i].id != cookedItemTex.id) {
-        ReleaseTexture(playerTexture[i]);
-      }
-    }
-    FillTextureArray(playerTexture, 4, cookedItemTex);
+  if (MinigameStatus == WIN && !cookResultApplied) {
+    // Textures are preloaded and persistent - no need to load/unload
     holding = newHolding;
     cookResultApplied = true;
     UnloadCook();
@@ -169,11 +160,6 @@ void DrawCook() {
 }
 
 void UnloadCook() {
-  if (cookedItemTex.id != 0 && !cookResultApplied) {
-    ReleaseTexture(cookedItemTex);
-  }
-  cookedItemTex = (Texture2D){0};
-
   switch (minigameSelection) {
     case 0:
       UnloadBarMinigame();

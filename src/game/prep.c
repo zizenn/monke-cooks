@@ -4,7 +4,6 @@
 #include "game/display_screen.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "game/texture_cache.h"
 #include "stdbool.h"
 #include "string.h"
 
@@ -70,10 +69,6 @@ void PrepFood(int currentTile) {
 }
 
 static void Apply() {
-  ReleaseTextureArray(playerTexture, 4);
-  Texture2D newTexture = AcquireCachedTexture(nextVariant.filePath);
-  FillTextureArray(playerTexture, 4, newTexture);
-
   holding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
   currentPrepType = nextVariant.prep_type;
 }

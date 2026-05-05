@@ -94,6 +94,8 @@ void UpdatePantry() {
       holding = (ItemType){ categoryId, variantId, cookType };
       currentPrepType = prepType;
 
+      TraceLog(LOG_INFO, "category id: %d  |  variant id: %d  |  item name: %s", categoryId, variantId, allPantry[categoryId].variants->name);
+
       searchEditMode = false;
       currentScreen = GAME;
     }

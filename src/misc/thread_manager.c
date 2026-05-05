@@ -1,24 +1,29 @@
-#ifndef NOGDI
-#define NOGDI
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "external/tinycthread.h"
 #include "string.h"
 #include "game/thread_manager.h"
 #include "time.h"
+#include "stdbool.h"
 
 // Forward declare functions from other modules
-void LoadAllImagesAsync(void);
+void LoadAllTexturesAsync(void);
 void ProcessTextureLoadingOnMainThread(void);
 void InitTextures(void);
+
+// Define AudioStream type (Raylib's)
 typedef struct {
-  void *stream;
+  unsigned int sampleRate;
+  unsigned int sampleSize;
+  unsigned int channels;
+  void *buffer;
+  unsigned int bufferSizeInFrames;
+  unsigned int framesProcessed;
+  unsigned int looping;
+  void *usedSequencer;
+} AudioStream;
+
+// Define Music struct (matching Raylib's exactly)
+typedef struct {
+  AudioStream stream;
   unsigned int frameCount;
   unsigned int looping;
   int ctxType;
@@ -48,7 +53,7 @@ static int TextureLoaderThreadFunc(void *arg) {
   mtx_unlock(&textureLoaderMutex);
   
   // Load all image data from disk (no OpenGL needed)
-  LoadAllImagesAsync();
+  LoadAllTexturesAsync();
   
   mtx_lock(&textureLoaderMutex);
   textureLoaderProgress = 100;
@@ -113,7 +118,7 @@ static int MusicManagerThreadFunc(void *arg) {
     mtx_lock(&musicMutex);
     
     // Update music and volume
-    if (currentMusic.stream != NULL) {
+    if (currentMusic.frameCount > 0) {
       SetMusicVolume(currentMusic, musicVolume);
       UpdateMusicStream(currentMusic);
     }
@@ -151,9 +156,10 @@ void StopMusicManager(void) {
   thrd_join(musicManagerThread, &result);
   
   mtx_lock(&musicMutex);
-  if (currentMusic.stream != NULL) {
+  if (currentMusic.frameCount > 0) {
     StopMusicStream(currentMusic);
     UnloadMusicStream(currentMusic);
+    currentMusic = (Music){0};
   }
   mtx_unlock(&musicMutex);
   
@@ -167,7 +173,7 @@ void SetMusicTrackThreaded(const char *trackPath) {
   mtx_lock(&musicMutex);
   
   // Stop and unload current music
-  if (currentMusic.stream != NULL) {
+  if (currentMusic.frameCount > 0) {
     StopMusicStream(currentMusic);
     UnloadMusicStream(currentMusic);
   }
@@ -177,7 +183,7 @@ void SetMusicTrackThreaded(const char *trackPath) {
   strncpy(currentMusicPath, trackPath, sizeof(currentMusicPath) - 1);
   currentMusicPath[sizeof(currentMusicPath) - 1] = '\0';
   
-  if (currentMusic.stream != NULL) {
+  if (currentMusic.frameCount > 0) {
     PlayMusicStream(currentMusic);
     SetMusicVolume(currentMusic, musicVolume);
   }
@@ -190,7 +196,7 @@ void SetMusicVolumeThreaded(float volume) {
   
   mtx_lock(&musicMutex);
   musicVolume = volume;
-  if (currentMusic.stream != NULL) {
+  if (currentMusic.frameCount > 0) {
     SetMusicVolume(currentMusic, volume);
   }
   mtx_unlock(&musicMutex);

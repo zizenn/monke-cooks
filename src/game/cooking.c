@@ -16,6 +16,7 @@
 
 static char panelTitle[9] = "";
 int minigameSelection;
+const char* debugText;
 
 static enum {
   RUNNING,
@@ -71,6 +72,7 @@ void InitCook() {
 
   Foods nextVariant = categories[categoryId].variants[nextVariantId];
   newHolding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
+  debugText = categories[categoryId].variants[nextVariantId].name;
 
   switch (minigameSelection) {
     case 0:
@@ -132,6 +134,8 @@ void UpdateCook() {
   if (MinigameStatus == WIN && !cookResultApplied) {
     // Textures are preloaded and persistent - no need to load/unload
     holding = newHolding;
+    itemFrom = newItemFrom;
+    TraceLog(LOG_INFO, "item name: %s", debugText);
     cookResultApplied = true;
     UnloadCook();
     currentScreen = GAME;
@@ -156,7 +160,6 @@ void DrawCook() {
       DrawBasketMinigame();
       break;
   }
-
 }
 
 void UnloadCook() {

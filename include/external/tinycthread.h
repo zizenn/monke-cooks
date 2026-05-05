@@ -22,6 +22,14 @@ freely, subject to the following restrictions:
     distribution.
 */
 
+/* Windows API guards - must be set BEFORE including windows.h */
+#ifndef NOGDI
+#define NOGDI
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #ifndef _TINYCTHREAD_H_
 #define _TINYCTHREAD_H_
 

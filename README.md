@@ -8,22 +8,20 @@ currently we are at a VERY BASIC level of development. currently the core game m
 
 ## installation
 
-### download (recommended)
+### from releases (recommended)
 go to the releases age and download the latest release
 
 
 ### build from source
 This repo is set up to build from local project files only.
 
-- `include/` is for project headers only.
-- raylib/raygui headers and raylib libraries live under `lib/`.
-- **Windows:** uses local `lib/libraylib.a`.
-- **Linux:** uses local `lib/linux/libraylib.a`.
-- **macOS:** uses local `lib/macos/libraylib.a`.
-- The Makefile does not download raylib. If a platform library is missing, `make` stops with an error telling you which file to add.
-   - These files are already packaged inside of the game folder. Please do **not** add your own
+#### prerequisites
 
-After that, anyone can run:
+```bash
+gcc
+```
+this can be downloaded via your preferred package manager. (NEEDED ON ALL PLATFORM)
+after that, anyone can run:
 
 ```bash
 make
@@ -32,9 +30,7 @@ make run
 
 ## team
 1. Sakif (Lead Dev / Founder)
-2. Marcus (Co-Founder / Artist)
 3. Eaton (Dev)
-5. Ryan (Lead Musician)
 
 # Wanted Features
 1. cooking (ofc)

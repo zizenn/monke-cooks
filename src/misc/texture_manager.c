@@ -9,10 +9,8 @@
 #endif
 
 #include "game/texture_manager.h"
-#include "game/items.h"
 #include "game/game.h"
 #include "external/raylib.h"
-#include "string.h"
 
 TextureAsset allTextures[TEXTURE_COUNT] = {
   // Player textures
@@ -121,7 +119,7 @@ typedef struct {
 static ImageCache imageCache[TEXTURE_COUNT] = {0};
 
 // Called by thread_manager to load images from disk
-void LoadAllImagesAsync(void) {
+void LoadAllTexturesAsync(void) {
   for (int i = 0; i < TEXTURE_COUNT; i++) {
     imageCache[i].image = LoadImage(allTextures[i].filePath);
     imageCache[i].loaded = 1;
@@ -233,6 +231,48 @@ Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom) {
     } else if (categoryId == 9) { // MILK
       if (variantId == 0) return GetTexture(MILK_FRESH);
       if (variantId == 1) return GetTexture(MILK_HEATED);
+    }
+  } else if (itemFrom == FROM_STOVE || itemFrom == FROM_OVEN || itemFrom == FROM_DEEP_FRY || itemFrom == FROM_GRILL) {
+    // Cooked items use same textures as fridge items (same categoryId mapping)
+    if (categoryId == 0) { // EGG
+      if (variantId == 0) return GetTexture(EGG_RAW);
+      if (variantId == 1) return GetTexture(EGG_CRACKED);
+      if (variantId == 2) return GetTexture(EGG_FRIED);
+    } else if (categoryId == 1) { // RICE
+      if (variantId == 0) return GetTexture(RICE_RAW);
+      if (variantId == 1) return GetTexture(RICE_WASHED);
+      if (variantId == 2) return GetTexture(RICE_COOKED);
+    } else if (categoryId == 2) { // SHIITAKE
+      if (variantId == 0) return GetTexture(SHIITAKE_RAW);
+      if (variantId == 1) return GetTexture(SHIITAKE_SLICED);
+      if (variantId == 2) return GetTexture(SHIITAKE_COOKED);
+    } else if (categoryId == 3) { // CHICKPEA
+      if (variantId == 0) return GetTexture(CHICKPEA_RAW);
+      if (variantId == 1) return GetTexture(CHICKPEA_SOAKED);
+      if (variantId == 2) return GetTexture(CHICKPEA_COOKED);
+    } else if (categoryId == 4) { // LENTIL
+      if (variantId == 0) return GetTexture(LENTIL_RAW);
+      if (variantId == 1) return GetTexture(LENTIL_RINSED);
+      if (variantId == 2) return GetTexture(LENTIL_COOKED);
+    } else if (categoryId == 5) { // OYSTER_MUSHROOM
+      if (variantId == 0) return GetTexture(OYSTER_MUSHROOM_RAW);
+      if (variantId == 1) return GetTexture(OYSTER_MUSHROOM_SLICED);
+      if (variantId == 2) return GetTexture(OYSTER_MUSHROOM_COOKED);
+    } else if (categoryId == 6) { // MOZZARELLA
+      if (variantId == 0) return GetTexture(MOZZARELLA_FRESH);
+      if (variantId == 1) return GetTexture(MOZZARELLA_MELTED);
+    } else if (categoryId == 7) { // PARMIGIANO
+      if (variantId == 0) return GetTexture(PARMIGIANO_FRESH);
+      if (variantId == 1) return GetTexture(PARMIGIANO_MELTED);
+    } else if (categoryId == 8) { // CHEDDAR
+      if (variantId == 0) return GetTexture(CHEDDAR_FRESH);
+      if (variantId == 1) return GetTexture(CHEDDAR_MELTED);
+    } else if (categoryId == 9) { // PEPPER
+      if (variantId == 0) return GetTexture(PEPPER_RAW);
+      if (variantId == 1) return GetTexture(PEPPER_GROUND);
+    } else if (categoryId == 10) { // CUMIN
+      if (variantId == 0) return GetTexture(CUMIN_RAW);
+      if (variantId == 1) return GetTexture(CUMIN_ROASTED);
     }
   }
 

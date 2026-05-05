@@ -71,4 +71,6 @@ void PrepFood(int currentTile) {
 static void Apply() {
   holding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
   currentPrepType = nextVariant.prep_type;
+  const char* debugText = nextVariant.name;
+  TraceLog(LOG_INFO, "item name: %s", debugText);
 }

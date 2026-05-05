@@ -9,7 +9,6 @@
 #include "game/texture_manager.h"
 #include "stdio.h"
 #include "ctype.h"
-#include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
 
@@ -95,6 +94,7 @@ void UpdateFridge() {
         
         itemFrom = FROM_FRIDGE;
         holding = (ItemType){ categoryId, variantId, cookType };
+        TraceLog(LOG_INFO, "category id: %d  |  variant id: %d  |  item name: %s", categoryId, variantId, allFoods[categoryId].variants->name);
 
         searchEditMode = false;
         currentScreen = GAME;

@@ -31,7 +31,9 @@ typedef struct {
 
 extern FoodCategory allFoods[];
 extern StockItem stockedFridge[];
+#define STOCKED_FRIDGE_COUNT 11
 extern FoodCategory allPantry[];
 extern StockItem stockedPantry[];
+#define STOCKED_PANTRY_COUNT 10
 
 #endif

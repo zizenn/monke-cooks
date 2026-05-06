@@ -1,16 +1,8 @@
-#ifndef NOGDI
-#define NOGDI
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "game/texture_manager.h"
-#include "game/game.h"
 #include "external/raylib.h"
+#include "stdlib.h"
+
+TextureMap textureMap = {0};
 
 TextureAsset allTextures[TEXTURE_COUNT] = {
   // Player textures
@@ -122,7 +114,7 @@ static ImageCache imageCache[TEXTURE_COUNT] = {0};
 void LoadAllTexturesAsync(void) {
   for (int i = 0; i < TEXTURE_COUNT; i++) {
     imageCache[i].image = LoadImage(allTextures[i].filePath);
-    imageCache[i].loaded = 1;
+    imageCache[i].loaded = i;
   }
 }
 
@@ -156,125 +148,120 @@ Texture2D GetTexture(TextureID id) {
   return (Texture2D){0};
 }
 
-Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom) {
-  if (itemFrom == FROM_FRIDGE) {
-    // Map fridge items (0-10)
-    if (categoryId == 0) { // EGG
-      if (variantId == 0) return GetTexture(EGG_RAW);
-      if (variantId == 1) return GetTexture(EGG_CRACKED);
-      if (variantId == 2) return GetTexture(EGG_FRIED);
-    } else if (categoryId == 1) { // RICE
-      if (variantId == 0) return GetTexture(RICE_RAW);
-      if (variantId == 1) return GetTexture(RICE_WASHED);
-      if (variantId == 2) return GetTexture(RICE_COOKED);
-    } else if (categoryId == 2) { // SHIITAKE
-      if (variantId == 0) return GetTexture(SHIITAKE_RAW);
-      if (variantId == 1) return GetTexture(SHIITAKE_SLICED);
-      if (variantId == 2) return GetTexture(SHIITAKE_COOKED);
-    } else if (categoryId == 3) { // CHICKPEA
-      if (variantId == 0) return GetTexture(CHICKPEA_RAW);
-      if (variantId == 1) return GetTexture(CHICKPEA_SOAKED);
-      if (variantId == 2) return GetTexture(CHICKPEA_COOKED);
-    } else if (categoryId == 4) { // LENTIL
-      if (variantId == 0) return GetTexture(LENTIL_RAW);
-      if (variantId == 1) return GetTexture(LENTIL_RINSED);
-      if (variantId == 2) return GetTexture(LENTIL_COOKED);
-    } else if (categoryId == 5) { // OYSTER_MUSHROOM
-      if (variantId == 0) return GetTexture(OYSTER_MUSHROOM_RAW);
-      if (variantId == 1) return GetTexture(OYSTER_MUSHROOM_SLICED);
-      if (variantId == 2) return GetTexture(OYSTER_MUSHROOM_COOKED);
-    } else if (categoryId == 6) { // MOZZARELLA
-      if (variantId == 0) return GetTexture(MOZZARELLA_FRESH);
-      if (variantId == 1) return GetTexture(MOZZARELLA_MELTED);
-    } else if (categoryId == 7) { // PARMIGIANO
-      if (variantId == 0) return GetTexture(PARMIGIANO_FRESH);
-      if (variantId == 1) return GetTexture(PARMIGIANO_MELTED);
-    } else if (categoryId == 8) { // CHEDDAR
-      if (variantId == 0) return GetTexture(CHEDDAR_FRESH);
-      if (variantId == 1) return GetTexture(CHEDDAR_MELTED);
-    } else if (categoryId == 9) { // PEPPER
-      if (variantId == 0) return GetTexture(PEPPER_RAW);
-      if (variantId == 1) return GetTexture(PEPPER_GROUND);
-    } else if (categoryId == 10) { // CUMIN
-      if (variantId == 0) return GetTexture(CUMIN_RAW);
-      if (variantId == 1) return GetTexture(CUMIN_ROASTED);
-    }
-  } else if (itemFrom == FROM_PANTRY) {
-    // Map pantry items (0-9)
-    if (categoryId == 0) { // TURMERIC
-      if (variantId == 0) return GetTexture(TURMERIC_RAW);
-      if (variantId == 1) return GetTexture(TURMERIC_GROUND);
-    } else if (categoryId == 1) { // VANILLA
-      if (variantId == 0) return GetTexture(VANILLA_RAW);
-      if (variantId == 1) return GetTexture(VANILLA_PROCESSED);
-    } else if (categoryId == 2) { // STAR_ANISE
-      if (variantId == 0) return GetTexture(STAR_ANISE_WHOLE);
-      if (variantId == 1) return GetTexture(STAR_ANISE_GROUND);
-    } else if (categoryId == 3) { // CLOVES
-      if (variantId == 0) return GetTexture(CLOVES_WHOLE);
-      if (variantId == 1) return GetTexture(CLOVES_GROUND);
-    } else if (categoryId == 4) { // NUTMEG
-      if (variantId == 0) return GetTexture(NUTMEG_WHOLE);
-      if (variantId == 1) return GetTexture(NUTMEG_GROUND);
-    } else if (categoryId == 5) { // WHEAT
-      if (variantId == 0) return GetTexture(WHEAT_RAW);
-      if (variantId == 1) return GetTexture(WHEAT_MILLED);
-    } else if (categoryId == 6) { // BARLEY
-      if (variantId == 0) return GetTexture(BARLEY_RAW);
-      if (variantId == 1) return GetTexture(BARLEY_COOKED);
-    } else if (categoryId == 7) { // NORI
-      if (variantId == 0) return GetTexture(NORI_DRIED);
-      if (variantId == 1) return GetTexture(NORI_TOASTED);
-    } else if (categoryId == 8) { // WAKAME
-      if (variantId == 0) return GetTexture(WAKAME_DRIED);
-      if (variantId == 1) return GetTexture(WAKAME_SOAKED);
-    } else if (categoryId == 9) { // MILK
-      if (variantId == 0) return GetTexture(MILK_FRESH);
-      if (variantId == 1) return GetTexture(MILK_HEATED);
-    }
-  } else if (itemFrom == FROM_STOVE || itemFrom == FROM_OVEN || itemFrom == FROM_DEEP_FRY || itemFrom == FROM_GRILL) {
-    // Cooked items use same textures as fridge items (same categoryId mapping)
-    if (categoryId == 0) { // EGG
-      if (variantId == 0) return GetTexture(EGG_RAW);
-      if (variantId == 1) return GetTexture(EGG_CRACKED);
-      if (variantId == 2) return GetTexture(EGG_FRIED);
-    } else if (categoryId == 1) { // RICE
-      if (variantId == 0) return GetTexture(RICE_RAW);
-      if (variantId == 1) return GetTexture(RICE_WASHED);
-      if (variantId == 2) return GetTexture(RICE_COOKED);
-    } else if (categoryId == 2) { // SHIITAKE
-      if (variantId == 0) return GetTexture(SHIITAKE_RAW);
-      if (variantId == 1) return GetTexture(SHIITAKE_SLICED);
-      if (variantId == 2) return GetTexture(SHIITAKE_COOKED);
-    } else if (categoryId == 3) { // CHICKPEA
-      if (variantId == 0) return GetTexture(CHICKPEA_RAW);
-      if (variantId == 1) return GetTexture(CHICKPEA_SOAKED);
-      if (variantId == 2) return GetTexture(CHICKPEA_COOKED);
-    } else if (categoryId == 4) { // LENTIL
-      if (variantId == 0) return GetTexture(LENTIL_RAW);
-      if (variantId == 1) return GetTexture(LENTIL_RINSED);
-      if (variantId == 2) return GetTexture(LENTIL_COOKED);
-    } else if (categoryId == 5) { // OYSTER_MUSHROOM
-      if (variantId == 0) return GetTexture(OYSTER_MUSHROOM_RAW);
-      if (variantId == 1) return GetTexture(OYSTER_MUSHROOM_SLICED);
-      if (variantId == 2) return GetTexture(OYSTER_MUSHROOM_COOKED);
-    } else if (categoryId == 6) { // MOZZARELLA
-      if (variantId == 0) return GetTexture(MOZZARELLA_FRESH);
-      if (variantId == 1) return GetTexture(MOZZARELLA_MELTED);
-    } else if (categoryId == 7) { // PARMIGIANO
-      if (variantId == 0) return GetTexture(PARMIGIANO_FRESH);
-      if (variantId == 1) return GetTexture(PARMIGIANO_MELTED);
-    } else if (categoryId == 8) { // CHEDDAR
-      if (variantId == 0) return GetTexture(CHEDDAR_FRESH);
-      if (variantId == 1) return GetTexture(CHEDDAR_MELTED);
-    } else if (categoryId == 9) { // PEPPER
-      if (variantId == 0) return GetTexture(PEPPER_RAW);
-      if (variantId == 1) return GetTexture(PEPPER_GROUND);
-    } else if (categoryId == 10) { // CUMIN
-      if (variantId == 0) return GetTexture(CUMIN_RAW);
-      if (variantId == 1) return GetTexture(CUMIN_ROASTED);
-    }
+// ===== DYNAMIC TEXTURE MAP FUNCTIONS =====
+
+void InitTextureMap(void) {
+  int initialCapacity = 100;
+  textureMap.entries = (TextureMapEntry *)calloc(initialCapacity, sizeof(TextureMapEntry));
+  textureMap.capacity = initialCapacity;
+  textureMap.count = 0;
+
+  // Populate fridge items (FROM_FRIDGE)
+  // 0: EGG (3 variants)
+  AddTextureMapping(0, 0, FROM_FRIDGE, EGG_RAW);
+  AddTextureMapping(0, 1, FROM_FRIDGE, EGG_CRACKED);
+  AddTextureMapping(0, 2, FROM_FRIDGE, EGG_FRIED);
+  // 1: RICE (3 variants)
+  AddTextureMapping(1, 0, FROM_FRIDGE, RICE_RAW);
+  AddTextureMapping(1, 1, FROM_FRIDGE, RICE_WASHED);
+  AddTextureMapping(1, 2, FROM_FRIDGE, RICE_COOKED);
+  // 2: SHIITAKE (3 variants)
+  AddTextureMapping(2, 0, FROM_FRIDGE, SHIITAKE_RAW);
+  AddTextureMapping(2, 1, FROM_FRIDGE, SHIITAKE_SLICED);
+  AddTextureMapping(2, 2, FROM_FRIDGE, SHIITAKE_COOKED);
+  // 3: CHICKPEA (3 variants)
+  AddTextureMapping(3, 0, FROM_FRIDGE, CHICKPEA_RAW);
+  AddTextureMapping(3, 1, FROM_FRIDGE, CHICKPEA_SOAKED);
+  AddTextureMapping(3, 2, FROM_FRIDGE, CHICKPEA_COOKED);
+  // 4: LENTIL (3 variants)
+  AddTextureMapping(4, 0, FROM_FRIDGE, LENTIL_RAW);
+  AddTextureMapping(4, 1, FROM_FRIDGE, LENTIL_RINSED);
+  AddTextureMapping(4, 2, FROM_FRIDGE, LENTIL_COOKED);
+  // 5: OYSTER_MUSHROOM (3 variants)
+  AddTextureMapping(5, 0, FROM_FRIDGE, OYSTER_MUSHROOM_RAW);
+  AddTextureMapping(5, 1, FROM_FRIDGE, OYSTER_MUSHROOM_SLICED);
+  AddTextureMapping(5, 2, FROM_FRIDGE, OYSTER_MUSHROOM_COOKED);
+  // 6: MOZZARELLA (2 variants)
+  AddTextureMapping(6, 0, FROM_FRIDGE, MOZZARELLA_FRESH);
+  AddTextureMapping(6, 1, FROM_FRIDGE, MOZZARELLA_MELTED);
+  // 7: PARMIGIANO (2 variants)
+  AddTextureMapping(7, 0, FROM_FRIDGE, PARMIGIANO_FRESH);
+  AddTextureMapping(7, 1, FROM_FRIDGE, PARMIGIANO_MELTED);
+  // 8: CHEDDAR (2 variants)
+  AddTextureMapping(8, 0, FROM_FRIDGE, CHEDDAR_FRESH);
+  AddTextureMapping(8, 1, FROM_FRIDGE, CHEDDAR_MELTED);
+  // 9: PEPPER (2 variants)
+  AddTextureMapping(9, 0, FROM_FRIDGE, PEPPER_RAW);
+  AddTextureMapping(9, 1, FROM_FRIDGE, PEPPER_GROUND);
+  // 10: CUMIN (2 variants)
+  AddTextureMapping(10, 0, FROM_FRIDGE, CUMIN_RAW);
+  AddTextureMapping(10, 1, FROM_FRIDGE, CUMIN_ROASTED);
+
+  // Populate pantry items (FROM_PANTRY) - KEY: categoryId=9 maps to MILK here, not PEPPER
+  // 0: TURMERIC (2 variants)
+  AddTextureMapping(0, 0, FROM_PANTRY, TURMERIC_RAW);
+  AddTextureMapping(0, 1, FROM_PANTRY, TURMERIC_GROUND);
+  // 1: VANILLA (2 variants)
+  AddTextureMapping(1, 0, FROM_PANTRY, VANILLA_RAW);
+  AddTextureMapping(1, 1, FROM_PANTRY, VANILLA_PROCESSED);
+  // 2: STAR_ANISE (2 variants)
+  AddTextureMapping(2, 0, FROM_PANTRY, STAR_ANISE_WHOLE);
+  AddTextureMapping(2, 1, FROM_PANTRY, STAR_ANISE_GROUND);
+  // 3: CLOVES (2 variants)
+  AddTextureMapping(3, 0, FROM_PANTRY, CLOVES_WHOLE);
+  AddTextureMapping(3, 1, FROM_PANTRY, CLOVES_GROUND);
+  // 4: NUTMEG (2 variants)
+  AddTextureMapping(4, 0, FROM_PANTRY, NUTMEG_WHOLE);
+  AddTextureMapping(4, 1, FROM_PANTRY, NUTMEG_GROUND);
+  // 5: WHEAT (2 variants)
+  AddTextureMapping(5, 0, FROM_PANTRY, WHEAT_RAW);
+  AddTextureMapping(5, 1, FROM_PANTRY, WHEAT_MILLED);
+  // 6: BARLEY (2 variants)
+  AddTextureMapping(6, 0, FROM_PANTRY, BARLEY_RAW);
+  AddTextureMapping(6, 1, FROM_PANTRY, BARLEY_COOKED);
+  // 7: NORI (2 variants)
+  AddTextureMapping(7, 0, FROM_PANTRY, NORI_DRIED);
+  AddTextureMapping(7, 1, FROM_PANTRY, NORI_TOASTED);
+  // 8: WAKAME (2 variants)
+  AddTextureMapping(8, 0, FROM_PANTRY, WAKAME_DRIED);
+  AddTextureMapping(8, 1, FROM_PANTRY, WAKAME_SOAKED);
+  // 9: MILK (2 variants) - THIS IS THE FIX! Pantry milk stays milk, doesn't become pepper
+  AddTextureMapping(9, 0, FROM_PANTRY, MILK_FRESH);
+  AddTextureMapping(9, 1, FROM_PANTRY, MILK_HEATED);
+}
+
+void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, TextureID textureId) {
+  // Resize if needed
+  if (textureMap.count >= textureMap.capacity) {
+    int newCapacity = textureMap.capacity * 2;
+    textureMap.entries = (TextureMapEntry *)realloc(textureMap.entries, newCapacity * sizeof(TextureMapEntry));
+    textureMap.capacity = newCapacity;
   }
 
+  // Add entry
+  textureMap.entries[textureMap.count].categoryId = categoryId;
+  textureMap.entries[textureMap.count].variantId = variantId;
+  textureMap.entries[textureMap.count].origin = origin;
+  textureMap.entries[textureMap.count].textureId = textureId;
+  textureMap.count++;
+}
+
+Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom) {
+  for (int i = 0; i < textureMap.count; i++) {
+    if (textureMap.entries[i].categoryId == categoryId &&
+        textureMap.entries[i].variantId == variantId &&
+        textureMap.entries[i].origin == itemFrom) {
+      return GetTexture(textureMap.entries[i].textureId);
+    }
+  }
   return (Texture2D){0};
+}
+
+void FreeTextureMap(void) {
+  if (textureMap.entries != NULL) {
+    free(textureMap.entries);
+    textureMap.entries = NULL;
+    textureMap.count = 0;
+    textureMap.capacity = 0;
+  }
 }

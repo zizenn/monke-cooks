@@ -1,13 +1,13 @@
 #ifndef TARGETGAME_H
 #define TARGETGAME_H
 
-typedef enum {
-    TARGET_GAME_RUNNING,
-    TARGET_GAME_WIN,
-    TARGET_GAME_LOSE
-
-} TargetGameResult;
+#include "core/enums.h"
 
 extern TargetGameResult targetGameResult;
+
+void InitTargetMinigame(void);
+void UpdateTargetMinigame(void);
+void DrawTargetMinigame(void);
+void UnloadTargetMinigame(void);
 
 #endif

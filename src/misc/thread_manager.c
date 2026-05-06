@@ -4,12 +4,12 @@
 #include "time.h"
 #include "stdbool.h"
 
-// Forward declare functions from other modules
+// function prototypes
 void LoadAllTexturesAsync(void);
 void ProcessTextureLoadingOnMainThread(void);
 void InitTextures(void);
 
-// Define AudioStream type (Raylib's)
+// same reason as below
 typedef struct {
   unsigned int sampleRate;
   unsigned int sampleSize;
@@ -21,7 +21,7 @@ typedef struct {
   void *usedSequencer;
 } AudioStream;
 
-// Define Music struct (matching Raylib's exactly)
+// clone the raylib music struct because including raylib has conflicts with windows.h
 typedef struct {
   AudioStream stream;
   unsigned int frameCount;
@@ -40,7 +40,7 @@ void UpdateMusicStream(Music music);
 // ===== TEXTURE LOADER =====
 static thrd_t textureLoaderThread;
 static mtx_t textureLoaderMutex;
-static int textureLoaderStatus = LOADER_IDLE;
+static LoaderStatus textureLoaderStatus = LOADER_IDLE;
 static int textureLoaderProgress = 0;
 static volatile bool textureLoaderRunning = false;
 
@@ -76,7 +76,7 @@ void StartTextureLoader(void) {
 LoaderStatus GetTextureLoaderStatus(void) {
   LoaderStatus status;
   mtx_lock(&textureLoaderMutex);
-  status = (LoaderStatus)textureLoaderStatus;
+  status = textureLoaderStatus;
   mtx_unlock(&textureLoaderMutex);
   return status;
 }
@@ -209,4 +209,3 @@ float GetMusicVolumeThreaded(void) {
   mtx_unlock(&musicMutex);
   return volume;
 }
-

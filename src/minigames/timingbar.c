@@ -1,44 +1,40 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/screens.h"
-#include "game/display_screen.h"
 #include "game/globals.h"
-#include "game/game.h"
-#include "game/items.h"
+#include "game/config.h"
+#include "game/display_screen.h"
 #include "minigames/minigame.h"
-#include "stdio.h"
-#include "stdlib.h"
+#include "minigames/timingbar.h"
 #include "stdbool.h"
 #include "math.h"
-#include "minigames/timingbar.h"
 
 TimingBarResult timingBarResult = TIMING_BAR_RUNNING;
 
 //bar dimensions
-float BAR_X = 200.0f;
-float BAR_Y = 700.0f;
-static const int BAR_WIDTH = 400;
-static const int BAR_HEIGHT = 20;
+float BAR_X = TIMING_BAR_OFFSET_X;
+float BAR_Y = TIMING_BAR_OFFSET_Y;
+static const int BAR_WIDTH = TIMING_BAR_WIDTH;
+static const int BAR_HEIGHT = TIMING_BAR_HEIGHT;
 
 //player
-static const int PLAYER_WIDTH = 10;
-static const float PLAYER_SPEED = 300.0f;
+static const int PLAYER_WIDTH = TIMING_PLAYER_WIDTH;
+static const float PLAYER_SPEED = TIMING_PLAYER_SPEED;
 static bool playerFirstInput = true;
 
 //safe zone
-static const float SAFEZONE_MAX = 200.0f;
-static const int SAFEZONE_WIDTH = 70;
+static const float SAFEZONE_MAX = TIMING_SAFEZONE_MAX_VELOCITY;
+static const int SAFEZONE_WIDTH = TIMING_SAFEZONE_WIDTH;
 static float safezoneX;
-static float safezoneAccel = 5.0f;
-static float safezoneVel = 150.0f;
+static float safezoneAccel = TIMING_SAFEZONE_INITIAL_ACCEL;
+static float safezoneVel = TIMING_SAFEZONE_INITIAL_VEL;
 static bool isSafe;
 
 //win condition
-static const float WIN_TIME = 5.0f;
+static const float WIN_TIME = TIMING_WIN_TIME;
 static float gameTime = 0.0f;
 
 //lose condition
-static const float LOSE_TIME = 30.0f;
+static const float LOSE_TIME = TIMING_LOSE_TIME;
 
 static float playerX;
 static float safeTime = 0.0f;
@@ -83,7 +79,7 @@ void UpdateBarMinigame() {
     playerX -= PLAYER_SPEED * deltaTime;
   }
 
-  //clamp player indicator to bar
+  // clamp player indicator to bar
   if (playerX < BAR_X) {
     playerX = BAR_X;
   }
@@ -91,7 +87,7 @@ void UpdateBarMinigame() {
     playerX = BAR_X + BAR_WIDTH - PLAYER_WIDTH;
   }
 
-  //bounce safearea off bar ends and increase acceleration after each gt
+  // bounce safearea off bar ends and increase acceleration after each gt
   safezoneVel += safezoneAccel;
   if (fabsf(safezoneVel) > SAFEZONE_MAX) {
     safezoneVel = SAFEZONE_MAX * (fabsf(safezoneVel)/safezoneVel);
@@ -110,24 +106,20 @@ void UpdateBarMinigame() {
   }
 
   if (ChangeAccel()) {
-    if (safezoneAccel == 5.0f) {
-      safezoneAccel = -5.0f;
-    } else if (safezoneAccel == -5.0f) {
-      safezoneAccel = 5.0f;
+    if (safezoneAccel == TIMING_SAFEZONE_INITIAL_ACCEL) {
+      safezoneAccel = -TIMING_SAFEZONE_INITIAL_ACCEL;
+    } else if (safezoneAccel == -TIMING_SAFEZONE_INITIAL_ACCEL) {
+      safezoneAccel = TIMING_SAFEZONE_INITIAL_ACCEL;
     }
   }
 
-  //count while indicator is in zone
+  // count while indicator is in zone
   isSafe = playerX >= safezoneX && playerX + PLAYER_WIDTH <= safezoneX + SAFEZONE_WIDTH;
 
   if (isSafe) {
     safeTime += deltaTime;
     if (safeTime >= WIN_TIME) {
       timingBarResult = TIMING_BAR_WIN;
-      if (itemFrom != FROM_NONE) {
-        QuantityLower(itemFrom);
-        itemFrom = FROM_NONE;
-      }
       SummonNotif("YOU WIN!", SUCCESS);
     }
   }
@@ -140,33 +132,33 @@ void UpdateBarMinigame() {
 }
 
 void DrawBarMinigame() {
-  //background
+  // background
   DrawRectangle(BAR_X, BAR_Y, BAR_WIDTH, BAR_HEIGHT, DARKGRAY);
   
-  //safe zone
+  // safe zone
   if (isSafe) {
     DrawRectangle((int)safezoneX, BAR_Y, SAFEZONE_WIDTH, BAR_HEIGHT, GREEN);
   } else {
     DrawRectangle((int)safezoneX, BAR_Y, SAFEZONE_WIDTH, BAR_HEIGHT, RED);
   }
-  //player indicator
+  // player indicator
   DrawRectangle((int)playerX, BAR_Y - 5, PLAYER_WIDTH, BAR_HEIGHT + 10, BLACK);
 
-  //% progress
+  // % progress
   DrawText(TextFormat("Stay in the Zone! %.1f / %.1f", safeTime, WIN_TIME), BAR_X, BAR_Y - 30, 20, BLACK);
 
-  //time remaining
+  // time remaining
   DrawText(TextFormat("%.0fs Left", LOSE_TIME-gameTime), BAR_X + BAR_WIDTH - 80, BAR_Y - 30, 20, BLACK);
 
-  //indicator before first input
+  // indicator before first input
   if (playerFirstInput) {
-    DrawText(TextFormat("[D]"), BAR_X + 20, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
-    DrawText(TextFormat("[A]"), BAR_X + BAR_WIDTH - 40, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
+    DrawText(TextFormat("[A]"), BAR_X + 20, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
+    DrawText(TextFormat("[D]"), BAR_X + BAR_WIDTH - 40, BAR_Y + (BAR_HEIGHT / 2.0f - 10), 20, BLACK);
   }
 }
 
 void UnloadBarMinigame() {
-
+  // textures will be added here later when it is needed
 }
 
 static bool ChangeAccel() {

@@ -1,24 +1,11 @@
-#ifndef COOKING
-#define COOKING
+#ifndef COOKING_H
+#define COOKING_H
 
-typedef enum{
-  NULL,
-  PAN,
-  DEEP_FRY,
-  OVEN,
-  GRILL
-} COOK_TYPE;
+#include "core/enums.h"
 
-typedef enum {
-  PREP_NONE,
-  CRACK,
-  WASH,
-  CUT,
-  GROUND
-} PREP_TYPE;
-
-extern COOK_TYPE currentCookType;
-extern PREP_TYPE currentPrepType;
-extern PREP_TYPE prepFrom;
+void InitCook(void);
+void UpdateCook(void);
+void DrawCook(void);
+void UnloadCook(void);
 
 #endif

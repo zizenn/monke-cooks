@@ -1,11 +1,11 @@
 #include "game/display_screen.h"
 #include "game/buttons.h"
 #include "game/game.h"
+#include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/thread_manager.h"
-#include "external/raylib.h"
-#include "game/screens.h"
 #include "game/globals.h"
+#include "external/raylib.h"
 #include "stdbool.h"
 
 // globals
@@ -200,6 +200,7 @@ int main() {
   // Start async texture loading and music manager
   StartTextureLoader();
   StartMusicManager();
+  InitializeRuntimeCounts();
   
   SetTargetFPS(targetFPS);
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);

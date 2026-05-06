@@ -1,27 +1,26 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/screens.h"
-#include "game/display_screen.h"
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
+#include "game/config.h"
+#include "game/display_screen.h"
 #include "minigames/minigame.h"
+#include "minigames/targetgame.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
 #include "math.h"
-#include "minigames/targetgame.h"
 
 TargetGameResult targetGameResult = TARGET_GAME_RUNNING;
 
 
-static const float OUTER_RADIUS = 100.0f;
-static const int SEGMENTS = 72;
-#define TARGET_COUNT 10
-static const float SPEED = 120.0f;
-static const float HIT_TOLERANCE = 12.0f;
-static const float PLAYER_RADIUS = 40.0f;
-static const int MAX_MISSES = 2;
+static const float OUTER_RADIUS = TARGET_OUTER_RADIUS;
+static const int SEGMENTS = TARGET_RING_SEGMENTS;
+static const float SPEED = TARGET_SPEED;
+static const float HIT_TOLERANCE = TARGET_HIT_TOLERANCE;
+static const float PLAYER_RADIUS = TARGET_PLAYER_RADIUS;
+static const int MAX_MISSES = TARGET_MAX_MISSES;
 
 typedef struct {
     float radius;
@@ -33,7 +32,7 @@ static int CenterX = 0;
 static int CenterY = 0;
 
 static Target targets[TARGET_COUNT];
-static float playerRadius = PLAYER_RADIUS;
+static float playerRadius = TARGET_PLAYER_RADIUS;
 static int targetsMissed = 0;
 static int targetsHit = 0;
 static float missCooldown = 0;
@@ -41,7 +40,7 @@ static float missCooldown = 0;
 static void SpawnTargets() {
     int targetPosition = 0;
     for (int i = 0; i < TARGET_COUNT; i++) {
-        targetPosition += (float)GetRandomValue(20, 100);
+        targetPosition += (float)GetRandomValue(TARGET_SPAWN_MIN_OFFSET, TARGET_SPAWN_MAX_OFFSET);
         targets[i].radius = OUTER_RADIUS + (targetPosition);
         targets[i].active = true;
         targets[i].hit = false;
@@ -95,7 +94,7 @@ void UpdateTargetMinigame() {
             }
         }
         if (!hitAny) {
-            missCooldown = 0.5f;
+            missCooldown = TARGET_MISS_COOLDOWN;
         }
     }
 

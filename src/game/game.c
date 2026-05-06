@@ -1,13 +1,12 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/cooking.h"
-#include "game/screens.h"
-#include "game/display_screen.h"
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/thread_manager.h"
+#include "game/display_screen.h"
+#include "game/config.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
@@ -30,13 +29,12 @@ typedef enum {
 } TILE_TYPE;
 
 // function prototypes
-static void MovePlayer(int DIR);
+static void MovePlayer(DIRECTION DIR);
 static void Interact(void);
 static int MenuNavigation(Rectangle *rects, int count, int *selected);
 static void LoadMap(const char *filePath);
 static void DrawTile(TILE_TYPE tile, int tx, int ty);
 static void BuildStaticMapLayer(void);
-void QuantityLower(whereIsItemFrom type);
 
 // variables
 static bool isMenuOpen = false;
@@ -65,15 +63,17 @@ void InitGame(void) {
   playerPos = (Vector2){ TileToPixels(currentTileX), TileToPixels(currentTileY) };
   selected = 0;
   facing = DOWN;
-  holding = (ItemType){ -1, -1, 0 };
+  holding = (Holding){ -1, -1, COOK_NONE, FROM_FRIDGE, ARRAY_FOOD };
   currentPrepType = PREP_NONE;
   currentMenu = NONE;
   isMoving = false;
   isMenuOpen = false;
-  itemFrom = FROM_NONE;
 
   // Wait for async texture loading to finish before starting game
   WaitForTextureLoader();
+
+  // Initialize texture mappings
+  InitTextureMap();
 
   // mapfile
   LoadMap("assets/maps/map1.txt");
@@ -137,9 +137,9 @@ void DrawGame(void) {
       WHITE
     );
   } else if (map != NULL) {
-    for (int row = 0; row < mapRows; row++) {
-      for (int col = 0; col < mapCols; col++) {
-        TILE_TYPE tile = map[row * mapCols + col];
+    for (int row = 0; row < MAP_ROWS; row++) {
+      for (int col = 0; col < MAP_COLS; col++) {
+        TILE_TYPE tile = map[row * MAP_COLS + col];
         DrawTile(tile, TileToPixels(col), TileToPixels(row));
       }
     }
@@ -149,7 +149,7 @@ void DrawGame(void) {
   
   // If holding an item, display the item texture instead
   if (holding.categoryId >= 0) {
-    playerSprite = GetHeldItemTexture(holding.categoryId, holding.variantId, itemFrom);
+    playerSprite = GetHeldItemTexture(holding.categoryId, holding.variantId, holding.origin);
   }
   
   Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
@@ -214,6 +214,7 @@ void DrawGame(void) {
 
 void UnloadGame(void) {
   // Textures are managed by texture_manager and cleaned up in main()
+  FreeTextureMap();
 
   if (hasStaticMapLayer) {
     UnloadRenderTexture(staticMapLayer);
@@ -234,13 +235,13 @@ static void LoadMap(const char *filePath) {
     return;
   }
 
-  map = malloc(mapCols * mapRows * sizeof(TILE_TYPE));
+  map = malloc(MAP_COLS * MAP_ROWS * sizeof(TILE_TYPE));
 
   int value;
-  for (int y = 0; y < mapRows; y++) {
-    for (int x = 0; x < mapCols; x++) {
+  for (int y = 0; y < MAP_ROWS; y++) {
+    for (int x = 0; x < MAP_COLS; x++) {
       fscanf(mapFile, "%d", &value);
-      map[y * mapCols + x] = (TILE_TYPE)value;
+      map[y * MAP_COLS + x] = (TILE_TYPE)value;
     }
   }
 
@@ -250,60 +251,60 @@ static void LoadMap(const char *filePath) {
 static void DrawTile(TILE_TYPE tile, int tx, int ty) {
   switch (tile) {
     case WALKABLE:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RAYWHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_WALKABLE_COLOR);
       break;
     case COUNTER:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, LIGHTGRAY);
-      DrawText("counter", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_COUNTER_COLOR);
+      DrawText("counter", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_COUNTER_TEXT_COLOR);
       break;
     case FRIDGE:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKBLUE);
-      DrawText("fridge", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_FRIDGE_COLOR);
+      DrawText("fridge", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_FRIDGE_TEXT_COLOR);
       break;
     case STOVE_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GREEN);
-      DrawText("stove", tx+4, ty+4, 14, BLACK);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_STOVE_COLOR);
+      DrawText("stove", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_STOVE_TEXT_COLOR);
       break;
     case OVEN_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, YELLOW);
-      DrawText("oven", tx+4, ty+4, 14, BLACK);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_OVEN_COLOR);
+      DrawText("oven", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_OVEN_TEXT_COLOR);
       break;
     case DEEP_FRY_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, ORANGE);
-      DrawText("deep fry", tx+4, ty+4, 14, BLACK);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_DEEP_FRY_COLOR);
+      DrawText("deep fry", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_DEEP_FRY_TEXT_COLOR);
       break;
     case GRILL_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, RED);
-      DrawText("grill", tx+4, ty+4, 14, BLACK);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_GRILL_COLOR);
+      DrawText("grill", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_GRILL_TEXT_COLOR);
       break;
     case ASSEMBLY:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, GRAY);
-      DrawText("assembly", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_ASSEMBLY_COLOR);
+      DrawText("assembly", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_ASSEMBLY_TEXT_COLOR);
       break;
     case SINK:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLUE);
-      DrawText("sink", tx+4, ty+4, 14, BLACK);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_SINK_COLOR);
+      DrawText("sink", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_SINK_TEXT_COLOR);
       break;
     case CUTTING_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, DARKPURPLE);
-      DrawText("cutting", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_CUTTING_STATION_COLOR);
+      DrawText("cutting", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_CUTTING_STATION_TEXT_COLOR);
       break;
     case TRASH:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BLACK);
-      DrawText("trash", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_TRASH_COLOR);
+      DrawText("trash", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_TRASH_TEXT_COLOR);
       break;
     case PANTRY:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, BROWN);
-      DrawText("pantry", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_PANTRY_COLOR);
+      DrawText("pantry", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_PANTRY_TEXT_COLOR);
       break;
     case GRINDING_STATION:
-      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, MAROON);
-      DrawText("grind", tx+4, ty+4, 14, WHITE);
+      DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_GRINDING_STATION_COLOR);
+      DrawText("grind", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_GRINDING_STATION_TEXT_COLOR);
       break;
   }
 
-  DrawRectangle(tx, ty, TILE_SIZE, 1, GRAY);
-  DrawRectangle(tx, ty, 1, TILE_SIZE, GRAY);
+  DrawRectangle(tx, ty, TILE_SIZE, TILE_GRID_LINE_WIDTH, TILE_GRID_COLOR);
+  DrawRectangle(tx, ty, TILE_GRID_LINE_WIDTH, TILE_SIZE, TILE_GRID_COLOR);
 }
 
 static void BuildStaticMapLayer(void) {
@@ -323,9 +324,9 @@ static void BuildStaticMapLayer(void) {
 
   BeginTextureMode(staticMapLayer);
   ClearBackground(WHITE);
-  for (int row = 0; row < mapRows; row++) {
-    for (int col = 0; col < mapCols; col++) {
-      TILE_TYPE tile = map[row * mapCols + col];
+  for (int row = 0; row < MAP_ROWS; row++) {
+    for (int col = 0; col < MAP_COLS; col++) {
+      TILE_TYPE tile = map[row * MAP_COLS + col];
       DrawTile(tile, TileToPixels(col), TileToPixels(row));
     }
   }
@@ -333,7 +334,7 @@ static void BuildStaticMapLayer(void) {
   hasStaticMapLayer = true;
 }
 
-static void MovePlayer(int DIR) {
+static void MovePlayer(DIRECTION DIR) {
   int nextTileX = currentTileX;
   int nextTileY = currentTileY;
 
@@ -352,8 +353,8 @@ static void MovePlayer(int DIR) {
       break;
   }
 
-  if (nextTileX >= 0 && nextTileX < mapCols && nextTileY >= 0 && nextTileY < mapRows) {
-    if (map[nextTileY * mapCols + nextTileX] == WALKABLE) {
+  if (nextTileX >= 0 && nextTileX < MAP_COLS && nextTileY >= 0 && nextTileY < MAP_ROWS) {
+    if (map[nextTileY * MAP_COLS + nextTileX] == WALKABLE) {
       currentTileX = nextTileX;
       currentTileY = nextTileY;
     }
@@ -385,32 +386,6 @@ static int MenuNavigation(Rectangle *rects, int count, int *selected) {
   return -1;
 }
 
-void QuantityLower(whereIsItemFrom type) {
-  if (holding.categoryId < 0) return; // player holds nothing
-
-  switch (type) {
-    case FROM_FRIDGE:
-      for (int i = 0; i < 11; i++) { // stockedFridge item count
-        if (stockedFridge[i].categoryId == holding.categoryId) {
-          if (stockedFridge[i].quantity > 0) stockedFridge[i].quantity--;
-          break;
-        }
-      }
-      break;
-
-    case FROM_PANTRY:
-      for (int i = 0; i < 10; i++) { // stockedPantry item count
-        if (stockedPantry[i].categoryId == holding.categoryId) {
-          if (stockedPantry[i].quantity > 0) stockedPantry[i].quantity--;
-          break;
-        }
-      }
-      break;
-
-    default:
-      break;
-  }
-}
 
 static void Interact(void) {
   TILE_TYPE facingType;
@@ -434,7 +409,7 @@ static void Interact(void) {
       break;
   }
 
-  facingType = map[facingTileY * mapCols + facingTileX];
+  facingType = map[facingTileY * MAP_COLS + facingTileX];
 
   switch (facingType) {
     default:
@@ -459,9 +434,8 @@ static void Interact(void) {
       break;
     case TRASH:
       if (holding.categoryId >= 0) {
-        holding = (ItemType){ -1, -1, 0 };
+        holding = (Holding){ -1, -1, COOK_NONE, FROM_FRIDGE, ARRAY_FOOD };
         currentPrepType = PREP_NONE;
-        itemFrom = FROM_NONE;
       }
       break;
     case ASSEMBLY:

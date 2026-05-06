@@ -1,19 +1,19 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/screens.h"
 #include "game/display_screen.h"
-#include "minigames/minigame.h"
-#include "game/game.h"
 #include "game/globals.h"
+#include "game/game.h"
 #include "game/items.h"
 #include "game/texture_manager.h"
+#include "game/config.h"
+#include "minigames/minigame.h"
 #include "stdio.h"
 #include "ctype.h"
 #include "stdbool.h"
 #include "string.h"
 
 // textures - static array mapping category index to texture ID
-static const TextureID pantryCategoryTextures[10] = {
+static const TextureID pantryCategoryTextures[PANTRY_ITEM_COUNT] = {
   TURMERIC_RAW,
   VANILLA_RAW,
   STAR_ANISE_WHOLE,
@@ -26,8 +26,7 @@ static const TextureID pantryCategoryTextures[10] = {
   MILK_FRESH,
 };
 
-static const int PANTRY_ITEM_COUNT = 10;
-static Texture2D pantryTextures[10] = {};
+static Texture2D pantryTextures[PANTRY_ITEM_COUNT] = {};
 
 // vector2s
 static Vector2 scrollOffset = {0, 0};
@@ -36,16 +35,16 @@ static Vector2 scrollOffset = {0, 0};
 static bool confirm;
 static char searchBarText[64] = "";
 static bool searchEditMode = false;
-static int matchedItems[10];
+static int matchedItems[PANTRY_ITEM_COUNT];
 static int matchCount = 0;
-static char lastSearchText[64] = "";
+static char lastSearchText[INVENTORY_SEARCH_BOX_MAX_LENGTH] = "";
 static int selectedItem;
-static char lowerCategoryNames[10][65] = {0};
+static char lowerCategoryNames[PANTRY_ITEM_COUNT][INVENTORY_CATEGORY_NAME_MAX_LENGTH] = {0};
 
-static const int COLUMNS = 8;
-static const int ITEM_WIDTH = 84;
-static const int ITEM_HEIGHT = 84;
-static int pantryCount = STOCKED_PANTRY_COUNT;
+static const int COLUMNS = INVENTORY_COLUMNS;
+static const int ITEM_WIDTH = INVENTORY_ITEM_WIDTH;
+static const int ITEM_HEIGHT = INVENTORY_ITEM_HEIGHT;
+static int pantryCount = PANTRY_ITEM_COUNT;
 
 static bool FuzzyFinder(const char* search, const char* name);
 static void ToLowerString(const char* source, char* output, int outputSize);
@@ -90,8 +89,7 @@ void UpdatePantry() {
       COOK_TYPE cookType = allPantry[categoryId].variants[variantId].cook_type;
       PREP_TYPE prepType = allPantry[categoryId].variants[variantId].prep_type;
       
-      itemFrom = FROM_PANTRY;
-      holding = (ItemType){ categoryId, variantId, cookType };
+      holding = (Holding){ categoryId, variantId, cookType, FROM_PANTRY, ARRAY_FOOD };
       currentPrepType = prepType;
 
       TraceLog(LOG_INFO, "category id: %d  |  variant id: %d  |  item name: %s", categoryId, variantId, allPantry[categoryId].variants->name);
@@ -125,7 +123,7 @@ void DrawPantry() {
   if (itemsPerRow < 1) itemsPerRow = 1;
 
   GuiScrollPanel(panelBounds, NULL, panelContent, &scrollOffset,NULL);
-  if (GuiTextBox(searchBounds, searchBarText, 64, searchEditMode)) {
+  if (GuiTextBox(searchBounds, searchBarText, INVENTORY_SEARCH_BOX_MAX_LENGTH, searchEditMode)) {
     searchEditMode = !searchEditMode;
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
       currentScreen = GAME;
@@ -148,21 +146,21 @@ void DrawPantry() {
 
       char quantityStr[10];
       snprintf(quantityStr, sizeof(quantityStr), "%d", stockedPantry[ingredientIdx].quantity);
-      DrawTextureEx(pantryTextures[ingredientIdx], (Vector2){xPos, yPos}, 0, 5.25, WHITE);
-      DrawRectangleRec((Rectangle){ xPos, yPos, 20, 20 }, LIGHTGRAY);
-      DrawText(quantityStr, xPos+2, yPos+2, 16, BLACK);
+      DrawTextureEx(pantryTextures[ingredientIdx], (Vector2){xPos, yPos}, 0, INVENTORY_TEXTURE_SCALE, WHITE);
+      DrawRectangleRec((Rectangle){ xPos, yPos, INVENTORY_QUANTITY_BOX_WIDTH, INVENTORY_QUANTITY_BOX_HEIGHT }, LIGHTGRAY);
+      DrawText(quantityStr, xPos+2, yPos+2, INVENTORY_QUANTITY_BOX_FONT_SIZE, BLACK);
       
       int categoryId = stockedPantry[ingredientIdx].categoryId;
       const char* categoryName = allPantry[categoryId].categoryName;
-      int textWidth = MeasureText(categoryName, 10);
+      int textWidth = MeasureText(categoryName, INVENTORY_LABEL_FONT_SIZE);
       int textX = xPos + (ITEM_WIDTH / 2.0f) - (textWidth / 2.0f);
       int textY = yPos + 68;
       
-      int padding = 3;
-      DrawRectangle(textX - padding, textY - padding, textWidth + (padding * 2), 16, (Color){200, 200, 200, 255});
-      DrawRectangleLines(textX - padding, textY - padding, textWidth + (padding * 2), 16, BLACK);
+      int padding = INVENTORY_LABEL_PADDING;
+      DrawRectangle(textX - padding, textY - padding, textWidth + (padding * 2), 16, INVENTORY_LABEL_BG_COLOR);
+      DrawRectangleLines(textX - padding, textY - padding, textWidth + (padding * 2), 16, INVENTORY_LABEL_BORDER_COLOR);
       
-      DrawText(categoryName, textX, textY, 10, BLACK);
+      DrawText(categoryName, textX, textY, INVENTORY_LABEL_FONT_SIZE, BLACK);
     }
   }
 

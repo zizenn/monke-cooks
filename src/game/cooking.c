@@ -1,18 +1,14 @@
-#include "game/cooking.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/screens.h"
-#include "game/display_screen.h"
+#include "game/cooking.h"
 #include "game/globals.h"
-#include "minigames/minigame.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "string.h"
-
-//minigames
+#include "minigames/minigame.h"
 #include "minigames/timingbar.h"
 #include "minigames/targetgame.h"
 #include "minigames/basketcatch.h"
+#include "string.h"
 
 static char panelTitle[9] = "";
 int minigameSelection;
@@ -24,9 +20,28 @@ static enum {
   LOSE
 } MinigameStatus;
 
-static whereIsItemFrom newItemFrom;
 static bool cookResultApplied = false;
-ItemType newHolding;
+Holding newHolding;
+
+static void ReduceItemQuantity(void) {
+  if (holding.categoryId < 0) return;
+
+  if (holding.origin == FROM_FRIDGE) {
+    for (int i = 0; i < 11; i++) {
+      if (stockedFridge[i].categoryId == holding.categoryId) {
+        if (stockedFridge[i].quantity > 0) stockedFridge[i].quantity--;
+        break;
+      }
+    }
+  } else if (holding.origin == FROM_PANTRY) {
+    for (int i = 0; i < 10; i++) {
+      if (stockedPantry[i].categoryId == holding.categoryId) {
+        if (stockedPantry[i].quantity > 0) stockedPantry[i].quantity--;
+        break;
+      }
+    }
+  }
+}
 
 void InitCook() {
   MinigameStatus = false;
@@ -35,19 +50,15 @@ void InitCook() {
   switch (currentCookType) {
     case PAN:
       strcpy(panelTitle, "stove");
-      newItemFrom = FROM_STOVE;
       break;
     case DEEP_FRY:
       strcpy(panelTitle, "deep fry");
-      newItemFrom = FROM_DEEP_FRY;
       break;
     case OVEN:
       strcpy(panelTitle, "oven");
-      newItemFrom = FROM_OVEN;
       break;
     case GRILL:
       strcpy(panelTitle, "grill");
-      newItemFrom = FROM_GRILL;
       break;
     case 0:
       break;
@@ -56,9 +67,9 @@ void InitCook() {
   minigameSelection = GetRandomValue(0, 2);
 
   FoodCategory *categories = NULL;
-  if (itemFrom == FROM_FRIDGE) {
+  if (holding.origin == FROM_FRIDGE) {
     categories = allFoods;
-  } else if (itemFrom == FROM_PANTRY) {
+  } else if (holding.origin == FROM_PANTRY) {
     categories = allPantry;
   } else {
     return;
@@ -71,7 +82,13 @@ void InitCook() {
   }
 
   Foods nextVariant = categories[categoryId].variants[nextVariantId];
-  newHolding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
+  newHolding = (Holding){
+    categoryId, 
+    nextVariantId, 
+    nextVariant.cook_type,
+    holding.origin,   // Keep the original origin
+    ARRAY_FOOD        // Food items stay in ARRAY_FOOD
+  };
   debugText = categories[categoryId].variants[nextVariantId].name;
 
   switch (minigameSelection) {
@@ -134,7 +151,7 @@ void UpdateCook() {
   if (MinigameStatus == WIN && !cookResultApplied) {
     // Textures are preloaded and persistent - no need to load/unload
     holding = newHolding;
-    itemFrom = newItemFrom;
+    ReduceItemQuantity();
     TraceLog(LOG_INFO, "item name: %s", debugText);
     cookResultApplied = true;
     UnloadCook();

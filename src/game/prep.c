@@ -1,6 +1,6 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/cooking.h"
+#include "game/globals.h"
 #include "game/display_screen.h"
 #include "game/game.h"
 #include "game/items.h"
@@ -18,9 +18,9 @@ static void Apply();
 void PrepFood(int currentTile) {
   FoodCategory* categories = NULL;
 
-  if (itemFrom == FROM_FRIDGE) {
+  if (holding.origin == FROM_FRIDGE) {
     categories = allFoods;
-  } else if (itemFrom == FROM_PANTRY) {
+  } else if (holding.origin == FROM_PANTRY) {
     categories = allPantry;
   } else {
     return;
@@ -69,7 +69,13 @@ void PrepFood(int currentTile) {
 }
 
 static void Apply() {
-  holding = (ItemType){categoryId, nextVariantId, nextVariant.cook_type};
+  holding = (Holding){
+    categoryId, 
+    nextVariantId, 
+    nextVariant.cook_type,
+    holding.origin,   // Keep the original origin
+    ARRAY_FOOD        // Food items stay in ARRAY_FOOD
+  };
   currentPrepType = nextVariant.prep_type;
   const char* debugText = nextVariant.name;
   TraceLog(LOG_INFO, "item name: %s", debugText);

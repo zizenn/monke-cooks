@@ -12,6 +12,7 @@
 #endif
 
 #include "external/raylib.h"
+#include "core/enums.h"
 
 typedef enum {
   // Player textures
@@ -119,10 +120,29 @@ typedef struct {
   Texture2D texture;
 } TextureAsset;
 
+// Texture mapping entry: maps (categoryId, variantId, origin) -> TextureID
+typedef struct {
+  int categoryId;
+  int variantId;
+  ItemOrigin origin;
+  TextureID textureId;
+} TextureMapEntry;
+
+// Dynamic texture map
+typedef struct {
+  TextureMapEntry *entries;
+  int count;
+  int capacity;
+} TextureMap;
+
 extern TextureAsset allTextures[TEXTURE_COUNT];
+extern TextureMap textureMap;
 
 // Texture management API
 void ProcessTextureLoadingOnMainThread(void);
+void InitTextureMap(void);
+void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, TextureID textureId);
+void FreeTextureMap(void);
 void UnloadAllTextures(void);
 Texture2D GetTexture(TextureID id);
 Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom);

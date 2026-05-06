@@ -1,10 +1,7 @@
 #include "external/raylib.h"
 #include "external/raygui.h"
-#include "game/game.h"
 #include "game/globals.h"
 #include "game/items.h"
-#include "game/cooking.h"
-#include "minigames/minigame.h"
 #include "stddef.h"
 
 // cooking
@@ -13,9 +10,12 @@ PREP_TYPE currentPrepType;
 PREP_TYPE prepFrom;
 
 // game
-ItemType holding;
-whereIsItemFrom itemFrom;
+Holding holding;
 Texture2D playerTexture[4];
+
+// Dynamic item counts (calculated at runtime based on array sizes)
+int fridgeItemCountRuntime;
+int pantryItemCountRuntime;
 
 // ===== INGREDIENT VARIANT ARRAYS =====
 
@@ -260,4 +260,10 @@ void DrawNotifications() {
   DrawRectangle((int)notifPanelBounds.x, (int)notifPanelBounds.y, (int)notifPanelBounds.width, (int)notifPanelBounds.height, notifColor);
   DrawRectangle((int)notifPanelBounds.x + 5, (int)notifPanelBounds.y + 5, (int)notifPanelBounds.width - 10, (int)notifPanelBounds.height - 10, WHITE);
   DrawText(notifText, (int)notifPanelBounds.x + 10, (int)notifPanelBounds.y + (int)notifPanelBounds.height / 2 - 10, 20, notifColor);
+}
+
+// Initialize runtime counts (call this once at startup)
+void InitializeRuntimeCounts(void) {
+  fridgeItemCountRuntime = sizeof(allFoods) / sizeof(allFoods[0]);
+  pantryItemCountRuntime = sizeof(allPantry) / sizeof(allPantry[0]);
 }

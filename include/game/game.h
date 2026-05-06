@@ -2,7 +2,8 @@
 #define GAME_H
 
 #include "external/raylib.h"
-#include "game/items.h"
+#include "core/types.h"
+#include "config.h"
 
 typedef enum {
   UP,
@@ -11,29 +12,7 @@ typedef enum {
   RIGHT
 } DIRECTION;
 
-typedef enum {
-  FROM_FRIDGE,
-  FROM_PANTRY,
-  FROM_STOVE,
-  FROM_OVEN,
-  FROM_DEEP_FRY,
-  FROM_GRILL,
-  FROM_NONE
-} whereIsItemFrom;
-
-extern whereIsItemFrom itemFrom;
-void QuantityLower(whereIsItemFrom type);
-
 // tiling system
-enum {
-  TILE_SIZE = 64,
-  VISIBLE_ROWS = 9,
-  mapRows = 9,
-  mapCols = 16,
-  VIRTUAL_WIDTH = TILE_SIZE * 16,
-  VIRTUAL_HEIGHT = TILE_SIZE * 9
-};
-
 static inline int TileToPixels(int tiles) {
   return tiles * TILE_SIZE;
 }
@@ -44,7 +23,7 @@ static inline float TilesToPixels(float tiles) {
 
 // player
 static const int PLAYER_TEXTURE_COUNT = 4;
-extern ItemType holding;
+extern Holding holding;
 extern Texture2D playerTexture[4];
 
 #endif

@@ -1,13 +1,13 @@
 #ifndef BASKETCATCH_H
 #define BASKETCATCH_H
 
-typedef enum {
-    BASKET_CATCH_RUNNING,
-    BASKET_CATCH_WIN,
-    BASKET_CATCH_LOSE
-    
-} BasketCatchResult;
+#include "core/enums.h"
 
 extern BasketCatchResult basketCatchResult;
+
+void InitBasketMinigame(void);
+void UpdateBasketMinigame(void);
+void DrawBasketMinigame(void);
+void UnloadBasketMinigame(void);
 
 #endif

@@ -8,173 +8,153 @@
 #include "game/config.h"
 #include "external/raylib.h"
 #include "stdbool.h"
+#include "stdlib.h"
 
-// globals
+// === SCENE ACTION ENUM ===
+typedef enum {
+  SCENE_INIT,
+  SCENE_UPDATE,
+  SCENE_DRAW,
+  SCENE_UNLOAD
+} SceneAction;
+
+// === SCENE TYPE ENUM ===
+typedef enum {
+  SCENE_FULL_SCREEN,  // Replaces previous full-screen scene
+  SCENE_OVERLAY       // Stacks on top
+} SceneType;
+
+// === SCENE HANDLER STRUCT ===
+typedef struct {
+  GameScreen id;
+  SceneType type;
+  void (*init)(void);
+  void (*update)(void);
+  void (*draw)(void);
+  void (*unload)(void);
+} SceneHandler;
+
+// === SCENE MANAGER STRUCT ===
+typedef struct {
+  GameScreen *scenes;
+  int count;
+  int capacity;
+} SceneManager;
+
+static SceneManager sceneManager = {0};
+
+// === SCENE HANDLERS TABLE ===
+static const SceneHandler sceneHandlers[] = {
+  { MAIN_MENU, SCENE_FULL_SCREEN, InitMainMenu, UpdateMainMenu, DrawMainMenu, UnloadMainMenu },
+  { CAMPAIGN_MENU, SCENE_FULL_SCREEN, InitCampaignMenu, UpdateCampaignMenu, DrawCampaignMenu, UnloadCampaignMenu },
+  { GAME_SCREEN, SCENE_FULL_SCREEN, InitGame, UpdateGame, DrawGame, UnloadGame },
+  { INVENTORY_SCREEN, SCENE_OVERLAY, InitInventory, UpdateInventory, DrawInventory, UnloadInventory },
+  { STOVE_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
+  { OVEN_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
+  { DEEP_FRY_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
+  { GRILL_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
+};
+
+#define SCENE_HANDLER_COUNT (sizeof(sceneHandlers) / sizeof(sceneHandlers[0]))
+
+// === GLOBALS ===
 GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas;
 int targetFPS = 60;
 
-// screens
-GameScreen screensToNotUnloadFromGame[] = {
-  INVENTORY_SCREEN,
-  STOVE_SCREEN,
-  OVEN_SCREEN,
-  DEEP_FRY_SCREEN,
-  GRILL_SCREEN
-};
+// === FORWARD DECLARATIONS ===
+void PushScene(GameScreen scene);
+void PopScene(void);
+void HandleScene(GameScreen scene, SceneAction action);
+void CleanupSceneManager(void);
 
-bool returnToGameAndUnload = false;
+// === SCENE MANAGER FUNCTIONS ===
 
-static void EnterScene(GameScreen scene) {
-  switch (scene) {
-    case MAIN_MENU:
-      InitMainMenu();
-      break;
-    case CAMPAIGN_MENU:
-      InitCampaignMenu();
-      break;
-    case GAME_SCREEN:
-      InitGame();
-      break;
-    case INVENTORY_SCREEN:
-      InitInventory();
-    case STOVE_SCREEN:
-    case OVEN_SCREEN:
-    case DEEP_FRY_SCREEN:
-    case GRILL_SCREEN:
-      InitCook();
-      break;
-    default:
-      break;
-  }
-}
-
-static void ExitScene(GameScreen scene) {
-  switch (scene) {
-    case MAIN_MENU:
-      UnloadMainMenu();
-      break;
-    case CAMPAIGN_MENU:
-      UnloadCampaignMenu();
-      break;
-    case GAME_SCREEN:
-      UnloadGame();
-      break;
-    case INVENTORY_SCREEN:
-      UnloadInventory();
-      break;
-    case STOVE_SCREEN:
-    case OVEN_SCREEN:
-    case DEEP_FRY_SCREEN:
-    case GRILL_SCREEN:
-      UnloadCook();
-      break;
-    default:
-      break;
-  }
-}
-
-static void UpdateScene(GameScreen scene) {
-  switch (scene) {
-    case MAIN_MENU:
-      UpdateMainMenu();
-      break;
-    case CAMPAIGN_MENU:
-      UpdateCampaignMenu();
-      break;
-    case GAME_SCREEN:
-      UpdateGame();
-      break;
-    case INVENTORY_SCREEN:
-      UpdateInventory();
-      break;
-    case STOVE_SCREEN:
-    case OVEN_SCREEN:
-    case DEEP_FRY_SCREEN:
-    case GRILL_SCREEN:
-      UpdateCook();
-      break;
-    default:
-      break;
-  }
-}
-
-static void DrawScene(GameScreen scene) {
-  switch (scene) {
-    case MAIN_MENU:
-      DrawMainMenu();
-      break;
-    case CAMPAIGN_MENU:
-      DrawCampaignMenu();
-      break;
-    case GAME_SCREEN:
-      DrawGame();
-      break;
-    case INVENTORY_SCREEN:
-      DrawGame();
-      DrawInventory();
-      break;
-    case STOVE_SCREEN:
-    case OVEN_SCREEN:
-    case DEEP_FRY_SCREEN:
-    case GRILL_SCREEN:
-      DrawGame();
-      DrawCook();
-      break;
-
-    default:
-      break;
-  }
-}
-
-static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
-  GameScreen from = *activeScene;
-  bool unloadGame = true;
- 
-  switch (from) {
-    case INVENTORY_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-    case STOVE_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-    case OVEN_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-    case DEEP_FRY_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-    case GRILL_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-
-    default:
-      returnToGameAndUnload = false;
-      break;
-  }
-
-  for (int i = 0; i < sizeof(screensToNotUnloadFromGame) / sizeof(screensToNotUnloadFromGame[0]); i++) {
-    if (nextScene == screensToNotUnloadFromGame[i]) {
-      unloadGame = false;
+// Find scene type
+static SceneType GetSceneType(GameScreen scene) {
+  for (int i = 0; i < SCENE_HANDLER_COUNT; i++) {
+    if (sceneHandlers[i].id == scene) {
+      return sceneHandlers[i].type;
     }
   }
+  return SCENE_FULL_SCREEN;  // Default to full-screen
+}
 
-  if (from == GAME_SCREEN && unloadGame == false) {
-    EnterScene(nextScene);
-  } else if (returnToGameAndUnload == true && nextScene == GAME_SCREEN) {
-    ExitScene(from);
-  } else {
-    ExitScene(from);
-    EnterScene(nextScene);
+void InitSceneManager(void) {
+  sceneManager.capacity = 10;
+  sceneManager.scenes = (GameScreen *)malloc(10 * sizeof(GameScreen));
+  sceneManager.count = 0;
+  PushScene(MAIN_MENU);
+}
+
+void PushScene(GameScreen scene) {
+  // If pushing a full-screen scene, pop the current one first
+  if (GetSceneType(scene) == SCENE_FULL_SCREEN && sceneManager.count > 0) {
+    PopScene();
   }
+  
+  // Grow array if needed
+  if (sceneManager.count >= sceneManager.capacity) {
+    sceneManager.capacity *= 2;
+    sceneManager.scenes = (GameScreen *)realloc(sceneManager.scenes, 
+      sceneManager.capacity * sizeof(GameScreen));
+  }
+  
+  // Add scene to stack
+  sceneManager.scenes[sceneManager.count++] = scene;
+  currentScreen = scene;  // Update global for compatibility
+  
+  // Initialize the scene
+  HandleScene(scene, SCENE_INIT);
+}
 
-  *activeScene = nextScene;
+void PopScene(void) {
+  if (sceneManager.count == 0) return;
+  
+  GameScreen scene = sceneManager.scenes[sceneManager.count - 1];
+  sceneManager.count--;
+  
+  // Unload the scene
+  HandleScene(scene, SCENE_UNLOAD);
+  
+  // Update global to top scene
+  if (sceneManager.count > 0) {
+    currentScreen = sceneManager.scenes[sceneManager.count - 1];
+  }
+}
+
+// Find and execute scene action
+void HandleScene(GameScreen scene, SceneAction action) {
+  for (int i = 0; i < SCENE_HANDLER_COUNT; i++) {
+    if (sceneHandlers[i].id == scene) {
+      switch (action) {
+        case SCENE_INIT:
+          sceneHandlers[i].init();
+          break;
+        case SCENE_UPDATE:
+          sceneHandlers[i].update();
+          break;
+        case SCENE_DRAW:
+          sceneHandlers[i].draw();
+          break;
+        case SCENE_UNLOAD:
+          sceneHandlers[i].unload();
+          break;
+      }
+      return;
+    }
+  }
+}
+
+void CleanupSceneManager(void) {
+  while (sceneManager.count > 0) {
+    PopScene();
+  }
+  free(sceneManager.scenes);
 }
 
 int main() {
-  GameScreen activeScene = currentScreen;
-
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
@@ -214,8 +194,8 @@ int main() {
     .borderRight = 4,
   };
 
-
-  EnterScene(activeScene);
+  // Initialize scene manager with MAIN_MENU as starting scene
+  InitSceneManager();
 
   while (!WindowShouldClose() && !shouldQuit) {
     float screenWidth = (float)GetScreenWidth();
@@ -224,24 +204,22 @@ int main() {
     SetMouseOffset(0, 0);
     SetMouseScale((float)VIRTUAL_WIDTH / screenWidth, (float)VIRTUAL_HEIGHT / screenHeight);
 
-    if (currentScreen != activeScene) {
-      SwitchScene(&activeScene, currentScreen);
-    }
-
     // Process texture loading on main thread (converts images to textures)
     ProcessTextureLoadingOnMainThread();
     
-    UpdateScene(activeScene);
-    UpdateNotifications();
-
-    if (currentScreen != activeScene) {
-      SwitchScene(&activeScene, currentScreen);
+    // UPDATE all active scenes in the stack
+    for (int i = 0; i < sceneManager.count; i++) {
+      HandleScene(sceneManager.scenes[i], SCENE_UPDATE);
     }
-
+    
     BeginTextureMode(canvas);
     ClearBackground(BLACK);
 
-    DrawScene(activeScene);
+    // DRAW all visible scenes (bottom to top)
+    for (int i = 0; i < sceneManager.count; i++) {
+      HandleScene(sceneManager.scenes[i], SCENE_DRAW);
+    }
+
     DrawNotifications();
 
     EndTextureMode();
@@ -258,19 +236,13 @@ int main() {
     EndDrawing();
   }
 
-  ExitScene(activeScene);
-  if (activeScene == INVENTORY_SCREEN) {
-    ExitScene(GAME_SCREEN);
-  }
-
-  // Stop music manager before closing audio
+  // Cleanup
   StopMusicManager();
-  
+  CleanupSceneManager();
   UnloadAllTextures();
   UnloadRenderTexture(canvas);
   CloseAudioDevice();
   CloseWindow();
 
   return 0;
-
 }

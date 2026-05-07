@@ -30,9 +30,13 @@ static int *matchedItems = NULL;
 static int matchCount = 0;
 static char lastSearchText[INVENTORY_SEARCH_BOX_MAX_LENGTH] = "";
 static int selectedItem;
+static int selectedMatchIndex = 0;  // Index in matchedItems array (for keyboard selection)
+static bool mouseSelectionArmed = false;
 static char (*lowerCategoryNames)[INVENTORY_CATEGORY_NAME_MAX_LENGTH] = NULL;
 static StockItem *stockedArray = NULL;
 static int ingredientCount;
+
+static bool wasSpaceRemoved = false;
 
 // sizing
 static const int COLUMNS = INVENTORY_COLUMNS;
@@ -52,6 +56,14 @@ void InitInventory() {
   searchBarText[0] = '\0';
   searchEditMode = true;
   selectedItem = holding.categoryId;
+  
+  // Consume key presses and character input from SPACE that opened inventory
+  while (GetKeyPressed() != 0) {}
+  while (GetCharPressed() != 0) {}
+  wasSpaceRemoved = true;
+  
+  selectedMatchIndex = 0;
+  mouseSelectionArmed = false;
 
   // Determine which inventory to use based on currentInventoryType
   switch (currentInventoryType) {
@@ -111,37 +123,18 @@ void InitInventory() {
 }
 
 void UpdateInventory() {
+  // Consume any remaining character input on first frame to block SPACE from entering text
+  if (wasSpaceRemoved) {
+    while (GetCharPressed() != 0) {}
+    wasSpaceRemoved = false;
+  }
+  
   if (IsKeyPressed(KEY_ESCAPE)) {
     searchEditMode = false;
-    currentScreen = GAME_SCREEN;
-  } else if (IsKeyPressed(KEY_ENTER)) {
-    if (matchCount > 0) {
-      int selectedStockedIndex = matchedItems[0];
-      int categoryId = stockedArray[selectedStockedIndex].categoryId;
-      
-      if (stockedArray[selectedStockedIndex].quantity > 0) {
-        int variantId = 0;  // Start with first variant (RAW/FRESH)
-        
-        // Get the appropriate category data
-        FoodCategory *category = (currentInventoryType == FROM_FRIDGE) ? &allFridge[categoryId] : &allPantry[categoryId];
-        COOK_TYPE cookType = category->variants[variantId].cook_type;
-        
-        holding = (Holding){ categoryId, variantId, cookType, currentInventoryType, ARRAY_FOOD };
-        
-        // Set prep type if from pantry
-        if (currentInventoryType == FROM_PANTRY) {
-          currentPrepType = category->variants[variantId].prep_type;
-        }
-        
-        TraceLog(LOG_INFO, "category id: %d  |  variant id: %d  |  item name: %s", categoryId, variantId, category->variants->name);
-
-        searchEditMode = false;
-        currentScreen = GAME_SCREEN;
-      }
-    }
+    PopScene();
   }
-
-  // Update search filter
+  
+  // Handle search filter updates
   if (strcmp(searchBarText, lastSearchText) != 0) {
     matchCount = 0;
 
@@ -152,30 +145,145 @@ void UpdateInventory() {
     }
 
     strcpy(lastSearchText, searchBarText);
+    selectedMatchIndex = 0;  // Reset selection when search changes
+    mouseSelectionArmed = false;
+  }
+  
+  // Handle selection and confirmation
+  if (matchCount > 0) {
+    // Keyboard selection (grid movement with arrow keys)
+    int layoutItemsPerRow = (panelBounds.width - 20) / ITEM_WIDTH;
+    if (layoutItemsPerRow < 1) layoutItemsPerRow = 1;
+    int totalRows = (matchCount + layoutItemsPerRow - 1) / layoutItemsPerRow;
+
+    int selectedRow = selectedMatchIndex / layoutItemsPerRow;
+    int selectedCol = selectedMatchIndex % layoutItemsPerRow;
+    bool movedByKeyboard = false;
+
+    if (IsKeyPressed(KEY_LEFT)) {
+      if (selectedCol > 0) {
+        selectedCol--;
+        movedByKeyboard = true;
+      }
+    } else if (IsKeyPressed(KEY_RIGHT)) {
+      int rightIndex = selectedRow * layoutItemsPerRow + (selectedCol + 1);
+      if (rightIndex < matchCount) {
+        selectedCol++;
+        movedByKeyboard = true;
+      }
+    } else if (IsKeyPressed(KEY_UP)) {
+      if (selectedRow > 0) {
+        selectedRow--;
+        movedByKeyboard = true;
+      }
+    } else if (IsKeyPressed(KEY_DOWN)) {
+      if (selectedRow < totalRows - 1) {
+        selectedRow++;
+        movedByKeyboard = true;
+      }
+    }
+
+    int newSelectedIndex = selectedRow * layoutItemsPerRow + selectedCol;
+    if (newSelectedIndex >= matchCount) newSelectedIndex = matchCount - 1;
+    selectedMatchIndex = newSelectedIndex;
+    if (movedByKeyboard) mouseSelectionArmed = false;
+    
+    // Mouse click detection
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      Vector2 virtualMousePos = GetMousePosition();
+      
+      // Check if click is within inventory panel
+      if (virtualMousePos.x >= panelBounds.x && virtualMousePos.x < panelBounds.x + panelBounds.width &&
+          virtualMousePos.y >= panelBounds.y && virtualMousePos.y < panelBounds.y + panelBounds.height) {
+        int startX = panelBounds.x + 5;
+        int startY = panelBounds.y + 5;
+        int maxWidth = panelBounds.width - 20;
+        int itemsPerRow = maxWidth / ITEM_WIDTH;
+        if (itemsPerRow < 1) itemsPerRow = 1;
+
+        float localX = virtualMousePos.x - startX;
+        float localY = virtualMousePos.y - startY + scrollOffset.y;
+        int rowClicked = (int)(localY / ITEM_HEIGHT);
+        int colClicked = (int)(localX / ITEM_WIDTH);
+        int itemIndexClicked = rowClicked * itemsPerRow + colClicked;
+
+        if (localX >= 0 && localY >= 0 &&
+            colClicked >= 0 && colClicked < itemsPerRow &&
+            itemIndexClicked >= 0 && itemIndexClicked < matchCount) {
+          // Confirm only after an explicit prior mouse selection
+          if (mouseSelectionArmed && itemIndexClicked == selectedMatchIndex) {
+            // Confirm selection
+            int selectedStockedIndex = matchedItems[selectedMatchIndex];
+            int categoryId = stockedArray[selectedStockedIndex].categoryId;
+            
+            if (stockedArray[selectedStockedIndex].quantity > 0) {
+              int variantId = 0;
+              FoodCategory *category = (currentInventoryType == FROM_FRIDGE) ? &allFridge[categoryId] : &allPantry[categoryId];
+              COOK_TYPE cookType = category->variants[variantId].cook_type;
+              
+              holding = (Holding){ categoryId, variantId, cookType, currentInventoryType, ARRAY_FOOD };
+              
+              if (currentInventoryType == FROM_PANTRY) {
+                currentPrepType = category->variants[variantId].prep_type;
+              }
+              
+              searchEditMode = false;
+              PopScene();
+            }
+          } else {
+            // First click selects and highlights the item
+            selectedMatchIndex = itemIndexClicked;
+            mouseSelectionArmed = true;
+          }
+        }
+      }
+    }
+    
+    // ENTER to confirm selection
+    if (IsKeyPressed(KEY_ENTER)) {
+      int selectedStockedIndex = matchedItems[selectedMatchIndex];
+      int categoryId = stockedArray[selectedStockedIndex].categoryId;
+      
+      if (stockedArray[selectedStockedIndex].quantity > 0) {
+        int variantId = 0;
+        FoodCategory *category = (currentInventoryType == FROM_FRIDGE) ? &allFridge[categoryId] : &allPantry[categoryId];
+        COOK_TYPE cookType = category->variants[variantId].cook_type;
+        
+        holding = (Holding){ categoryId, variantId, cookType, currentInventoryType, ARRAY_FOOD };
+        
+        if (currentInventoryType == FROM_PANTRY) {
+          currentPrepType = category->variants[variantId].prep_type;
+        }
+        
+        TraceLog(LOG_INFO, "category id: %d  |  variant id: %d  |  item name: %s", categoryId, variantId, category->variants->name);
+
+        searchEditMode = false;
+        PopScene();
+      }
+    }
   }
 }
 
 void DrawInventory() {
-  Rectangle panelContent = {0, 0, panelBounds.width-15, 1000};
-  Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16};
   int startX = panelBounds.x + 5;
   int startY = panelBounds.y + 5;
   int maxWidth = panelBounds.width - 20;
   int itemsPerRow = maxWidth / ITEM_WIDTH;
   if (itemsPerRow < 1) itemsPerRow = 1;
+  int totalRows = (matchCount + itemsPerRow - 1) / itemsPerRow;
+
+  Rectangle panelContent = {0, 0, panelBounds.width-15, totalRows * ITEM_HEIGHT};
+  Rectangle searchBounds = {totalArea.x, totalArea.y+panelBounds.height, totalArea.width, 16};
 
   GuiScrollPanel(panelBounds, NULL, panelContent, &scrollOffset, NULL);
   if (GuiTextBox(searchBounds, searchBarText, INVENTORY_SEARCH_BOX_MAX_LENGTH, searchEditMode)) {
     searchEditMode = !searchEditMode;
     if (!searchEditMode && matchCount == 0 && searchBarText[0] != '\0') {
-      currentScreen = GAME_SCREEN;
+      PopScene();
     }
   }
 
   BeginScissorMode(panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height);
-
-  int totalRows = (matchCount + itemsPerRow - 1) / itemsPerRow;
-  panelContent.height = totalRows * ITEM_HEIGHT;
  
   if (matchCount != 0) {
     for (int i = 0; i < matchCount; i++) {
@@ -185,6 +293,11 @@ void DrawInventory() {
 
       float xPos = startX + (col * ITEM_WIDTH);
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
+
+      // Highlight selected item behind texture
+      if (i == selectedMatchIndex) {
+        DrawRectangle(xPos, yPos, ITEM_WIDTH, ITEM_HEIGHT, Fade(BLUE, 0.45f));
+      }
 
       // Draw quantity
       char quantityStr[10];

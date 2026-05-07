@@ -31,7 +31,7 @@ void DrawMainMenu(void) {
 
     if (DrawTexturedButton(rectangles[0], "Campaign", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
-        currentScreen = CAMPAIGN_MENU;
+        PushScene(CAMPAIGN_MENU);
     }
 
     if (DrawTexturedButton(rectangles[1], "Multiplayer", BUTTON_STYLE_PRIMARY)) {

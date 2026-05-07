@@ -89,12 +89,10 @@ void InitCook() {
 
 void UpdateCook() {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    UnloadCook();
-    currentScreen = GAME_SCREEN;
+    PopScene();
     return;
   } else if (IsKeyPressed(KEY_ENTER)) {
-    UnloadCook();
-    currentScreen = GAME_SCREEN;
+    PopScene();
     return;
   }
 
@@ -137,12 +135,10 @@ void UpdateCook() {
     ReduceItemQuantity();
     TraceLog(LOG_INFO, "item name: %s", debugText);
     cookResultApplied = true;
-    UnloadCook();
-    currentScreen = GAME_SCREEN;
+    PopScene();
   }
   if (MinigameStatus == LOSE) {
-    UnloadCook();
-    currentScreen = GAME_SCREEN;
+    PopScene();
   }
 }
 

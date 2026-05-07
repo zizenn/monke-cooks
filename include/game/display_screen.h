@@ -1,6 +1,12 @@
 #ifndef SCREEN_MENU_H
 #define SCREEN_MENU_H
 
+#include "core/enums.h"
+
+// --- SCENE MANAGEMENT ---
+void PushScene(GameScreen scene);
+void PopScene(void);
+
 // --- MENUS ---
 
 // main menu

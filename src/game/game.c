@@ -129,7 +129,7 @@ void DrawGame(void) {
     case INVENTORY_MENU:
       isMenuOpen = false;
       currentMenu = NONE;
-      currentScreen = INVENTORY_SCREEN;
+      PushScene(INVENTORY_SCREEN);
       break;
 
     case STOVE_MENU: 
@@ -137,7 +137,7 @@ void DrawGame(void) {
       currentMenu = NONE;
       if (holding.cookType == PAN) {
         currentCookType = PAN;
-        currentScreen = STOVE_SCREEN;
+        PushScene(STOVE_SCREEN);
       }
       break;
 
@@ -146,7 +146,7 @@ void DrawGame(void) {
       currentMenu = NONE;
       if (holding.cookType == OVEN) {
         currentCookType = OVEN;
-        currentScreen = OVEN_SCREEN;
+        PushScene(OVEN_SCREEN);
       }
       break;
 
@@ -155,7 +155,7 @@ void DrawGame(void) {
       currentMenu = NONE;
        if (holding.cookType == DEEP_FRY) {
         currentCookType = DEEP_FRY;
-        currentScreen = DEEP_FRY_SCREEN;
+        PushScene(DEEP_FRY_SCREEN);
       }
       break;
 
@@ -164,7 +164,7 @@ void DrawGame(void) {
       currentMenu = NONE;
       if (holding.cookType == GRILL) {
         currentCookType = GRILL;
-        currentScreen = GRILL_SCREEN;
+        PushScene(GRILL_SCREEN);
       }
       break;
   }

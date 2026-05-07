@@ -3,15 +3,10 @@
 #include "external/raymath.h"
 #include "game/globals.h"
 #include "game/game.h"
-#include "game/items.h"
 #include "game/config.h"
 #include "game/display_screen.h"
-#include "minigames/minigame.h"
 #include "minigames/basketcatch.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include "stdbool.h"
-#include "math.h"
 
 BasketCatchResult basketCatchResult = BASKET_CATCH_RUNNING;
 

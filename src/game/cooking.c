@@ -4,44 +4,27 @@
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
-#include "minigames/minigame.h"
 #include "minigames/timingbar.h"
 #include "minigames/targetgame.h"
 #include "minigames/basketcatch.h"
 #include "string.h"
 
-static char panelTitle[9] = "";
-int minigameSelection;
-const char* debugText;
-
+// enums
 static enum {
   RUNNING,
   WIN,
   LOSE
 } MinigameStatus;
 
+// variables
 static bool cookResultApplied = false;
 Holding newHolding;
+static char panelTitle[9] = "";
+int minigameSelection;
+const char* debugText;
 
-static void ReduceItemQuantity(void) {
-  if (holding.categoryId < 0) return;
-
-  if (holding.origin == FROM_FRIDGE) {
-    for (int i = 0; i < 11; i++) {
-      if (stockedFridge[i].categoryId == holding.categoryId) {
-        if (stockedFridge[i].quantity > 0) stockedFridge[i].quantity--;
-        break;
-      }
-    }
-  } else if (holding.origin == FROM_PANTRY) {
-    for (int i = 0; i < 10; i++) {
-      if (stockedPantry[i].categoryId == holding.categoryId) {
-        if (stockedPantry[i].quantity > 0) stockedPantry[i].quantity--;
-        break;
-      }
-    }
-  }
-}
+// function prototypes
+static void ReduceItemQuantity(void);
 
 void InitCook() {
   MinigameStatus = false;
@@ -68,7 +51,7 @@ void InitCook() {
 
   FoodCategory *categories = NULL;
   if (holding.origin == FROM_FRIDGE) {
-    categories = allFoods;
+    categories = allFridge;
   } else if (holding.origin == FROM_PANTRY) {
     categories = allPantry;
   } else {
@@ -107,11 +90,11 @@ void InitCook() {
 void UpdateCook() {
   if (IsKeyPressed(KEY_ESCAPE)) {
     UnloadCook();
-    currentScreen = GAME;
+    currentScreen = GAME_SCREEN;
     return;
   } else if (IsKeyPressed(KEY_ENTER)) {
     UnloadCook();
-    currentScreen = GAME;
+    currentScreen = GAME_SCREEN;
     return;
   }
 
@@ -155,11 +138,11 @@ void UpdateCook() {
     TraceLog(LOG_INFO, "item name: %s", debugText);
     cookResultApplied = true;
     UnloadCook();
-    currentScreen = GAME;
+    currentScreen = GAME_SCREEN;
   }
   if (MinigameStatus == LOSE) {
     UnloadCook();
-    currentScreen = GAME;
+    currentScreen = GAME_SCREEN;
   }
 }
 
@@ -190,5 +173,25 @@ void UnloadCook() {
     case 2:
       UnloadBasketMinigame();
       break;
+  }
+}
+
+static void ReduceItemQuantity(void) {
+  if (holding.categoryId < 0) return;
+
+  if (holding.origin == FROM_FRIDGE) {
+    for (int i = 0; i < 11; i++) {
+      if (stockedFridge[i].categoryId == holding.categoryId) {
+        if (stockedFridge[i].quantity > 0) stockedFridge[i].quantity--;
+        break;
+      }
+    }
+  } else if (holding.origin == FROM_PANTRY) {
+    for (int i = 0; i < 10; i++) {
+      if (stockedPantry[i].categoryId == holding.categoryId) {
+        if (stockedPantry[i].quantity > 0) stockedPantry[i].quantity--;
+        break;
+      }
+    }
   }
 }

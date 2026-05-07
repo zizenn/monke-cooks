@@ -145,6 +145,6 @@ void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, Texture
 void FreeTextureMap(void);
 void UnloadAllTextures(void);
 Texture2D GetTexture(TextureID id);
-Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom);
+Texture2D GetHeldItemTexture();
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "core/types.h"
 
-extern FoodCategory allFoods[];
+extern FoodCategory allFridge[];
 extern StockItem stockedFridge[];
 #define STOCKED_FRIDGE_COUNT 11
 extern int fridgeItemCountRuntime;

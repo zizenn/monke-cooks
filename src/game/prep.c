@@ -19,7 +19,7 @@ void PrepFood(int currentTile) {
   FoodCategory* categories = NULL;
 
   if (holding.origin == FROM_FRIDGE) {
-    categories = allFoods;
+    categories = allFridge;
   } else if (holding.origin == FROM_PANTRY) {
     categories = allPantry;
   } else {

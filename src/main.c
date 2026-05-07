@@ -1,10 +1,11 @@
+#include "core/enums.h"
 #include "game/display_screen.h"
 #include "game/buttons.h"
-#include "game/game.h"
 #include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/thread_manager.h"
 #include "game/globals.h"
+#include "game/config.h"
 #include "external/raylib.h"
 #include "stdbool.h"
 
@@ -16,8 +17,7 @@ int targetFPS = 60;
 
 // screens
 GameScreen screensToNotUnloadFromGame[] = {
-  FRIDGE_SCREEN,
-  PANTRY_SCREEN,
+  INVENTORY_SCREEN,
   STOVE_SCREEN,
   OVEN_SCREEN,
   DEEP_FRY_SCREEN,
@@ -34,15 +34,11 @@ static void EnterScene(GameScreen scene) {
     case CAMPAIGN_MENU:
       InitCampaignMenu();
       break;
-    case GAME:
+    case GAME_SCREEN:
       InitGame();
       break;
-    case FRIDGE_SCREEN:
-      InitFridge();
-       break;
-    case PANTRY_SCREEN:
-       InitPantry();
-       break;
+    case INVENTORY_SCREEN:
+      InitInventory();
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:
@@ -62,14 +58,11 @@ static void ExitScene(GameScreen scene) {
     case CAMPAIGN_MENU:
       UnloadCampaignMenu();
       break;
-    case GAME:
+    case GAME_SCREEN:
       UnloadGame();
       break;
-    case FRIDGE_SCREEN:
-      UnloadFridge();
-      break;
-    case PANTRY_SCREEN:
-      UnloadPantry();
+    case INVENTORY_SCREEN:
+      UnloadInventory();
       break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
@@ -90,15 +83,12 @@ static void UpdateScene(GameScreen scene) {
     case CAMPAIGN_MENU:
       UpdateCampaignMenu();
       break;
-    case GAME:
+    case GAME_SCREEN:
       UpdateGame();
       break;
-    case FRIDGE_SCREEN:
-      UpdateFridge();
+    case INVENTORY_SCREEN:
+      UpdateInventory();
       break;
-     case PANTRY_SCREEN:
-       UpdatePantry();
-       break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:
@@ -118,17 +108,13 @@ static void DrawScene(GameScreen scene) {
     case CAMPAIGN_MENU:
       DrawCampaignMenu();
       break;
-    case GAME:
+    case GAME_SCREEN:
       DrawGame();
       break;
-    case FRIDGE_SCREEN:
+    case INVENTORY_SCREEN:
       DrawGame();
-      DrawFridge();
+      DrawInventory();
       break;
-     case PANTRY_SCREEN:
-       DrawGame();
-       DrawPantry();
-       break;
     case STOVE_SCREEN:
     case OVEN_SCREEN:
     case DEEP_FRY_SCREEN:
@@ -147,10 +133,7 @@ static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
   bool unloadGame = true;
  
   switch (from) {
-    case FRIDGE_SCREEN:
-      returnToGameAndUnload = true;
-      break;
-    case PANTRY_SCREEN:
+    case INVENTORY_SCREEN:
       returnToGameAndUnload = true;
       break;
     case STOVE_SCREEN:
@@ -177,9 +160,9 @@ static void SwitchScene(GameScreen *activeScene, GameScreen nextScene) {
     }
   }
 
-  if (from == GAME && unloadGame == false) {
+  if (from == GAME_SCREEN && unloadGame == false) {
     EnterScene(nextScene);
-  } else if (returnToGameAndUnload == true && nextScene == GAME) {
+  } else if (returnToGameAndUnload == true && nextScene == GAME_SCREEN) {
     ExitScene(from);
   } else {
     ExitScene(from);
@@ -276,13 +259,10 @@ int main() {
   }
 
   ExitScene(activeScene);
-  if (activeScene == FRIDGE_SCREEN) {
-    ExitScene(GAME);
+  if (activeScene == INVENTORY_SCREEN) {
+    ExitScene(GAME_SCREEN);
   }
-  if (activeScene == PANTRY_SCREEN) {
-    ExitScene(GAME);
-  }
-  
+
   // Stop music manager before closing audio
   StopMusicManager();
   

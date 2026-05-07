@@ -1,6 +1,7 @@
 #include "game/texture_manager.h"
 #include "external/raylib.h"
 #include "stdlib.h"
+#include "game/globals.h"
 
 TextureMap textureMap = {0};
 
@@ -105,16 +106,16 @@ TextureAsset allTextures[TEXTURE_COUNT] = {
 // Image cache used by thread_manager for async loading
 typedef struct {
   Image image;
-  int loaded;
+  bool loaded;
 } ImageCache;
 
 static ImageCache imageCache[TEXTURE_COUNT] = {0};
 
-// Called by thread_manager to load images from disk
+// loads images without putting into gpu (so its opengl safe :) )
 void LoadAllTexturesAsync(void) {
   for (int i = 0; i < TEXTURE_COUNT; i++) {
     imageCache[i].image = LoadImage(allTextures[i].filePath);
-    imageCache[i].loaded = i;
+    imageCache[i].loaded = true;
   }
 }
 
@@ -246,11 +247,11 @@ void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, Texture
   textureMap.count++;
 }
 
-Texture2D GetHeldItemTexture(int categoryId, int variantId, int itemFrom) {
+Texture2D GetHeldItemTexture() {
   for (int i = 0; i < textureMap.count; i++) {
-    if (textureMap.entries[i].categoryId == categoryId &&
-        textureMap.entries[i].variantId == variantId &&
-        textureMap.entries[i].origin == itemFrom) {
+    if (textureMap.entries[i].categoryId == holding.categoryId &&
+        textureMap.entries[i].variantId == holding.variantId &&
+        textureMap.entries[i].origin == holding.origin) {
       return GetTexture(textureMap.entries[i].textureId);
     }
   }

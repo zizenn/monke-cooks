@@ -1,8 +1,8 @@
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
 #include "game/globals.h"
 #include "game/game.h"
-#include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/thread_manager.h"
 #include "game/display_screen.h"
@@ -29,12 +29,13 @@ typedef enum {
 } TILE_TYPE;
 
 // function prototypes
+static void CalculateKeyPress(void);
 static void MovePlayer(DIRECTION DIR);
 static void Interact(void);
-static int MenuNavigation(Rectangle *rects, int count, int *selected);
 static void LoadMap(const char *filePath);
 static void DrawTile(TILE_TYPE tile, int tx, int ty);
 static void BuildStaticMapLayer(void);
+static int TileToPixels(int tiles);
 
 // variables
 static bool isMenuOpen = false;
@@ -48,7 +49,6 @@ static float moveSpeed = 1.0f;
 static int currentTileX;
 static int currentTileY;
 static bool isMoving = false;
-static bool spaceWasPressed = false;
 
 // player
 static Vector2 playerPos;
@@ -87,43 +87,7 @@ void InitGame(void) {
 }
 
 void UpdateGame(void) {
-  if (!isMenuOpen) {
-    if (IsKeyPressed(KEY_W) && !isMoving) {
-      isMoving = true;
-      facing = UP;
-      MovePlayer(UP);
-      isMoving = false;
-    }
-    if (IsKeyPressed(KEY_S) && !isMoving) {
-      isMoving = true;
-      facing = DOWN;
-      MovePlayer(DOWN);
-      isMoving = false;
-    }
-    if (IsKeyPressed(KEY_A) && !isMoving) {
-      isMoving = true;
-      facing = LEFT;
-      MovePlayer(LEFT);
-      isMoving = false;
-    }
-    if (IsKeyPressed(KEY_D) && !isMoving) {
-      isMoving = true;
-      facing = RIGHT;
-      MovePlayer(RIGHT);
-      isMoving = false;
-    }
-  }
-
-  // interact
-  if (IsKeyPressed(KEY_SPACE) && !isMenuOpen) {
-    Interact();
-    spaceWasPressed = true;
-  }
-
-  // track when space is released
-  if (IsKeyUp(KEY_SPACE)) {
-    spaceWasPressed = false;
-  }
+  CalculateKeyPress();
 }
 
 void DrawGame(void) {
@@ -149,11 +113,11 @@ void DrawGame(void) {
   
   // If holding an item, display the item texture instead
   if (holding.categoryId >= 0) {
-    playerSprite = GetHeldItemTexture(holding.categoryId, holding.variantId, holding.origin);
+    playerSprite = GetHeldItemTexture();
   }
   
   Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
-  Rectangle playerDest = { TilesToPixels(currentTileX), TilesToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
+  Rectangle playerDest = { (float)TileToPixels(currentTileX), (float)TileToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(playerSprite, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
   // dialog_menus
@@ -162,16 +126,10 @@ void DrawGame(void) {
     case NONE:
       break;
 
-    case FRIDGE_MENU:
+    case INVENTORY_MENU:
       isMenuOpen = false;
       currentMenu = NONE;
-      currentScreen = FRIDGE_SCREEN;
-      break;
-
-    case PANTRY_MENU:
-      isMenuOpen = false;
-      currentMenu = NONE;
-      currentScreen = PANTRY_SCREEN;
+      currentScreen = INVENTORY_SCREEN;
       break;
 
     case STOVE_MENU: 
@@ -334,21 +292,53 @@ static void BuildStaticMapLayer(void) {
   hasStaticMapLayer = true;
 }
 
+static void CalculateKeyPress(void) {
+  KeyboardKey key = GetKeyPressed();
+  switch (key) {
+    default:
+      break;
+      
+    case KEY_W:
+      if (!isMenuOpen) MovePlayer(UP);
+      break;
+
+    case KEY_A:
+      if (!isMenuOpen) MovePlayer(LEFT);
+      break;
+
+    case KEY_S:
+      if (!isMenuOpen) MovePlayer(DOWN);
+      break;
+
+    case KEY_D:
+      if (!isMenuOpen) MovePlayer(RIGHT);
+      break;
+
+    case KEY_SPACE:
+      Interact();
+      break;
+  }
+}
+
 static void MovePlayer(DIRECTION DIR) {
+  isMoving = true;
   int nextTileX = currentTileX;
   int nextTileY = currentTileY;
-
   switch (DIR) {
     case UP:
+      facing = UP;
       nextTileY--;
       break;
     case DOWN:
+      facing = DOWN;
       nextTileY++;
       break;
     case LEFT:
+      facing = LEFT;
       nextTileX--;
       break;
     case RIGHT:
+      facing = RIGHT;
       nextTileX++;
       break;
   }
@@ -359,33 +349,8 @@ static void MovePlayer(DIRECTION DIR) {
       currentTileY = nextTileY;
     }
   }
+  isMoving = false;
 }
-
-static int MenuNavigation(Rectangle *rects, int count, int *selected) {
-  if (IsKeyPressed(KEY_D)) (*selected)++;
-  if (IsKeyPressed(KEY_A)) (*selected)--;
-  if (*selected < 0) *selected = 0;
-  if (*selected >= count) *selected = count - 1;
-
-  // draw a rectangle behind to show selection (1 pixel larger on all sides)
-  Rectangle selectionRect = {
-    rects[*selected].x - 1,
-    rects[*selected].y - 1,
-    rects[*selected].width + 2,
-    rects[*selected].height + 2
-  };
-  DrawRectangleRec(selectionRect, YELLOW);
-
-  if (IsKeyPressed(KEY_ESCAPE)) {
-    isMenuOpen = false;
-    currentMenu = NONE;
-    return -1;
-  }
-
-  if (IsKeyPressed(KEY_SPACE) && !spaceWasPressed) return *selected + 1;
-  return -1;
-}
-
 
 static void Interact(void) {
   TILE_TYPE facingType;
@@ -415,10 +380,12 @@ static void Interact(void) {
     default:
       break;
     case FRIDGE:
-      currentMenu = FRIDGE_MENU;
+      currentInventoryType = FROM_FRIDGE;
+      currentMenu = INVENTORY_MENU;
       break;
     case PANTRY:
-      currentMenu = PANTRY_MENU;
+      currentInventoryType = FROM_PANTRY;
+      currentMenu = INVENTORY_MENU;
       break;
     case STOVE_STATION:
       currentMenu = STOVE_MENU;
@@ -459,4 +426,8 @@ static void Interact(void) {
       }
       break;
   }
+}
+
+static int TileToPixels(int tiles) {
+  return tiles * TILE_SIZE;
 }

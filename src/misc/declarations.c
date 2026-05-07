@@ -9,6 +9,9 @@ COOK_TYPE currentCookType;
 PREP_TYPE currentPrepType;
 PREP_TYPE prepFrom;
 
+// inventory
+ItemOrigin currentInventoryType;
+
 // game
 Holding holding;
 Texture2D playerTexture[4];
@@ -92,7 +95,7 @@ Foods cuminVariants[] = {
 };
 
 // All food categories with variants
-FoodCategory allFoods[] = {
+FoodCategory allFridge[] = {
   { "EGG", eggVariants, 3 },
   { "RICE", riceVariants, 3 },
   { "SHIITAKE", shiitakeVariants, 3 },
@@ -264,6 +267,6 @@ void DrawNotifications() {
 
 // Initialize runtime counts (call this once at startup)
 void InitializeRuntimeCounts(void) {
-  fridgeItemCountRuntime = sizeof(allFoods) / sizeof(allFoods[0]);
+  fridgeItemCountRuntime = sizeof(allFridge) / sizeof(allFridge[0]);
   pantryItemCountRuntime = sizeof(allPantry) / sizeof(allPantry[0]);
 }

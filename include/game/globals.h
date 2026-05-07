@@ -5,24 +5,27 @@
 #include "core/types.h"
 #include "external/raylib.h"
 
-// Game state
+// game state
 extern GameScreen currentScreen;
 extern bool shouldQuit;
 extern RenderTexture2D canvas;
 extern int targetFPS;
 
-// Cooking state
+// cooking state
 extern COOK_TYPE currentCookType;
 extern PREP_TYPE currentPrepType;
 extern PREP_TYPE prepFrom;
 
-// Player holding
+// inventory state
+extern ItemOrigin currentInventoryType;
+
+// player holding
 extern Holding holding;
 
 // UI
 extern Rectangle notifPanelBounds;
 
-// Notifications
+// notifications
 void SummonNotif(const char* text, NOTIF_TYPE notifType);
 void UpdateNotifications();
 void DrawNotifications();

@@ -5,7 +5,6 @@
 #include "game/items.h"
 #include "game/config.h"
 #include "game/display_screen.h"
-#include "minigames/minigame.h"
 #include "minigames/targetgame.h"
 #include "stdio.h"
 #include "stdlib.h"

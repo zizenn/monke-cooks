@@ -25,23 +25,17 @@ void UpdateGame(void);
 void DrawGame(void);
 void UnloadGame(void);
 
-// fridge
-void InitFridge(void);
-void UpdateFridge(void);
-void DrawFridge(void);
-void UnloadFridge(void);
-
-// pantry
-void InitPantry(void);
-void UpdatePantry(void);
-void DrawPantry(void);
-void UnloadPantry(void);
+// inventory
+void InitInventory(void);
+void UpdateInventory(void);
+void DrawInventory(void);
+void UnloadInventory(void);
 
 // cooking surfaces (stove, oven, etc.)
-void InitCook();
-void UpdateCook();
-void DrawCook();
-void UnloadCook();
+void InitCook(void);
+void UpdateCook(void);
+void DrawCook(void);
+void UnloadCook(void);
 
 // prep surfaces
 void PrepFood(int currentTile);

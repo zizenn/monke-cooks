@@ -30,7 +30,7 @@ void DrawCampaignMenu(void) {
 
     if (DrawTexturedButton(rectangles[0], "Play Campaign", BUTTON_STYLE_PRIMARY)) {
         PlaySound(clickSound);
-        currentScreen = GAME;
+        currentScreen = GAME_SCREEN;
     }
 
     if (DrawTexturedButton(rectangles[1], "Advancements", BUTTON_STYLE_PRIMARY)) {

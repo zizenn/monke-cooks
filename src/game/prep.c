@@ -3,19 +3,17 @@
 #include "game/globals.h"
 #include "game/display_screen.h"
 #include "game/game.h"
+#include "core/enums.h"
 #include "game/items.h"
+#include "game/state.h"
 #include "stdbool.h"
 #include "string.h"
-
-// variables
-int categoryId;
-Foods nextVariant;
-int nextVariantId;
 
 // function prototypes
 static void Apply();
 
 void PrepFood(int currentTile) {
+  GameState *state = GetGameState();
   FoodCategory* categories = NULL;
 
   if (holding.origin == FROM_FRIDGE) {
@@ -26,17 +24,17 @@ void PrepFood(int currentTile) {
     return;
   }
 
-  categoryId = holding.categoryId;
+  state->prep.categoryId = holding.categoryId;
   int currentVariantId = holding.variantId;
-  nextVariantId = currentVariantId + 1;
-  int variantCount = categories[categoryId].variantCount;
+  state->prep.nextVariantId = currentVariantId + 1;
+  int variantCount = categories[state->prep.categoryId].variantCount;
 
-  if (currentVariantId < 0 || currentVariantId >= variantCount || nextVariantId >= variantCount) {
+  if (currentVariantId < 0 || currentVariantId >= variantCount || state->prep.nextVariantId >= variantCount) {
     return;
   }
 
-  Foods currentVariant = categories[categoryId].variants[currentVariantId];
-  nextVariant = categories[categoryId].variants[nextVariantId];
+  Foods currentVariant = categories[state->prep.categoryId].variants[currentVariantId];
+  state->prep.nextVariant = categories[state->prep.categoryId].variants[state->prep.nextVariantId];
 
   currentPrepType = currentVariant.prep_type;
 
@@ -44,24 +42,20 @@ void PrepFood(int currentTile) {
     return;
   }
 
-  // Enforce location-specific prep constraints
-  // Crack only at assembly table (7)
-  if (currentPrepType == CRACK && currentTile != 7) {
+  // prep only at corresponding areas
+  if (currentPrepType == CRACK && currentTile != ASSEMBLY) {
     return;
   }
 
-  // Wash only at sink (8)
-  if (currentPrepType == WASH && currentTile != 8) {
+  if (currentPrepType == WASH && currentTile != SINK) {
     return;
   }
 
-  // Cut only at cutting station (9)
-  if (currentPrepType == CUT && currentTile != 9) {
+  if (currentPrepType == CUT && currentTile != CUTTING_STATION) {
     return;
   }
 
-  // Ground only at grinding station (12)
-  if (currentPrepType == GROUND && currentTile != 12) {
+  if (currentPrepType == GROUND && currentTile != GRINDING_STATION) {
     return;
   }
 
@@ -69,14 +63,15 @@ void PrepFood(int currentTile) {
 }
 
 static void Apply() {
+  GameState *state = GetGameState();
   holding = (Holding){
-    categoryId, 
-    nextVariantId, 
-    nextVariant.cook_type,
+    state->prep.categoryId, 
+    state->prep.nextVariantId, 
+    state->prep.nextVariant.cook_type,
     holding.origin,   // Keep the original origin
     ARRAY_FOOD        // Food items stay in ARRAY_FOOD
   };
-  currentPrepType = nextVariant.prep_type;
-  const char* debugText = nextVariant.name;
+  currentPrepType = state->prep.nextVariant.prep_type;
+  const char* debugText = state->prep.nextVariant.name;
   TraceLog(LOG_INFO, "item name: %s", debugText);
 }

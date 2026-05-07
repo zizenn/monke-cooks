@@ -6,6 +6,7 @@
 #include "game/thread_manager.h"
 #include "game/globals.h"
 #include "game/config.h"
+#include "game/state.h"
 #include "external/raylib.h"
 #include "stdbool.h"
 #include "stdlib.h"
@@ -58,16 +59,22 @@ static const SceneHandler sceneHandlers[] = {
 #define SCENE_HANDLER_COUNT (sizeof(sceneHandlers) / sizeof(sceneHandlers[0]))
 
 // === GLOBALS ===
+static GameState gameState = {0};
 GameScreen currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas;
 int targetFPS = 60;
+
+GameState* GetGameState(void) {
+  return &gameState;
+}
 
 // === FORWARD DECLARATIONS ===
 void PushScene(GameScreen scene);
 void PopScene(void);
 void HandleScene(GameScreen scene, SceneAction action);
 void CleanupSceneManager(void);
+bool IsOverlayActive(void);
 
 // === SCENE MANAGER FUNCTIONS ===
 
@@ -79,6 +86,12 @@ static SceneType GetSceneType(GameScreen scene) {
     }
   }
   return SCENE_FULL_SCREEN;  // Default to full-screen
+}
+
+bool IsOverlayActive(void) {
+  if (sceneManager.count < 2) return false;  // Need at least one full-screen + one overlay
+  GameScreen topScene = sceneManager.scenes[sceneManager.count - 1];
+  return GetSceneType(topScene) == SCENE_OVERLAY;
 }
 
 void InitSceneManager(void) {
@@ -206,6 +219,9 @@ int main() {
 
     // Process texture loading on main thread (converts images to textures)
     ProcessTextureLoadingOnMainThread();
+    
+    // Update notifications timer
+    UpdateNotifications();
     
     // UPDATE all active scenes in the stack
     for (int i = 0; i < sceneManager.count; i++) {

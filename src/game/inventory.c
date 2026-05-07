@@ -8,6 +8,7 @@
 #include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/config.h"
+#include "game/state.h"
 #include "stdio.h"
 #include "ctype.h"
 #include "stdbool.h"
@@ -30,8 +31,6 @@ static int *matchedItems = NULL;
 static int matchCount = 0;
 static char lastSearchText[INVENTORY_SEARCH_BOX_MAX_LENGTH] = "";
 static int selectedItem;
-static int selectedMatchIndex = 0;  // Index in matchedItems array (for keyboard selection)
-static bool mouseSelectionArmed = false;
 static char (*lowerCategoryNames)[INVENTORY_CATEGORY_NAME_MAX_LENGTH] = NULL;
 static StockItem *stockedArray = NULL;
 static int ingredientCount;
@@ -51,6 +50,8 @@ void InitInventory() {
   // Set inventory type (FROM_FRIDGE or FROM_PANTRY)
   // This should be set by the caller before InitInventory() is called
   
+  GameState *state = GetGameState();
+  
   // variable setting
   confirm = false;
   searchBarText[0] = '\0';
@@ -62,8 +63,8 @@ void InitInventory() {
   while (GetCharPressed() != 0) {}
   wasSpaceRemoved = true;
   
-  selectedMatchIndex = 0;
-  mouseSelectionArmed = false;
+  state->inventory.selectedMatchIndex = 0;
+  state->inventory.mouseSelectionArmed = false;
 
   // Determine which inventory to use based on currentInventoryType
   switch (currentInventoryType) {
@@ -123,6 +124,8 @@ void InitInventory() {
 }
 
 void UpdateInventory() {
+  GameState *state = GetGameState();
+  
   // Consume any remaining character input on first frame to block SPACE from entering text
   if (wasSpaceRemoved) {
     while (GetCharPressed() != 0) {}
@@ -145,8 +148,8 @@ void UpdateInventory() {
     }
 
     strcpy(lastSearchText, searchBarText);
-    selectedMatchIndex = 0;  // Reset selection when search changes
-    mouseSelectionArmed = false;
+    state->inventory.selectedMatchIndex = 0;  // Reset selection when search changes
+    state->inventory.mouseSelectionArmed = false;
   }
   
   // Handle selection and confirmation
@@ -156,8 +159,8 @@ void UpdateInventory() {
     if (layoutItemsPerRow < 1) layoutItemsPerRow = 1;
     int totalRows = (matchCount + layoutItemsPerRow - 1) / layoutItemsPerRow;
 
-    int selectedRow = selectedMatchIndex / layoutItemsPerRow;
-    int selectedCol = selectedMatchIndex % layoutItemsPerRow;
+    int selectedRow = state->inventory.selectedMatchIndex / layoutItemsPerRow;
+    int selectedCol = state->inventory.selectedMatchIndex % layoutItemsPerRow;
     bool movedByKeyboard = false;
 
     if (IsKeyPressed(KEY_LEFT)) {
@@ -185,8 +188,8 @@ void UpdateInventory() {
 
     int newSelectedIndex = selectedRow * layoutItemsPerRow + selectedCol;
     if (newSelectedIndex >= matchCount) newSelectedIndex = matchCount - 1;
-    selectedMatchIndex = newSelectedIndex;
-    if (movedByKeyboard) mouseSelectionArmed = false;
+    state->inventory.selectedMatchIndex = newSelectedIndex;
+    if (movedByKeyboard) state->inventory.mouseSelectionArmed = false;
     
     // Mouse click detection
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -211,9 +214,9 @@ void UpdateInventory() {
             colClicked >= 0 && colClicked < itemsPerRow &&
             itemIndexClicked >= 0 && itemIndexClicked < matchCount) {
           // Confirm only after an explicit prior mouse selection
-          if (mouseSelectionArmed && itemIndexClicked == selectedMatchIndex) {
+          if (state->inventory.mouseSelectionArmed && itemIndexClicked == state->inventory.selectedMatchIndex) {
             // Confirm selection
-            int selectedStockedIndex = matchedItems[selectedMatchIndex];
+            int selectedStockedIndex = matchedItems[state->inventory.selectedMatchIndex];
             int categoryId = stockedArray[selectedStockedIndex].categoryId;
             
             if (stockedArray[selectedStockedIndex].quantity > 0) {
@@ -232,8 +235,8 @@ void UpdateInventory() {
             }
           } else {
             // First click selects and highlights the item
-            selectedMatchIndex = itemIndexClicked;
-            mouseSelectionArmed = true;
+            state->inventory.selectedMatchIndex = itemIndexClicked;
+            state->inventory.mouseSelectionArmed = true;
           }
         }
       }
@@ -241,7 +244,7 @@ void UpdateInventory() {
     
     // ENTER to confirm selection
     if (IsKeyPressed(KEY_ENTER)) {
-      int selectedStockedIndex = matchedItems[selectedMatchIndex];
+      int selectedStockedIndex = matchedItems[state->inventory.selectedMatchIndex];
       int categoryId = stockedArray[selectedStockedIndex].categoryId;
       
       if (stockedArray[selectedStockedIndex].quantity > 0) {
@@ -265,6 +268,7 @@ void UpdateInventory() {
 }
 
 void DrawInventory() {
+  GameState *state = GetGameState();
   int startX = panelBounds.x + 5;
   int startY = panelBounds.y + 5;
   int maxWidth = panelBounds.width - 20;
@@ -295,7 +299,7 @@ void DrawInventory() {
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
 
       // Highlight selected item behind texture
-      if (i == selectedMatchIndex) {
+      if (i == state->inventory.selectedMatchIndex) {
         DrawRectangle(xPos, yPos, ITEM_WIDTH, ITEM_HEIGHT, Fade(BLUE, 0.45f));
       }
 

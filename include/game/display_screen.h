@@ -2,10 +2,12 @@
 #define SCREEN_MENU_H
 
 #include "core/enums.h"
+#include "stdbool.h"
 
 // --- SCENE MANAGEMENT ---
 void PushScene(GameScreen scene);
 void PopScene(void);
+bool IsOverlayActive(void);
 
 // --- MENUS ---
 

@@ -7,26 +7,10 @@
 #include "game/thread_manager.h"
 #include "game/display_screen.h"
 #include "game/config.h"
+#include "game/state.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "stdbool.h"
-
-// enums
-typedef enum {
-  WALKABLE, // this is 0
-  COUNTER, // this is 1
-  FRIDGE, // this is 2
-  STOVE_STATION, // this is 3
-  OVEN_STATION, // 4
-  DEEP_FRY_STATION, // 5
-  GRILL_STATION, // 6
-  ASSEMBLY, // 7
-  SINK, // 8
-  CUTTING_STATION, // 9
-  TRASH, // 10
-  PANTRY, // 11
-  GRINDING_STATION // 12
-} TILE_TYPE;
 
 // function prototypes
 static void CalculateKeyPress(void);
@@ -38,36 +22,26 @@ static void BuildStaticMapLayer(void);
 static int TileToPixels(int tiles);
 
 // variables
-static bool isMenuOpen = false;
-static MENU_TYPE currentMenu = NONE;
 static RenderTexture2D staticMapLayer = {0};
 static bool hasStaticMapLayer = false;
 
 // tile-based movement
 static TILE_TYPE *map = NULL;
 static float moveSpeed = 1.0f;
-static int currentTileX;
-static int currentTileY;
-static bool isMoving = false;
-
-// player
-static Vector2 playerPos;
-static DIRECTION facing;
-
-// dialog_menus
-static int selected = 0;
 
 void InitGame(void) {
-  currentTileX = 4;
-  currentTileY = 4;
-  playerPos = (Vector2){ TileToPixels(currentTileX), TileToPixels(currentTileY) };
-  selected = 0;
-  facing = DOWN;
+  GameState *state = GetGameState();
+  
+  state->player.tileX = 4;
+  state->player.tileY = 4;
+  state->player.pos = (Vector2){ TileToPixels(state->player.tileX), TileToPixels(state->player.tileY) };
+  state->menu.selected = 0;
+  state->player.facing = DOWN;
   holding = (Holding){ -1, -1, COOK_NONE, FROM_FRIDGE, ARRAY_FOOD };
   currentPrepType = PREP_NONE;
-  currentMenu = NONE;
-  isMoving = false;
-  isMenuOpen = false;
+  state->menu.currentMenu = NONE;
+  state->player.isMoving = false;
+  state->menu.isMenuOpen = false;
 
   // Wait for async texture loading to finish before starting game
   WaitForTextureLoader();
@@ -91,6 +65,7 @@ void UpdateGame(void) {
 }
 
 void DrawGame(void) {
+  GameState *state = GetGameState();
   ClearBackground(WHITE);
 
   if (hasStaticMapLayer) {
@@ -109,7 +84,7 @@ void DrawGame(void) {
     }
   } 
 
-  Texture2D playerSprite = playerTexture[facing];
+  Texture2D playerSprite = playerTexture[state->player.facing];
   
   // If holding an item, display the item texture instead
   if (holding.categoryId >= 0) {
@@ -117,24 +92,23 @@ void DrawGame(void) {
   }
   
   Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
-  Rectangle playerDest = { (float)TileToPixels(currentTileX), (float)TileToPixels(currentTileY), (float)TILE_SIZE, (float)TILE_SIZE };
+  Rectangle playerDest = { (float)TileToPixels(state->player.tileX), (float)TileToPixels(state->player.tileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(playerSprite, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
   // dialog_menus
-  int selection = 0;
-  switch (currentMenu) {
+  switch (state->menu.currentMenu) {
     case NONE:
       break;
 
     case INVENTORY_MENU:
-      isMenuOpen = false;
-      currentMenu = NONE;
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
       PushScene(INVENTORY_SCREEN);
       break;
 
     case STOVE_MENU: 
-      isMenuOpen = false;
-      currentMenu = NONE;
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
       if (holding.cookType == PAN) {
         currentCookType = PAN;
         PushScene(STOVE_SCREEN);
@@ -142,8 +116,8 @@ void DrawGame(void) {
       break;
 
     case OVEN_MENU: 
-      isMenuOpen = false;
-      currentMenu = NONE;
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
       if (holding.cookType == OVEN) {
         currentCookType = OVEN;
         PushScene(OVEN_SCREEN);
@@ -151,8 +125,8 @@ void DrawGame(void) {
       break;
 
     case DEEP_FRY_MENU: 
-      isMenuOpen = false;
-      currentMenu = NONE;
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
        if (holding.cookType == DEEP_FRY) {
         currentCookType = DEEP_FRY;
         PushScene(DEEP_FRY_SCREEN);
@@ -160,8 +134,8 @@ void DrawGame(void) {
       break;
 
     case GRILL_MENU: 
-      isMenuOpen = false;
-      currentMenu = NONE;
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
       if (holding.cookType == GRILL) {
         currentCookType = GRILL;
         PushScene(GRILL_SCREEN);
@@ -293,25 +267,32 @@ static void BuildStaticMapLayer(void) {
 }
 
 static void CalculateKeyPress(void) {
+  GameState *state = GetGameState();
+  
+  // Don't process movement input if an overlay is open
+  if (IsOverlayActive()) {
+    return;
+  }
+  
   KeyboardKey key = GetKeyPressed();
   switch (key) {
     default:
       break;
       
     case KEY_W:
-      if (!isMenuOpen) MovePlayer(UP);
+      if (!state->menu.isMenuOpen) MovePlayer(UP);
       break;
 
     case KEY_A:
-      if (!isMenuOpen) MovePlayer(LEFT);
+      if (!state->menu.isMenuOpen) MovePlayer(LEFT);
       break;
 
     case KEY_S:
-      if (!isMenuOpen) MovePlayer(DOWN);
+      if (!state->menu.isMenuOpen) MovePlayer(DOWN);
       break;
 
     case KEY_D:
-      if (!isMenuOpen) MovePlayer(RIGHT);
+      if (!state->menu.isMenuOpen) MovePlayer(RIGHT);
       break;
 
     case KEY_SPACE:
@@ -321,43 +302,45 @@ static void CalculateKeyPress(void) {
 }
 
 static void MovePlayer(DIRECTION DIR) {
-  isMoving = true;
-  int nextTileX = currentTileX;
-  int nextTileY = currentTileY;
+  GameState *state = GetGameState();
+  state->player.isMoving = true;
+  int nextTileX = state->player.tileX;
+  int nextTileY = state->player.tileY;
   switch (DIR) {
     case UP:
-      facing = UP;
+      state->player.facing = UP;
       nextTileY--;
       break;
     case DOWN:
-      facing = DOWN;
+      state->player.facing = DOWN;
       nextTileY++;
       break;
     case LEFT:
-      facing = LEFT;
+      state->player.facing = LEFT;
       nextTileX--;
       break;
     case RIGHT:
-      facing = RIGHT;
+      state->player.facing = RIGHT;
       nextTileX++;
       break;
   }
 
   if (nextTileX >= 0 && nextTileX < MAP_COLS && nextTileY >= 0 && nextTileY < MAP_ROWS) {
     if (map[nextTileY * MAP_COLS + nextTileX] == WALKABLE) {
-      currentTileX = nextTileX;
-      currentTileY = nextTileY;
+      state->player.tileX = nextTileX;
+      state->player.tileY = nextTileY;
     }
   }
-  isMoving = false;
+  state->player.isMoving = false;
 }
 
 static void Interact(void) {
+  GameState *state = GetGameState();
   TILE_TYPE facingType;
-  int facingTileX = currentTileX;
-  int facingTileY = currentTileY;
+  int facingTileX = state->player.tileX;
+  int facingTileY = state->player.tileY;
 
-  switch (facing) {
+  switch (state->player.facing) {
     default:
       break;
     case LEFT:
@@ -381,23 +364,23 @@ static void Interact(void) {
       break;
     case FRIDGE:
       currentInventoryType = FROM_FRIDGE;
-      currentMenu = INVENTORY_MENU;
+      state->menu.currentMenu = INVENTORY_MENU;
       break;
     case PANTRY:
       currentInventoryType = FROM_PANTRY;
-      currentMenu = INVENTORY_MENU;
+      state->menu.currentMenu = INVENTORY_MENU;
       break;
     case STOVE_STATION:
-      currentMenu = STOVE_MENU;
+      state->menu.currentMenu = STOVE_MENU;
       break;
     case OVEN_STATION:
-      currentMenu = OVEN_MENU;
+      state->menu.currentMenu = OVEN_MENU;
       break;
     case DEEP_FRY_STATION:
-      currentMenu = DEEP_FRY_MENU;
+      state->menu.currentMenu = DEEP_FRY_MENU;
       break;
     case GRILL_STATION:
-      currentMenu = GRILL_MENU;
+      state->menu.currentMenu = GRILL_MENU;
       break;
     case TRASH:
       if (holding.categoryId >= 0) {

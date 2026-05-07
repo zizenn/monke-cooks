@@ -4,50 +4,38 @@
 #include "game/globals.h"
 #include "game/game.h"
 #include "game/items.h"
+#include "game/state.h"
 #include "minigames/timingbar.h"
 #include "minigames/targetgame.h"
 #include "minigames/basketcatch.h"
 #include "string.h"
 
-// enums
-static enum {
-  RUNNING,
-  WIN,
-  LOSE
-} MinigameStatus;
-
-// variables
-static bool cookResultApplied = false;
-Holding newHolding;
-static char panelTitle[9] = "";
-int minigameSelection;
-const char* debugText;
-
 // function prototypes
 static void ReduceItemQuantity(void);
 
 void InitCook() {
-  MinigameStatus = false;
-  cookResultApplied = false;
+  GameState *state = GetGameState();
+  state->cook.minigameStatus = RUNNING;
+  state->cook.cookResultApplied = false;
 
   switch (currentCookType) {
     case PAN:
-      strcpy(panelTitle, "stove");
+      strcpy(state->cook.panelTitle, "stove");
       break;
     case DEEP_FRY:
-      strcpy(panelTitle, "deep fry");
+      strcpy(state->cook.panelTitle, "deep fry");
       break;
     case OVEN:
-      strcpy(panelTitle, "oven");
+      strcpy(state->cook.panelTitle, "oven");
       break;
     case GRILL:
-      strcpy(panelTitle, "grill");
+      strcpy(state->cook.panelTitle, "grill");
       break;
     case 0:
       break;
   }
 
-  minigameSelection = GetRandomValue(0, 2);
+  state->cook.minigameSelection = GetRandomValue(0, 2);
 
   FoodCategory *categories = NULL;
   if (holding.origin == FROM_FRIDGE) {
@@ -65,16 +53,15 @@ void InitCook() {
   }
 
   Foods nextVariant = categories[categoryId].variants[nextVariantId];
-  newHolding = (Holding){
+  state->cook.newHolding = (Holding){
     categoryId, 
     nextVariantId, 
     nextVariant.cook_type,
     holding.origin,   // Keep the original origin
     ARRAY_FOOD        // Food items stay in ARRAY_FOOD
   };
-  debugText = categories[categoryId].variants[nextVariantId].name;
 
-  switch (minigameSelection) {
+  switch (state->cook.minigameSelection) {
     case 0:
       InitBarMinigame();
       break;
@@ -88,6 +75,7 @@ void InitCook() {
 }
 
 void UpdateCook() {
+  GameState *state = GetGameState();
   if (IsKeyPressed(KEY_ESCAPE)) {
     PopScene();
     return;
@@ -96,56 +84,56 @@ void UpdateCook() {
     return;
   }
 
-  switch (minigameSelection) {
+  switch (state->cook.minigameSelection) {
     case 0:
       UpdateBarMinigame();
       if (timingBarResult == TIMING_BAR_WIN) {
-        MinigameStatus = WIN;
+        state->cook.minigameStatus = WIN;
       } else if (timingBarResult == TIMING_BAR_LOSE) {
-        MinigameStatus = LOSE;
+        state->cook.minigameStatus = LOSE;
       } else {
-        MinigameStatus = RUNNING;
+        state->cook.minigameStatus = RUNNING;
       }
       break;
     case 1:
       UpdateTargetMinigame();
       if (targetGameResult == TARGET_GAME_WIN) {
-        MinigameStatus = WIN;
+        state->cook.minigameStatus = WIN;
       } else if (targetGameResult == TARGET_GAME_LOSE) {
-        MinigameStatus = LOSE;
+        state->cook.minigameStatus = LOSE;
       } else {
-        MinigameStatus = RUNNING;
+        state->cook.minigameStatus = RUNNING;
       }
       break;
     case 2:
       UpdateBasketMinigame();
       if (basketCatchResult == BASKET_CATCH_WIN) {
-        MinigameStatus = WIN;
+        state->cook.minigameStatus = WIN;
       } else if (basketCatchResult == BASKET_CATCH_LOSE) {
-        MinigameStatus = LOSE;
+        state->cook.minigameStatus = LOSE;
       } else {
-        MinigameStatus = RUNNING;
+        state->cook.minigameStatus = RUNNING;
       }
       break;
   }
 
-  if (MinigameStatus == WIN && !cookResultApplied) {
+  if (state->cook.minigameStatus == WIN && !state->cook.cookResultApplied) {
     // Textures are preloaded and persistent - no need to load/unload
-    holding = newHolding;
+    holding = state->cook.newHolding;
     ReduceItemQuantity();
-    TraceLog(LOG_INFO, "item name: %s", debugText);
-    cookResultApplied = true;
+    state->cook.cookResultApplied = true;
     PopScene();
   }
-  if (MinigameStatus == LOSE) {
+  if (state->cook.minigameStatus == LOSE) {
     PopScene();
   }
 }
 
 void DrawCook() {
-  GuiPanel(panelBounds, panelTitle);
+  GameState *state = GetGameState();
+  GuiPanel(panelBounds, state->cook.panelTitle);
 
-  switch (minigameSelection) {
+  switch (state->cook.minigameSelection) {
     case 0:
       DrawBarMinigame();
       break;
@@ -159,7 +147,8 @@ void DrawCook() {
 }
 
 void UnloadCook() {
-  switch (minigameSelection) {
+  GameState *state = GetGameState();
+  switch (state->cook.minigameSelection) {
     case 0:
       UnloadBarMinigame();
       break;

@@ -1,8 +1,6 @@
 #ifndef SCREEN_MENU_H
 #define SCREEN_MENU_H
 
-#include "external/raylib.h"
-
 // --- MENUS ---
 
 // main menu

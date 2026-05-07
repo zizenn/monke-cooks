@@ -270,3 +270,13 @@ void InitializeRuntimeCounts(void) {
   fridgeItemCountRuntime = sizeof(allFridge) / sizeof(allFridge[0]);
   pantryItemCountRuntime = sizeof(allPantry) / sizeof(allPantry[0]);
 }
+
+// Get category array based on holding origin (FROM_FRIDGE or FROM_PANTRY)
+FoodCategory* GetHoldingCategories(Holding* holding) {
+  if (holding->origin == FROM_FRIDGE) {
+    return allFridge;
+  } else if (holding->origin == FROM_PANTRY) {
+    return allPantry;
+  }
+  return NULL;
+}

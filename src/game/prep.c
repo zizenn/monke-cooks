@@ -14,13 +14,9 @@ static void Apply();
 
 void PrepFood(int currentTile) {
   GameState *state = GetGameState();
-  FoodCategory* categories = NULL;
-
-  if (holding.origin == FROM_FRIDGE) {
-    categories = allFridge;
-  } else if (holding.origin == FROM_PANTRY) {
-    categories = allPantry;
-  } else {
+  FoodCategory* categories = GetHoldingCategories(&holding);
+  
+  if (categories == NULL) {
     return;
   }
 

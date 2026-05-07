@@ -13,6 +13,23 @@
 // function prototypes
 static void ReduceItemQuantity(void);
 
+// === MINIGAME HANDLER STRUCT ===
+typedef struct {
+  void (*init)(void);
+  void (*update)(void);
+  void (*draw)(void);
+  void (*unload)(void);
+} MinigameHandler;
+
+// === MINIGAME HANDLERS TABLE ===
+static const MinigameHandler minigameHandlers[] = {
+  { InitBarMinigame, UpdateBarMinigame, DrawBarMinigame, UnloadBarMinigame },
+  { InitTargetMinigame, UpdateTargetMinigame, DrawTargetMinigame, UnloadTargetMinigame },
+  { InitBasketMinigame, UpdateBasketMinigame, DrawBasketMinigame, UnloadBasketMinigame }
+};
+
+#define MINIGAME_COUNT (sizeof(minigameHandlers) / sizeof(minigameHandlers[0]))
+
 void InitCook() {
   GameState *state = GetGameState();
   state->cook.minigameStatus = RUNNING;
@@ -37,12 +54,8 @@ void InitCook() {
 
   state->cook.minigameSelection = GetRandomValue(0, 2);
 
-  FoodCategory *categories = NULL;
-  if (holding.origin == FROM_FRIDGE) {
-    categories = allFridge;
-  } else if (holding.origin == FROM_PANTRY) {
-    categories = allPantry;
-  } else {
+  FoodCategory *categories = GetHoldingCategories(&holding);
+  if (categories == NULL) {
     return;
   }
 
@@ -61,17 +74,7 @@ void InitCook() {
     ARRAY_FOOD        // Food items stay in ARRAY_FOOD
   };
 
-  switch (state->cook.minigameSelection) {
-    case 0:
-      InitBarMinigame();
-      break;
-    case 1:
-      InitTargetMinigame();
-      break;
-    case 2:
-      InitBasketMinigame();
-      break;
-  }
+  minigameHandlers[state->cook.minigameSelection].init();
 }
 
 void UpdateCook() {
@@ -84,9 +87,10 @@ void UpdateCook() {
     return;
   }
 
+  minigameHandlers[state->cook.minigameSelection].update();
+
   switch (state->cook.minigameSelection) {
     case 0:
-      UpdateBarMinigame();
       if (timingBarResult == TIMING_BAR_WIN) {
         state->cook.minigameStatus = WIN;
       } else if (timingBarResult == TIMING_BAR_LOSE) {
@@ -96,7 +100,6 @@ void UpdateCook() {
       }
       break;
     case 1:
-      UpdateTargetMinigame();
       if (targetGameResult == TARGET_GAME_WIN) {
         state->cook.minigameStatus = WIN;
       } else if (targetGameResult == TARGET_GAME_LOSE) {
@@ -106,7 +109,6 @@ void UpdateCook() {
       }
       break;
     case 2:
-      UpdateBasketMinigame();
       if (basketCatchResult == BASKET_CATCH_WIN) {
         state->cook.minigameStatus = WIN;
       } else if (basketCatchResult == BASKET_CATCH_LOSE) {
@@ -133,32 +135,12 @@ void DrawCook() {
   GameState *state = GetGameState();
   GuiPanel(panelBounds, state->cook.panelTitle);
 
-  switch (state->cook.minigameSelection) {
-    case 0:
-      DrawBarMinigame();
-      break;
-    case 1:
-      DrawTargetMinigame();
-      break;
-    case 2:
-      DrawBasketMinigame();
-      break;
-  }
+  minigameHandlers[state->cook.minigameSelection].draw();
 }
 
 void UnloadCook() {
   GameState *state = GetGameState();
-  switch (state->cook.minigameSelection) {
-    case 0:
-      UnloadBarMinigame();
-      break;
-    case 1:
-      UnloadTargetMinigame();
-      break;
-    case 2:
-      UnloadBasketMinigame();
-      break;
-  }
+  minigameHandlers[state->cook.minigameSelection].unload();
 }
 
 static void ReduceItemQuantity(void) {

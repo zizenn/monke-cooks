@@ -15,4 +15,7 @@ extern int pantryItemCountRuntime;
 
 void InitializeRuntimeCounts(void);
 
+// Get category array based on holding origin (FROM_FRIDGE or FROM_PANTRY)
+FoodCategory* GetHoldingCategories(Holding* holding);
+
 #endif

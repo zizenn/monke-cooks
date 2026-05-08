@@ -141,6 +141,12 @@ void DrawGame(void) {
         PushScene(GRILL_SCREEN);
       }
       break;
+
+    case RECIPE_BOOK:
+      state->menu.isMenuOpen = false;
+      state->menu.currentMenu = NONE;
+      PushScene(RECIPE_SCREEN);
+      break;
   }
 }
 
@@ -298,6 +304,10 @@ static void CalculateKeyPress(void) {
     case KEY_SPACE:
       Interact();
       break;
+    
+    case KEY_R:
+      state->menu.currentMenu = RECIPE_BOOK;
+      
   }
 }
 

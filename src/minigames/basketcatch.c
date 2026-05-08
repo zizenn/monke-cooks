@@ -1,3 +1,4 @@
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
 #include "external/raymath.h"
@@ -8,7 +9,7 @@
 #include "minigames/basketcatch.h"
 #include "stdbool.h"
 
-BasketCatchResult basketCatchResult = BASKET_CATCH_RUNNING;
+BASKET_CATCH_RESULT basketCatchResult = BASKET_CATCH_RUNNING;
 
 static const float FIELD_X = BASKET_FIELD_X;
 static const float FIELD_Y = BASKET_FIELD_Y;

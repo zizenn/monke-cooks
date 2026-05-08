@@ -27,7 +27,7 @@ typedef enum {
 
 // === SCENE HANDLER STRUCT ===
 typedef struct {
-  GameScreen id;
+  SCREENS id;
   SceneType type;
   void (*init)(void);
   void (*update)(void);
@@ -37,7 +37,7 @@ typedef struct {
 
 // === SCENE MANAGER STRUCT ===
 typedef struct {
-  GameScreen *scenes;
+  SCREENS *scenes;
   int count;
   int capacity;
 } SceneManager;
@@ -54,13 +54,14 @@ static const SceneHandler sceneHandlers[] = {
   { OVEN_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
   { DEEP_FRY_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
   { GRILL_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
+  { RECIPE_SCREEN, SCENE_OVERLAY, InitRecipeBook, UpdateRecipeBook, DrawRecipeBook, UnloadRecipeBook },
 };
 
 #define SCENE_HANDLER_COUNT (sizeof(sceneHandlers) / sizeof(sceneHandlers[0]))
 
 // === GLOBALS ===
 static GameState gameState = {0};
-GameScreen currentScreen = MAIN_MENU;
+SCREENS currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas;
 int targetFPS = 60;
@@ -70,16 +71,16 @@ GameState* GetGameState(void) {
 }
 
 // === FORWARD DECLARATIONS ===
-void PushScene(GameScreen scene);
+void PushScene(SCREENS scene);
 void PopScene(void);
-void HandleScene(GameScreen scene, SceneAction action);
+void HandleScene(SCREENS scene, SceneAction action);
 void CleanupSceneManager(void);
 bool IsOverlayActive(void);
 
 // === SCENE MANAGER FUNCTIONS ===
 
 // Find scene type
-static SceneType GetSceneType(GameScreen scene) {
+static SceneType GetSceneType(SCREENS scene) {
   for (int i = 0; i < SCENE_HANDLER_COUNT; i++) {
     if (sceneHandlers[i].id == scene) {
       return sceneHandlers[i].type;
@@ -90,18 +91,18 @@ static SceneType GetSceneType(GameScreen scene) {
 
 bool IsOverlayActive(void) {
   if (sceneManager.count < 2) return false;  // Need at least one full-screen + one overlay
-  GameScreen topScene = sceneManager.scenes[sceneManager.count - 1];
+  SCREENS topScene = sceneManager.scenes[sceneManager.count - 1];
   return GetSceneType(topScene) == SCENE_OVERLAY;
 }
 
 void InitSceneManager(void) {
   sceneManager.capacity = 10;
-  sceneManager.scenes = (GameScreen *)malloc(10 * sizeof(GameScreen));
+  sceneManager.scenes = (SCREENS *)malloc(10 * sizeof(SCREENS));
   sceneManager.count = 0;
   PushScene(MAIN_MENU);
 }
 
-void PushScene(GameScreen scene) {
+void PushScene(SCREENS scene) {
   // If pushing a full-screen scene, pop the current one first
   if (GetSceneType(scene) == SCENE_FULL_SCREEN && sceneManager.count > 0) {
     PopScene();
@@ -110,8 +111,8 @@ void PushScene(GameScreen scene) {
   // Grow array if needed
   if (sceneManager.count >= sceneManager.capacity) {
     sceneManager.capacity *= 2;
-    sceneManager.scenes = (GameScreen *)realloc(sceneManager.scenes, 
-      sceneManager.capacity * sizeof(GameScreen));
+    sceneManager.scenes = (SCREENS *)realloc(sceneManager.scenes, 
+      sceneManager.capacity * sizeof(SCREENS));
   }
   
   // Add scene to stack
@@ -125,7 +126,7 @@ void PushScene(GameScreen scene) {
 void PopScene(void) {
   if (sceneManager.count == 0) return;
   
-  GameScreen scene = sceneManager.scenes[sceneManager.count - 1];
+  SCREENS scene = sceneManager.scenes[sceneManager.count - 1];
   sceneManager.count--;
   
   // Unload the scene
@@ -138,7 +139,7 @@ void PopScene(void) {
 }
 
 // Find and execute scene action
-void HandleScene(GameScreen scene, SceneAction action) {
+void HandleScene(SCREENS scene, SceneAction action) {
   for (int i = 0; i < SCENE_HANDLER_COUNT; i++) {
     if (sceneHandlers[i].id == scene) {
       switch (action) {

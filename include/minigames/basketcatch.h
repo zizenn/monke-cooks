@@ -3,7 +3,7 @@
 
 #include "core/enums.h"
 
-extern BasketCatchResult basketCatchResult;
+extern BASKET_CATCH_RESULT basketCatchResult;
 
 void InitBasketMinigame(void);
 void UpdateBasketMinigame(void);

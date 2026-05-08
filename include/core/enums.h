@@ -15,7 +15,8 @@ typedef enum {
   CUTTING_STATION, // 9
   TRASH, // 10
   PANTRY, // 11
-  GRINDING_STATION // 12
+  GRINDING_STATION, // 12
+  EQUIPMENT_BOX // 13
 } TILE_TYPE;
 
 // Player direction
@@ -49,14 +50,14 @@ typedef enum {
   FROM_FRIDGE,
   FROM_PANTRY,
   FROM_NONE
-} ItemOrigin;
+} ITEM_ORIGIN;
 
 // Which array/collection the item belongs to
 typedef enum {
   ARRAY_FOOD,
   ARRAY_EQUIPMENT,
   ARRAY_UI
-} ItemArray;
+} ITEM_ARRAY;
 
 // Menu types
 typedef enum {
@@ -65,7 +66,8 @@ typedef enum {
   STOVE_MENU,
   OVEN_MENU,
   DEEP_FRY_MENU,
-  GRILL_MENU
+  GRILL_MENU,
+  RECIPE_BOOK
 } MENU_TYPE;
 
 // Game screens
@@ -81,7 +83,8 @@ typedef enum {
   OVEN_SCREEN,
   DEEP_FRY_SCREEN,
   GRILL_SCREEN,
-} GameScreen;
+  RECIPE_SCREEN
+} SCREENS;
 
 // Notification types
 typedef enum {
@@ -96,18 +99,23 @@ typedef enum {
   TIMING_BAR_RUNNING,
   TIMING_BAR_WIN,
   TIMING_BAR_LOSE
-} TimingBarResult;
+} TIMING_BAR_RESULT;
 
 typedef enum {
   TARGET_GAME_RUNNING,
   TARGET_GAME_WIN,
   TARGET_GAME_LOSE
-} TargetGameResult;
+} TARGET_GAME_RESULT;
 
 typedef enum {
   BASKET_CATCH_RUNNING,
   BASKET_CATCH_WIN,
   BASKET_CATCH_LOSE
-} BasketCatchResult;
+} BASKET_CATCH_RESULT;
+
+// recipe book types
+typedef enum {
+  NATURE
+} RECIPE_BOOK_TYPE;
 
 #endif

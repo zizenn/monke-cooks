@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 // --- SCENE MANAGEMENT ---
-void PushScene(GameScreen scene);
+void PushScene(SCREENS scene);
 void PopScene(void);
 bool IsOverlayActive(void);
 
@@ -22,6 +22,12 @@ void InitCampaignMenu(void);
 void UpdateCampaignMenu(void);
 void DrawCampaignMenu(void);
 void UnloadCampaignMenu(void);
+
+// recipe book
+void InitRecipeBook(void);
+void UpdateRecipeBook(void);
+void DrawRecipeBook(void);
+void UnloadRecipeBook(void);
 
 // --- GAME ---
 

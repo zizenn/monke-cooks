@@ -43,6 +43,11 @@ typedef struct {
     bool cookResultApplied;
   } cook;
   
+  // recipe book state
+  struct {
+    RECIPE_BOOK_TYPE currentBook;
+  } recipe_book;
+
   // Game state
   struct {
     bool isMenuOpen;

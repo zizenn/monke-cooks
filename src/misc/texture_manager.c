@@ -1,4 +1,5 @@
 #include "game/texture_manager.h"
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "stdlib.h"
 #include "game/globals.h"
@@ -231,7 +232,7 @@ void InitTextureMap(void) {
   AddTextureMapping(9, 1, FROM_PANTRY, MILK_HEATED);
 }
 
-void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, TextureID textureId) {
+void AddTextureMapping(int categoryId, int variantId, ITEM_ORIGIN origin, TextureID textureId) {
   // Resize if needed
   if (textureMap.count >= textureMap.capacity) {
     int newCapacity = textureMap.capacity * 2;

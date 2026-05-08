@@ -1,3 +1,4 @@
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
 #include "game/globals.h"
@@ -10,7 +11,7 @@ PREP_TYPE currentPrepType;
 PREP_TYPE prepFrom;
 
 // inventory
-ItemOrigin currentInventoryType;
+ITEM_ORIGIN currentInventoryType;
 
 // game
 Holding holding;

@@ -124,7 +124,7 @@ typedef struct {
 typedef struct {
   int categoryId;
   int variantId;
-  ItemOrigin origin;
+  ITEM_ORIGIN origin;
   TextureID textureId;
 } TextureMapEntry;
 
@@ -141,7 +141,7 @@ extern TextureMap textureMap;
 // Texture management API
 void ProcessTextureLoadingOnMainThread(void);
 void InitTextureMap(void);
-void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, TextureID textureId);
+void AddTextureMapping(int categoryId, int variantId, ITEM_ORIGIN origin, TextureID textureId);
 void FreeTextureMap(void);
 void UnloadAllTextures(void);
 Texture2D GetTexture(TextureID id);

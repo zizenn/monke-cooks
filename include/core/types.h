@@ -8,8 +8,8 @@ typedef struct {
   int categoryId;      // index into the array
   int variantId;       // which variant/texture within that item
   COOK_TYPE cookType;  // for cooking minigames
-  ItemOrigin origin;   // FROM_FRIDGE or FROM_PANTRY
-  ItemArray array;     // which array/collection to look in
+  ITEM_ORIGIN origin;   // FROM_FRIDGE or FROM_PANTRY
+  ITEM_ARRAY array;     // which array/collection to look in
 } Holding;
 
 // Food ingredient definition
@@ -19,6 +19,7 @@ typedef struct {
   PREP_TYPE prep_type;
   float price;
   int variant;
+  int textureId;
 } Foods;
 
 // Food category with variants

@@ -3,6 +3,7 @@
 #include "external/raygui.h"
 #include "game/globals.h"
 #include "game/game.h"
+#include "game/items.h"
 #include "game/texture_manager.h"
 #include "game/thread_manager.h"
 #include "game/display_screen.h"
@@ -20,6 +21,7 @@ static void LoadMap(const char *filePath);
 static void DrawTile(TILE_TYPE tile, int tx, int ty);
 static void BuildStaticMapLayer(void);
 static int TileToPixels(int tiles);
+static void UpdateStockedItemArrays();
 
 // variables
 static RenderTexture2D staticMapLayer = {0};
@@ -30,18 +32,16 @@ static TILE_TYPE *map = NULL;
 static float moveSpeed = 1.0f;
 
 void InitGame(void) {
-  GameState *state = GetGameState();
-  
-  state->player.tileX = 4;
-  state->player.tileY = 4;
-  state->player.pos = (Vector2){ TileToPixels(state->player.tileX), TileToPixels(state->player.tileY) };
-  state->menu.selected = 0;
-  state->player.facing = DOWN;
+  state.player.tileX = 5;
+  state.player.tileY = 5;
+  state.player.pos = (Vector2){ TileToPixels(state.player.tileX), TileToPixels(state.player.tileY) };
+  state.menu.selected = 0;
+  state.player.facing = DOWN;
   holding = (Holding){ -1, -1, COOK_NONE, FROM_FRIDGE, ARRAY_FOOD };
   currentPrepType = PREP_NONE;
-  state->menu.currentMenu = NONE;
-  state->player.isMoving = false;
-  state->menu.isMenuOpen = false;
+  state.menu.currentMenu = NONE;
+  state.player.isMoving = false;
+  state.menu.isMenuOpen = false;
 
   // Wait for async texture loading to finish before starting game
   WaitForTextureLoader();
@@ -61,11 +61,32 @@ void InitGame(void) {
 }
 
 void UpdateGame(void) {
+  // Handle R to toggle recipe
+  if (IsKeyPressed(KEY_R) && !IsOverlayActive()) {
+    if (IsBackgroundSceneActive()) {
+      PopBackgroundScene();
+    } else {
+      PushScene(RECIPE_SCREEN);
+    }
+    return;
+  }
+
+  // Handle ESC to close overlays/menus or recipe
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsOverlayActive()) {
+      PopScene();
+    } else if (IsBackgroundSceneActive()) {
+      PopBackgroundScene();
+    }
+    return;
+  }
+
+  UpdateStockedItemArrays();
+
   CalculateKeyPress();
 }
 
 void DrawGame(void) {
-  GameState *state = GetGameState();
   ClearBackground(WHITE);
 
   if (hasStaticMapLayer) {
@@ -82,64 +103,70 @@ void DrawGame(void) {
         DrawTile(tile, TileToPixels(col), TileToPixels(row));
       }
     }
-  } 
+  }
 
-  Texture2D playerSprite = playerTexture[state->player.facing];
-  
+  Texture2D playerSprite = playerTexture[state.player.facing];
+
   // If holding an item, display the item texture instead
   if (holding.categoryId >= 0) {
     playerSprite = GetHeldItemTexture();
   }
-  
+
   Rectangle playerSource = { 0.0f, 0.0f, (float)playerSprite.width, (float)playerSprite.height };
-  Rectangle playerDest = { (float)TileToPixels(state->player.tileX), (float)TileToPixels(state->player.tileY), (float)TILE_SIZE, (float)TILE_SIZE };
+  Rectangle playerDest = { (float)TileToPixels(state.player.tileX), (float)TileToPixels(state.player.tileY), (float)TILE_SIZE, (float)TILE_SIZE };
   DrawTexturePro(playerSprite, playerSource, playerDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 
   // dialog_menus
-  switch (state->menu.currentMenu) {
+  switch (state.menu.currentMenu) {
     case NONE:
       break;
 
     case INVENTORY_MENU:
-      state->menu.isMenuOpen = false;
-      state->menu.currentMenu = NONE;
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
       PushScene(INVENTORY_SCREEN);
       break;
 
-    case STOVE_MENU: 
-      state->menu.isMenuOpen = false;
-      state->menu.currentMenu = NONE;
+    case STOVE_MENU:
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
       if (holding.cookType == PAN) {
         currentCookType = PAN;
         PushScene(STOVE_SCREEN);
       }
       break;
 
-    case OVEN_MENU: 
-      state->menu.isMenuOpen = false;
-      state->menu.currentMenu = NONE;
+    case OVEN_MENU:
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
       if (holding.cookType == OVEN) {
         currentCookType = OVEN;
         PushScene(OVEN_SCREEN);
       }
       break;
 
-    case DEEP_FRY_MENU: 
-      state->menu.isMenuOpen = false;
-      state->menu.currentMenu = NONE;
+    case DEEP_FRY_MENU:
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
        if (holding.cookType == DEEP_FRY) {
         currentCookType = DEEP_FRY;
         PushScene(DEEP_FRY_SCREEN);
       }
       break;
 
-    case GRILL_MENU: 
-      state->menu.isMenuOpen = false;
-      state->menu.currentMenu = NONE;
+    case GRILL_MENU:
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
       if (holding.cookType == GRILL) {
         currentCookType = GRILL;
         PushScene(GRILL_SCREEN);
       }
+      break;
+
+    case RECIPE_BOOK:
+      state.menu.isMenuOpen = false;
+      state.menu.currentMenu = NONE;
+      PushScene(RECIPE_SCREEN);
       break;
   }
 }
@@ -161,6 +188,26 @@ void UnloadGame(void) {
 }
 
 static void LoadMap(const char *filePath) {
+  FILE *mapFile = fopen(filePath, "r");
+  if (mapFile == NULL) {
+    TraceLog(LOG_ERROR, "could not open map file %s", filePath);
+    return;
+  }
+
+  map = malloc(MAP_COLS * MAP_ROWS * sizeof(TILE_TYPE));
+
+  int value;
+  for (int y = 0; y < MAP_ROWS; y++) {
+    for (int x = 0; x < MAP_COLS; x++) {
+      fscanf(mapFile, "%d", &value);
+      map[y * MAP_COLS + x] = (TILE_TYPE)value;
+    }
+  }
+
+  fclose(mapFile);
+}
+
+static void LoadTextureMap(const char *filePath) {
   FILE *mapFile = fopen(filePath, "r");
   if (mapFile == NULL) {
     TraceLog(LOG_ERROR, "could not open map file %s", filePath);
@@ -233,6 +280,10 @@ static void DrawTile(TILE_TYPE tile, int tx, int ty) {
       DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_GRINDING_STATION_COLOR);
       DrawText("grind", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_GRINDING_STATION_TEXT_COLOR);
       break;
+    case EQUIPMENT_BOX:
+    DrawRectangle(tx, ty, TILE_SIZE, TILE_SIZE, TILE_EQUIPMENT_BOX_COLOR);
+    DrawText("tools", tx+TILE_LABEL_OFFSET_X, ty+TILE_LABEL_OFFSET_Y, TILE_LABEL_FONT_SIZE, TILE_EQUIPMENT_BOX_TEXT_COLOR);
+    break;
   }
 
   DrawRectangle(tx, ty, TILE_SIZE, TILE_GRID_LINE_WIDTH, TILE_GRID_COLOR);
@@ -267,80 +318,83 @@ static void BuildStaticMapLayer(void) {
 }
 
 static void CalculateKeyPress(void) {
-  GameState *state = GetGameState();
-  
-  // Don't process movement input if an overlay is open
-  if (IsOverlayActive()) {
+  // Allow movement only if recipe book is open, block other overlays
+  if (IsOverlayActive() && currentScreen != RECIPE_SCREEN) {
     return;
   }
-  
+
   KeyboardKey key = GetKeyPressed();
   switch (key) {
     default:
       break;
-      
+
     case KEY_W:
-      if (!state->menu.isMenuOpen) MovePlayer(UP);
+      if (!state.menu.isMenuOpen) MovePlayer(UP);
       break;
 
     case KEY_A:
-      if (!state->menu.isMenuOpen) MovePlayer(LEFT);
+      if (!state.menu.isMenuOpen) MovePlayer(LEFT);
       break;
 
     case KEY_S:
-      if (!state->menu.isMenuOpen) MovePlayer(DOWN);
+      if (!state.menu.isMenuOpen) MovePlayer(DOWN);
       break;
 
     case KEY_D:
-      if (!state->menu.isMenuOpen) MovePlayer(RIGHT);
+      if (!state.menu.isMenuOpen) MovePlayer(RIGHT);
       break;
 
     case KEY_SPACE:
       Interact();
       break;
+
+    case KEY_R:
+      state.menu.currentMenu = RECIPE_BOOK;
+      if (currentScreen != RECIPE_SCREEN) {
+        PushScene(RECIPE_SCREEN);
+      }
+      break;
   }
 }
 
 static void MovePlayer(DIRECTION DIR) {
-  GameState *state = GetGameState();
-  state->player.isMoving = true;
-  int nextTileX = state->player.tileX;
-  int nextTileY = state->player.tileY;
+  state.player.isMoving = true;
+  int nextTileX = state.player.tileX;
+  int nextTileY = state.player.tileY;
   switch (DIR) {
     case UP:
-      state->player.facing = UP;
+      state.player.facing = UP;
       nextTileY--;
       break;
     case DOWN:
-      state->player.facing = DOWN;
+      state.player.facing = DOWN;
       nextTileY++;
       break;
     case LEFT:
-      state->player.facing = LEFT;
+      state.player.facing = LEFT;
       nextTileX--;
       break;
     case RIGHT:
-      state->player.facing = RIGHT;
+      state.player.facing = RIGHT;
       nextTileX++;
       break;
   }
 
   if (nextTileX >= 0 && nextTileX < MAP_COLS && nextTileY >= 0 && nextTileY < MAP_ROWS) {
     if (map[nextTileY * MAP_COLS + nextTileX] == WALKABLE) {
-      state->player.tileX = nextTileX;
-      state->player.tileY = nextTileY;
+      state.player.tileX = nextTileX;
+      state.player.tileY = nextTileY;
     }
   }
-  state->player.isMoving = false;
+  state.player.isMoving = false;
 }
 
 static void Interact(void) {
-  GameState *state = GetGameState();
   TILE_TYPE facingType;
-  int facingTileX = state->player.tileX;
-  int facingTileY = state->player.tileY;
+  int facingTileX = state.player.tileX;
+  int facingTileY = state.player.tileY;
 
-  switch (state->player.facing) {
+  switch (state.player.facing) {
     default:
       break;
     case LEFT:
@@ -364,23 +418,23 @@ static void Interact(void) {
       break;
     case FRIDGE:
       currentInventoryType = FROM_FRIDGE;
-      state->menu.currentMenu = INVENTORY_MENU;
+      state.menu.currentMenu = INVENTORY_MENU;
       break;
     case PANTRY:
       currentInventoryType = FROM_PANTRY;
-      state->menu.currentMenu = INVENTORY_MENU;
+      state.menu.currentMenu = INVENTORY_MENU;
       break;
     case STOVE_STATION:
-      state->menu.currentMenu = STOVE_MENU;
+      state.menu.currentMenu = STOVE_MENU;
       break;
     case OVEN_STATION:
-      state->menu.currentMenu = OVEN_MENU;
+      state.menu.currentMenu = OVEN_MENU;
       break;
     case DEEP_FRY_STATION:
-      state->menu.currentMenu = DEEP_FRY_MENU;
+      state.menu.currentMenu = DEEP_FRY_MENU;
       break;
     case GRILL_STATION:
-      state->menu.currentMenu = GRILL_MENU;
+      state.menu.currentMenu = GRILL_MENU;
       break;
     case TRASH:
       if (holding.categoryId >= 0) {
@@ -413,4 +467,64 @@ static void Interact(void) {
 
 static int TileToPixels(int tiles) {
   return tiles * TILE_SIZE;
+}
+
+static void UpdateStockedItemArrays() {
+  // Remove zero or negative quantity items from stockedFridge
+  if (stockedFridge != NULL) {
+    int newCount = 0;
+    for (int i = 0; i < stockedFridgeCount; i++) {
+      if (stockedFridge[i].quantity > 0) newCount++;
+    }
+
+    if (newCount != stockedFridgeCount) {
+      if (newCount == 0) {
+        free(stockedFridge);
+        stockedFridge = NULL;
+        stockedFridgeCount = 0;
+      } else {
+        StockItem *newArr = (StockItem *)malloc(newCount * sizeof(StockItem));
+        if (newArr != NULL) {
+          int idx = 0;
+          for (int i = 0; i < stockedFridgeCount; i++) {
+            if (stockedFridge[i].quantity > 0) newArr[idx++] = stockedFridge[i];
+          }
+          free(stockedFridge);
+          stockedFridge = newArr;
+          stockedFridgeCount = newCount;
+        } else {
+          TraceLog(LOG_ERROR, "Failed to allocate memory for new stockedFridge array");
+        }
+      }
+    }
+  }
+
+  // Remove zero or negative quantity items from stockedPantry
+  if (stockedPantry != NULL) {
+    int newCount2 = 0;
+    for (int i = 0; i < stockedPantryCount; i++) {
+      if (stockedPantry[i].quantity > 0) newCount2++;
+    }
+
+    if (newCount2 != stockedPantryCount) {
+      if (newCount2 == 0) {
+        free(stockedPantry);
+        stockedPantry = NULL;
+        stockedPantryCount = 0;
+      } else {
+        StockItem *newArr2 = (StockItem *)malloc(newCount2 * sizeof(StockItem));
+        if (newArr2 != NULL) {
+          int idx2 = 0;
+          for (int i = 0; i < stockedPantryCount; i++) {
+            if (stockedPantry[i].quantity > 0) newArr2[idx2++] = stockedPantry[i];
+          }
+          free(stockedPantry);
+          stockedPantry = newArr2;
+          stockedPantryCount = newCount2;
+        } else {
+          TraceLog(LOG_ERROR, "Failed to allocate memory for new stockedPantry array");
+        }
+      }
+    }
+  }
 }

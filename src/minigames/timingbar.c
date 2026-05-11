@@ -1,3 +1,4 @@
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
 #include "game/globals.h"
@@ -8,7 +9,7 @@
 #include "stdbool.h"
 #include "math.h"
 
-TimingBarResult timingBarResult = TIMING_BAR_RUNNING;
+TIMING_BAR_RESULT timingBarResult = TIMING_BAR_RUNNING;
 
 //bar dimensions
 float BAR_X = TIMING_BAR_OFFSET_X;

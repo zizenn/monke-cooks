@@ -1,17 +1,15 @@
+#include "core/enums.h"
 #include "external/raylib.h"
 #include "external/raygui.h"
 #include "game/globals.h"
 #include "game/game.h"
-#include "game/items.h"
 #include "game/config.h"
 #include "game/display_screen.h"
 #include "minigames/targetgame.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include "stdbool.h"
 #include "math.h"
 
-TargetGameResult targetGameResult = TARGET_GAME_RUNNING;
+TARGET_GAME_RESULT targetGameResult = TARGET_GAME_RUNNING;
 
 
 static const float OUTER_RADIUS = TARGET_OUTER_RADIUS;

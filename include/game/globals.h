@@ -6,7 +6,7 @@
 #include "external/raylib.h"
 
 // game state
-extern GameScreen currentScreen;
+extern SCREENS currentScreen;
 extern bool shouldQuit;
 extern RenderTexture2D canvas;
 extern int targetFPS;
@@ -17,7 +17,7 @@ extern PREP_TYPE currentPrepType;
 extern PREP_TYPE prepFrom;
 
 // inventory state
-extern ItemOrigin currentInventoryType;
+extern ITEM_ORIGIN currentInventoryType;
 
 // player holding
 extern Holding holding;

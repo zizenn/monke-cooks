@@ -28,6 +28,14 @@ make
 make run
 ```
 
+### data files
+Ingredient definitions and starting stock now load from JSON:
+
+- `assets/data/ingredients.json`
+- `assets/data/stocked_fridge.json`
+- `assets/data/stocked_pantry.json`
+- `assets/data/textures.json`
+
 ## team
 1. Sakif (Lead Dev / Founder)
 3. Eaton (Dev)
@@ -40,3 +48,13 @@ make run
 5. upgrading
 6. bosses
 7. food quality system
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=zizenn%2Fmonke-cooks&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=zizenn/monke-cooks&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=zizenn/monke-cooks&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=zizenn/monke-cooks&type=date&legend=top-left" />
+ </picture>
+</a>

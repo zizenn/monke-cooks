@@ -3,7 +3,7 @@
 
 #include "core/enums.h"
 
-extern TargetGameResult targetGameResult;
+extern TARGET_GAME_RESULT targetGameResult;
 
 void InitTargetMinigame(void);
 void UpdateTargetMinigame(void);

@@ -11,6 +11,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "stdbool.h"
 #include "external/raylib.h"
 #include "core/enums.h"
 
@@ -124,7 +125,7 @@ typedef struct {
 typedef struct {
   int categoryId;
   int variantId;
-  ItemOrigin origin;
+  ITEM_ORIGIN origin;
   TextureID textureId;
 } TextureMapEntry;
 
@@ -139,9 +140,10 @@ extern TextureAsset allTextures[TEXTURE_COUNT];
 extern TextureMap textureMap;
 
 // Texture management API
+bool LoadTextureManifest(const char *path);
 void ProcessTextureLoadingOnMainThread(void);
 void InitTextureMap(void);
-void AddTextureMapping(int categoryId, int variantId, ItemOrigin origin, TextureID textureId);
+void AddTextureMapping(int categoryId, int variantId, ITEM_ORIGIN origin, TextureID textureId);
 void FreeTextureMap(void);
 void UnloadAllTextures(void);
 Texture2D GetTexture(TextureID id);

@@ -3,7 +3,7 @@
 
 #include "core/enums.h"
 
-extern TimingBarResult timingBarResult;
+extern TIMING_BAR_RESULT timingBarResult;
 
 void InitBarMinigame(void);
 void UpdateBarMinigame(void);

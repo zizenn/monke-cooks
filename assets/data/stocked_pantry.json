@@ -1,0 +1,14 @@
+{
+  "stock": [
+    { "category": "TURMERIC", "quantity": 3 },
+    { "category": "VANILLA", "quantity": 1 },
+    { "category": "STAR_ANISE", "quantity": 2 },
+    { "category": "CLOVES", "quantity": 2 },
+    { "category": "NUTMEG", "quantity": 1 },
+    { "category": "WHEAT", "quantity": 4 },
+    { "category": "BARLEY", "quantity": 2 },
+    { "category": "NORI", "quantity": 3 },
+    { "category": "WAKAME", "quantity": 2 },
+    { "category": "MILK", "quantity": 2 }
+  ]
+}

@@ -40,16 +40,16 @@ Ingredient definitions and starting stock now load from JSON:
 1. Sakif (Lead Dev / Founder)
 3. Eaton (Dev)
 
-# Wanted Features
-1. cooking (ofc)
-2. campaign mode
-3. multiplayer
-4. review system
-5. upgrading
-6. bosses
-7. food quality system
+# wanted features + status
+1. cooking (base complete)
+2. campaign mode (nope)
+3. multiplayer (nope)
+4. review system (nope)
+5. upgrading (nope)
+6. bosses (nope)
+7. food quality system (nope)
 
-## Star History
+## star History
 
 <a href="https://www.star-history.com/?repos=zizenn%2Fmonke-cooks&type=date&legend=top-left">
  <picture>

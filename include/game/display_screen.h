@@ -7,7 +7,9 @@
 // --- SCENE MANAGEMENT ---
 void PushScene(SCREENS scene);
 void PopScene(void);
+void PopBackgroundScene(void);
 bool IsOverlayActive(void);
+bool IsBackgroundSceneActive(void);
 
 // --- MENUS ---
 

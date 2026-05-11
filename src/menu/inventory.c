@@ -16,9 +16,7 @@
 #include "string.h"
 
 // textures
-static Texture2D fridgeTextures[FRIDGE_ITEM_COUNT];
-static Texture2D pantryTextures[PANTRY_ITEM_COUNT];
-static Texture2D *currentTextures;
+static Texture2D *currentTextures = NULL;
 
 // vector2s
 static Vector2 scrollOffset = {0, 0};
@@ -50,8 +48,6 @@ void InitInventory() {
   // Set inventory type (FROM_FRIDGE or FROM_PANTRY)
   // This should be set by the caller before InitInventory() is called
   
-  GameState *state = GetGameState();
-  
   // variable setting
   confirm = false;
   searchBarText[0] = '\0';
@@ -63,23 +59,21 @@ void InitInventory() {
   while (GetCharPressed() != 0) {}
   wasSpaceRemoved = true;
   
-  state->inventory.selectedMatchIndex = 0;
-  state->inventory.mouseSelectionArmed = false;
+  state.inventory.selectedMatchIndex = 0;
+  state.inventory.mouseSelectionArmed = false;
 
   // Determine which inventory to use based on currentInventoryType
   switch (currentInventoryType) {
     case FROM_FRIDGE:
       stockedArray = stockedFridge;
-      currentTextures = fridgeTextures;
-      ingredientCount = FRIDGE_ITEM_COUNT;
-      break;  
-    
+      ingredientCount = stockedFridgeCount;
+      break;
+
     case FROM_PANTRY:
       stockedArray = stockedPantry;
-      currentTextures = pantryTextures;
-      ingredientCount = PANTRY_ITEM_COUNT;
+      ingredientCount = stockedPantryCount;
       break;
-    
+
     default:
       return;  // Invalid inventory type
   }
@@ -92,6 +86,27 @@ void InitInventory() {
   lowerCategoryNames = (char (*)[INVENTORY_CATEGORY_NAME_MAX_LENGTH])malloc(
     ingredientCount * INVENTORY_CATEGORY_NAME_MAX_LENGTH * sizeof(char)
   );
+  
+  if (currentTextures != NULL) free(currentTextures);
+  currentTextures = (Texture2D *)malloc(ingredientCount * sizeof(Texture2D));
+  
+  if (ingredientCount > 0 &&
+      (matchedItems == NULL || lowerCategoryNames == NULL || currentTextures == NULL)) {
+    if (matchedItems != NULL) {
+      free(matchedItems);
+      matchedItems = NULL;
+    }
+    if (lowerCategoryNames != NULL) {
+      free(lowerCategoryNames);
+      lowerCategoryNames = NULL;
+    }
+    if (currentTextures != NULL) {
+      free(currentTextures);
+      currentTextures = NULL;
+    }
+    ingredientCount = 0;
+    return;
+  }
 
   // Load textures and prepare category names
   Holding savedHolding = holding;  // Save original
@@ -124,8 +139,6 @@ void InitInventory() {
 }
 
 void UpdateInventory() {
-  GameState *state = GetGameState();
-  
   // Consume any remaining character input on first frame to block SPACE from entering text
   if (wasSpaceRemoved) {
     while (GetCharPressed() != 0) {}
@@ -148,8 +161,8 @@ void UpdateInventory() {
     }
 
     strcpy(lastSearchText, searchBarText);
-    state->inventory.selectedMatchIndex = 0;  // Reset selection when search changes
-    state->inventory.mouseSelectionArmed = false;
+    state.inventory.selectedMatchIndex = 0;  // Reset selection when search changes
+    state.inventory.mouseSelectionArmed = false;
   }
   
   // Handle selection and confirmation
@@ -159,8 +172,8 @@ void UpdateInventory() {
     if (layoutItemsPerRow < 1) layoutItemsPerRow = 1;
     int totalRows = (matchCount + layoutItemsPerRow - 1) / layoutItemsPerRow;
 
-    int selectedRow = state->inventory.selectedMatchIndex / layoutItemsPerRow;
-    int selectedCol = state->inventory.selectedMatchIndex % layoutItemsPerRow;
+    int selectedRow = state.inventory.selectedMatchIndex / layoutItemsPerRow;
+    int selectedCol = state.inventory.selectedMatchIndex % layoutItemsPerRow;
     bool movedByKeyboard = false;
 
     if (IsKeyPressed(KEY_LEFT)) {
@@ -188,8 +201,8 @@ void UpdateInventory() {
 
     int newSelectedIndex = selectedRow * layoutItemsPerRow + selectedCol;
     if (newSelectedIndex >= matchCount) newSelectedIndex = matchCount - 1;
-    state->inventory.selectedMatchIndex = newSelectedIndex;
-    if (movedByKeyboard) state->inventory.mouseSelectionArmed = false;
+    state.inventory.selectedMatchIndex = newSelectedIndex;
+    if (movedByKeyboard) state.inventory.mouseSelectionArmed = false;
     
     // Mouse click detection
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -214,9 +227,9 @@ void UpdateInventory() {
             colClicked >= 0 && colClicked < itemsPerRow &&
             itemIndexClicked >= 0 && itemIndexClicked < matchCount) {
           // Confirm only after an explicit prior mouse selection
-          if (state->inventory.mouseSelectionArmed && itemIndexClicked == state->inventory.selectedMatchIndex) {
+          if (state.inventory.mouseSelectionArmed && itemIndexClicked == state.inventory.selectedMatchIndex) {
             // Confirm selection
-            int selectedStockedIndex = matchedItems[state->inventory.selectedMatchIndex];
+            int selectedStockedIndex = matchedItems[state.inventory.selectedMatchIndex];
             int categoryId = stockedArray[selectedStockedIndex].categoryId;
             
             if (stockedArray[selectedStockedIndex].quantity > 0) {
@@ -235,8 +248,8 @@ void UpdateInventory() {
             }
           } else {
             // First click selects and highlights the item
-            state->inventory.selectedMatchIndex = itemIndexClicked;
-            state->inventory.mouseSelectionArmed = true;
+            state.inventory.selectedMatchIndex = itemIndexClicked;
+            state.inventory.mouseSelectionArmed = true;
           }
         }
       }
@@ -244,7 +257,7 @@ void UpdateInventory() {
     
     // ENTER to confirm selection
     if (IsKeyPressed(KEY_ENTER)) {
-      int selectedStockedIndex = matchedItems[state->inventory.selectedMatchIndex];
+      int selectedStockedIndex = matchedItems[state.inventory.selectedMatchIndex];
       int categoryId = stockedArray[selectedStockedIndex].categoryId;
       
       if (stockedArray[selectedStockedIndex].quantity > 0) {
@@ -268,7 +281,6 @@ void UpdateInventory() {
 }
 
 void DrawInventory() {
-  GameState *state = GetGameState();
   int startX = panelBounds.x + 5;
   int startY = panelBounds.y + 5;
   int maxWidth = panelBounds.width - 20;
@@ -299,7 +311,7 @@ void DrawInventory() {
       float yPos = startY + (row * ITEM_HEIGHT) - scrollOffset.y;
 
       // Highlight selected item behind texture
-      if (i == state->inventory.selectedMatchIndex) {
+      if (i == state.inventory.selectedMatchIndex) {
         DrawRectangle(xPos, yPos, ITEM_WIDTH, ITEM_HEIGHT, Fade(BLUE, 0.45f));
       }
 
@@ -338,6 +350,10 @@ void UnloadInventory() {
   if (lowerCategoryNames != NULL) {
     free(lowerCategoryNames);
     lowerCategoryNames = NULL;
+  }
+  if (currentTextures != NULL) {
+    free(currentTextures);
+    currentTextures = NULL;
   }
 }
 

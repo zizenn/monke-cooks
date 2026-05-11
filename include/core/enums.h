@@ -70,6 +70,12 @@ typedef enum {
   RECIPE_BOOK
 } MENU_TYPE;
 
+// recipe book state
+typedef enum {
+  RECIPE_TASKED,
+  RECIPE_UNTASKED
+} RECIPE_STATUS;
+
 // Game screens
 typedef enum {
   MAIN_MENU,

@@ -6,7 +6,6 @@
 #include "game/thread_manager.h"
 #include "game/globals.h"
 #include "game/config.h"
-#include "game/state.h"
 #include "external/raylib.h"
 #include "stdbool.h"
 #include "stdlib.h"
@@ -21,8 +20,9 @@ typedef enum {
 
 // === SCENE TYPE ENUM ===
 typedef enum {
-  SCENE_FULL_SCREEN,  // Replaces previous full-screen scene
-  SCENE_OVERLAY       // Stacks on top
+  SCENE_FULL_SCREEN,  // Bottom layer: Replaces previous full-screen scene
+  SCENE_OVERLAY,      // Top layer: Stacks on top of everything
+  SCENE_BACKGROUND    // Middle layer: Drawn after full-screen, before overlays
 } SceneType;
 
 // === SCENE HANDLER STRUCT ===
@@ -40,6 +40,7 @@ typedef struct {
   SCREENS *scenes;
   int count;
   int capacity;
+  SCREENS backgroundScene;  // Background scene - drawn after fullscreen, before overlays
 } SceneManager;
 
 static SceneManager sceneManager = {0};
@@ -54,25 +55,21 @@ static const SceneHandler sceneHandlers[] = {
   { OVEN_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
   { DEEP_FRY_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
   { GRILL_SCREEN, SCENE_OVERLAY, InitCook, UpdateCook, DrawCook, UnloadCook },
-  { RECIPE_SCREEN, SCENE_OVERLAY, InitRecipeBook, UpdateRecipeBook, DrawRecipeBook, UnloadRecipeBook },
+  { RECIPE_SCREEN, SCENE_BACKGROUND, InitRecipeBook, UpdateRecipeBook, DrawRecipeBook, UnloadRecipeBook },
 };
 
 #define SCENE_HANDLER_COUNT (sizeof(sceneHandlers) / sizeof(sceneHandlers[0]))
 
 // === GLOBALS ===
-static GameState gameState = {0};
 SCREENS currentScreen = MAIN_MENU;
 bool shouldQuit = false;
 RenderTexture2D canvas;
 int targetFPS = 60;
 
-GameState* GetGameState(void) {
-  return &gameState;
-}
-
 // === FORWARD DECLARATIONS ===
 void PushScene(SCREENS scene);
 void PopScene(void);
+void PopBackgroundScene(void);
 void HandleScene(SCREENS scene, SceneAction action);
 void CleanupSceneManager(void);
 bool IsOverlayActive(void);
@@ -95,6 +92,10 @@ bool IsOverlayActive(void) {
   return GetSceneType(topScene) == SCENE_OVERLAY;
 }
 
+bool IsBackgroundSceneActive(void) {
+  return sceneManager.backgroundScene != 0;
+}
+
 void InitSceneManager(void) {
   sceneManager.capacity = 10;
   sceneManager.scenes = (SCREENS *)malloc(10 * sizeof(SCREENS));
@@ -103,8 +104,21 @@ void InitSceneManager(void) {
 }
 
 void PushScene(SCREENS scene) {
+  SceneType type = GetSceneType(scene);
+  
+  // If pushing a background scene, store it separately
+  if (type == SCENE_BACKGROUND) {
+    // Unload previous background scene if it exists
+    if (sceneManager.backgroundScene != 0) {
+      HandleScene(sceneManager.backgroundScene, SCENE_UNLOAD);
+    }
+    sceneManager.backgroundScene = scene;
+    HandleScene(scene, SCENE_INIT);
+    return;
+  }
+  
   // If pushing a full-screen scene, pop the current one first
-  if (GetSceneType(scene) == SCENE_FULL_SCREEN && sceneManager.count > 0) {
+  if (type == SCENE_FULL_SCREEN && sceneManager.count > 0) {
     PopScene();
   }
   
@@ -132,7 +146,24 @@ void PopScene(void) {
   // Unload the scene
   HandleScene(scene, SCENE_UNLOAD);
   
-  // Update global to top scene
+  // Update global to top scene (or background if only background left)
+  if (sceneManager.count > 0) {
+    currentScreen = sceneManager.scenes[sceneManager.count - 1];
+  } else if (sceneManager.backgroundScene != 0) {
+    currentScreen = sceneManager.backgroundScene;
+  }
+}
+
+void PopBackgroundScene(void) {
+  if (sceneManager.backgroundScene == 0) return;
+  
+  SCREENS scene = sceneManager.backgroundScene;
+  sceneManager.backgroundScene = 0;
+  
+  // Unload the scene
+  HandleScene(scene, SCENE_UNLOAD);
+  
+  // Update global to top scene if it exists
   if (sceneManager.count > 0) {
     currentScreen = sceneManager.scenes[sceneManager.count - 1];
   }
@@ -165,6 +196,9 @@ void CleanupSceneManager(void) {
   while (sceneManager.count > 0) {
     PopScene();
   }
+  if (sceneManager.backgroundScene != 0) {
+    PopBackgroundScene();
+  }
   free(sceneManager.scenes);
 }
 
@@ -173,11 +207,23 @@ int main() {
   InitWindow(1280, 720, "monke cooks");
   SetExitKey(KEY_NULL);
   InitAudioDevice();
+
+  if (!LoadTextureManifest("assets/data/textures.json")) {
+    CloseAudioDevice();
+    CloseWindow();
+    return 1;
+  }
+
+  if (!LoadItemData("assets/data/ingredients.json", "assets/data/stocked_fridge.json", "assets/data/stocked_pantry.json")) {
+    UnloadAllTextures();
+    CloseAudioDevice();
+    CloseWindow();
+    return 1;
+  }
   
   // Start async texture loading and music manager
   StartTextureLoader();
   StartMusicManager();
-  InitializeRuntimeCounts();
   
   SetTargetFPS(targetFPS);
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
@@ -224,17 +270,45 @@ int main() {
     // Update notifications timer
     UpdateNotifications();
     
-    // UPDATE all active scenes in the stack
+    // 1. UPDATE fullscreen scenes
     for (int i = 0; i < sceneManager.count; i++) {
-      HandleScene(sceneManager.scenes[i], SCENE_UPDATE);
+      if (GetSceneType(sceneManager.scenes[i]) == SCENE_FULL_SCREEN) {
+        HandleScene(sceneManager.scenes[i], SCENE_UPDATE);
+      }
+    }
+    
+    // 2. UPDATE background scene (middle layer)
+    if (sceneManager.backgroundScene != 0) {
+      HandleScene(sceneManager.backgroundScene, SCENE_UPDATE);
+    }
+    
+    // 3. UPDATE overlay scenes (top layer)
+    for (int i = 0; i < sceneManager.count; i++) {
+      if (GetSceneType(sceneManager.scenes[i]) == SCENE_OVERLAY) {
+        HandleScene(sceneManager.scenes[i], SCENE_UPDATE);
+      }
     }
     
     BeginTextureMode(canvas);
     ClearBackground(BLACK);
-
-    // DRAW all visible scenes (bottom to top)
+    
+    // 1. DRAW fullscreen scenes
     for (int i = 0; i < sceneManager.count; i++) {
-      HandleScene(sceneManager.scenes[i], SCENE_DRAW);
+      if (GetSceneType(sceneManager.scenes[i]) == SCENE_FULL_SCREEN) {
+        HandleScene(sceneManager.scenes[i], SCENE_DRAW);
+      }
+    }
+    
+    // 2. DRAW background scene (middle layer)
+    if (sceneManager.backgroundScene != 0) {
+      HandleScene(sceneManager.backgroundScene, SCENE_DRAW);
+    }
+
+    // 3. DRAW overlay scenes (top layer)
+    for (int i = 0; i < sceneManager.count; i++) {
+      if (GetSceneType(sceneManager.scenes[i]) == SCENE_OVERLAY) {
+        HandleScene(sceneManager.scenes[i], SCENE_DRAW);
+      }
     }
 
     DrawNotifications();
@@ -256,6 +330,7 @@ int main() {
   // Cleanup
   StopMusicManager();
   CleanupSceneManager();
+  UnloadItemData();
   UnloadAllTextures();
   UnloadRenderTexture(canvas);
   CloseAudioDevice();

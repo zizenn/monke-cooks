@@ -20,20 +20,20 @@ typedef struct {
     DIRECTION facing;
     bool isMoving;
   } player;
-  
+
   // Inventory state
   struct {
     int selectedMatchIndex;
     bool mouseSelectionArmed;
   } inventory;
-  
+
   // Prep state
   struct {
     int categoryId;
     Foods nextVariant;
     int nextVariantId;
   } prep;
-  
+
   // Cooking state
   struct {
     Holding newHolding;
@@ -42,10 +42,11 @@ typedef struct {
     MINIGAME_STATUS minigameStatus;
     bool cookResultApplied;
   } cook;
-  
+
   // recipe book state
   struct {
     RECIPE_BOOK_TYPE currentBook;
+    RECIPE_STATUS recipeStatus;
   } recipe_book;
 
   // Game state
@@ -56,6 +57,6 @@ typedef struct {
   } menu;
 } GameState;
 
-GameState* GetGameState(void);
+extern GameState state;
 
 #endif

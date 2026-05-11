@@ -19,6 +19,7 @@ typedef struct {
   PREP_TYPE prep_type;
   float price;
   int variant;
+  int textureId;
 } Foods;
 
 // Food category with variants

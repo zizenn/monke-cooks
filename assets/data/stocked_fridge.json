@@ -1,0 +1,15 @@
+{
+  "stock": [
+    { "category": "EGG", "quantity": 2 },
+    { "category": "RICE", "quantity": 1 },
+    { "category": "SHIITAKE", "quantity": 3 },
+    { "category": "CHICKPEA", "quantity": 2 },
+    { "category": "LENTIL", "quantity": 1 },
+    { "category": "OYSTER_MUSHROOM", "quantity": 2 },
+    { "category": "MOZZARELLA", "quantity": 2 },
+    { "category": "PARMIGIANO", "quantity": 1 },
+    { "category": "CHEDDAR", "quantity": 3 },
+    { "category": "PEPPER", "quantity": 4 },
+    { "category": "CUMIN", "quantity": 2 }
+  ]
+}

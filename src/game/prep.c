@@ -13,24 +13,27 @@
 static void Apply();
 
 void PrepFood(int currentTile) {
-  GameState *state = GetGameState();
   FoodCategory* categories = GetHoldingCategories(&holding);
   
   if (categories == NULL) {
     return;
   }
 
-  state->prep.categoryId = holding.categoryId;
+  state.prep.categoryId = holding.categoryId;
   int currentVariantId = holding.variantId;
-  state->prep.nextVariantId = currentVariantId + 1;
-  int variantCount = categories[state->prep.categoryId].variantCount;
+  state.prep.nextVariantId = currentVariantId + 1;
+  int categoryCount = GetCategoryCount(holding.origin);
+  if (state.prep.categoryId < 0 || state.prep.categoryId >= categoryCount) {
+    return;
+  }
+  int variantCount = categories[state.prep.categoryId].variantCount;
 
-  if (currentVariantId < 0 || currentVariantId >= variantCount || state->prep.nextVariantId >= variantCount) {
+  if (currentVariantId < 0 || currentVariantId >= variantCount || state.prep.nextVariantId >= variantCount) {
     return;
   }
 
-  Foods currentVariant = categories[state->prep.categoryId].variants[currentVariantId];
-  state->prep.nextVariant = categories[state->prep.categoryId].variants[state->prep.nextVariantId];
+  Foods currentVariant = categories[state.prep.categoryId].variants[currentVariantId];
+  state.prep.nextVariant = categories[state.prep.categoryId].variants[state.prep.nextVariantId];
 
   currentPrepType = currentVariant.prep_type;
 
@@ -59,15 +62,14 @@ void PrepFood(int currentTile) {
 }
 
 static void Apply() {
-  GameState *state = GetGameState();
   holding = (Holding){
-    state->prep.categoryId, 
-    state->prep.nextVariantId, 
-    state->prep.nextVariant.cook_type,
+    state.prep.categoryId, 
+    state.prep.nextVariantId, 
+    state.prep.nextVariant.cook_type,
     holding.origin,   // Keep the original origin
     ARRAY_FOOD        // Food items stay in ARRAY_FOOD
   };
-  currentPrepType = state->prep.nextVariant.prep_type;
-  const char* debugText = state->prep.nextVariant.name;
+  currentPrepType = state.prep.nextVariant.prep_type;
+  const char* debugText = state.prep.nextVariant.name;
   TraceLog(LOG_INFO, "item name: %s", debugText);
 }

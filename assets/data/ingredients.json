@@ -1,0 +1,159 @@
+{
+  "fridge": [
+    {
+      "category": "EGG",
+      "variants": [
+        { "name": "RAW_EGG", "cook_type": "COOK_NONE", "prep_type": "CRACK", "price": 3.5, "variant": 1, "texture": "EGG_RAW" },
+        { "name": "CRACKED_EGG", "cook_type": "PAN", "prep_type": "PREP_NONE", "price": 3.5, "variant": 2, "texture": "EGG_CRACKED" },
+        { "name": "FRIED_EGG", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 3.5, "variant": 3, "texture": "EGG_FRIED" }
+      ]
+    },
+    {
+      "category": "RICE",
+      "variants": [
+        { "name": "RAW_RICE", "cook_type": "COOK_NONE", "prep_type": "WASH", "price": 5.0, "variant": 1, "texture": "RICE_RAW" },
+        { "name": "WASHED_RICE", "cook_type": "OVEN", "prep_type": "PREP_NONE", "price": 5.0, "variant": 2, "texture": "RICE_WASHED" },
+        { "name": "COOKED_RICE", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 6.5, "variant": 3, "texture": "RICE_COOKED" }
+      ]
+    },
+    {
+      "category": "SHIITAKE",
+      "variants": [
+        { "name": "RAW_SHIITAKE", "cook_type": "COOK_NONE", "prep_type": "CUT", "price": 5.5, "variant": 1, "texture": "SHIITAKE_RAW" },
+        { "name": "SLICED_SHIITAKE", "cook_type": "PAN", "prep_type": "PREP_NONE", "price": 5.5, "variant": 2, "texture": "SHIITAKE_SLICED" },
+        { "name": "COOKED_SHIITAKE", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 7.0, "variant": 3, "texture": "SHIITAKE_COOKED" }
+      ]
+    },
+    {
+      "category": "CHICKPEA",
+      "variants": [
+        { "name": "RAW_CHICKPEA", "cook_type": "COOK_NONE", "prep_type": "WASH", "price": 8.0, "variant": 1, "texture": "CHICKPEA_RAW" },
+        { "name": "SOAKED_CHICKPEA", "cook_type": "OVEN", "prep_type": "PREP_NONE", "price": 8.0, "variant": 2, "texture": "CHICKPEA_SOAKED" },
+        { "name": "COOKED_CHICKPEA", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 10.0, "variant": 3, "texture": "CHICKPEA_COOKED" }
+      ]
+    },
+    {
+      "category": "LENTIL",
+      "variants": [
+        { "name": "RAW_LENTIL", "cook_type": "COOK_NONE", "prep_type": "WASH", "price": 6.0, "variant": 1, "texture": "LENTIL_RAW" },
+        { "name": "RINSED_LENTIL", "cook_type": "OVEN", "prep_type": "PREP_NONE", "price": 6.0, "variant": 2, "texture": "LENTIL_RINSED" },
+        { "name": "COOKED_LENTIL", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 8.0, "variant": 3, "texture": "LENTIL_COOKED" }
+      ]
+    },
+    {
+      "category": "OYSTER_MUSHROOM",
+      "variants": [
+        { "name": "RAW_OYSTER_MUSHROOM", "cook_type": "COOK_NONE", "prep_type": "CUT", "price": 7.0, "variant": 1, "texture": "OYSTER_MUSHROOM_RAW" },
+        { "name": "SLICED_OYSTER", "cook_type": "PAN", "prep_type": "PREP_NONE", "price": 7.0, "variant": 2, "texture": "OYSTER_MUSHROOM_SLICED" },
+        { "name": "COOKED_OYSTER", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 9.0, "variant": 3, "texture": "OYSTER_MUSHROOM_COOKED" }
+      ]
+    },
+    {
+      "category": "MOZZARELLA",
+      "variants": [
+        { "name": "FRESH_MOZZARELLA", "cook_type": "PAN", "prep_type": "CUT", "price": 12.0, "variant": 1, "texture": "MOZZARELLA_FRESH" },
+        { "name": "MELTED_MOZZARELLA", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 12.0, "variant": 2, "texture": "MOZZARELLA_MELTED" }
+      ]
+    },
+    {
+      "category": "PARMIGIANO",
+      "variants": [
+        { "name": "FRESH_PARMIGIANO", "cook_type": "PAN", "prep_type": "CUT", "price": 14.0, "variant": 1, "texture": "PARMIGIANO_FRESH" },
+        { "name": "MELTED_PARMIGIANO", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 14.0, "variant": 2, "texture": "PARMIGIANO_MELTED" }
+      ]
+    },
+    {
+      "category": "CHEDDAR",
+      "variants": [
+        { "name": "FRESH_CHEDDAR", "cook_type": "PAN", "prep_type": "CUT", "price": 10.0, "variant": 1, "texture": "CHEDDAR_FRESH" },
+        { "name": "MELTED_CHEDDAR", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 10.0, "variant": 2, "texture": "CHEDDAR_MELTED" }
+      ]
+    },
+    {
+      "category": "PEPPER",
+      "variants": [
+        { "name": "RAW_PEPPER", "cook_type": "PAN", "prep_type": "GROUND", "price": 2.5, "variant": 1, "texture": "PEPPER_RAW" },
+        { "name": "GROUND_PEPPER", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 2.5, "variant": 2, "texture": "PEPPER_GROUND" }
+      ]
+    },
+    {
+      "category": "CUMIN",
+      "variants": [
+        { "name": "RAW_CUMIN", "cook_type": "PAN", "prep_type": "CUT", "price": 3.0, "variant": 1, "texture": "CUMIN_RAW" },
+        { "name": "ROASTED_CUMIN", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 3.0, "variant": 2, "texture": "CUMIN_ROASTED" }
+      ]
+    }
+  ],
+  "pantry": [
+    {
+      "category": "TURMERIC",
+      "variants": [
+        { "name": "RAW_TURMERIC", "cook_type": "PAN", "prep_type": "GROUND", "price": 4.5, "variant": 1, "texture": "TURMERIC_RAW" },
+        { "name": "GROUND_TURMERIC", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 4.5, "variant": 2, "texture": "TURMERIC_GROUND" }
+      ]
+    },
+    {
+      "category": "VANILLA",
+      "variants": [
+        { "name": "RAW_VANILLA", "cook_type": "PAN", "prep_type": "CUT", "price": 8.0, "variant": 1, "texture": "VANILLA_RAW" },
+        { "name": "PROCESSED_VANILLA", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 8.0, "variant": 2, "texture": "VANILLA_PROCESSED" }
+      ]
+    },
+    {
+      "category": "STAR_ANISE",
+      "variants": [
+        { "name": "WHOLE_STAR_ANISE", "cook_type": "PAN", "prep_type": "GROUND", "price": 5.0, "variant": 1, "texture": "STAR_ANISE_WHOLE" },
+        { "name": "GROUND_STAR_ANISE", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 5.0, "variant": 2, "texture": "STAR_ANISE_GROUND" }
+      ]
+    },
+    {
+      "category": "CLOVES",
+      "variants": [
+        { "name": "WHOLE_CLOVES", "cook_type": "PAN", "prep_type": "GROUND", "price": 6.0, "variant": 1, "texture": "CLOVES_WHOLE" },
+        { "name": "GROUND_CLOVES", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 6.0, "variant": 2, "texture": "CLOVES_GROUND" }
+      ]
+    },
+    {
+      "category": "NUTMEG",
+      "variants": [
+        { "name": "WHOLE_NUTMEG", "cook_type": "PAN", "prep_type": "GROUND", "price": 5.5, "variant": 1, "texture": "NUTMEG_WHOLE" },
+        { "name": "GROUND_NUTMEG", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 5.5, "variant": 2, "texture": "NUTMEG_GROUND" }
+      ]
+    },
+    {
+      "category": "WHEAT",
+      "variants": [
+        { "name": "RAW_WHEAT", "cook_type": "OVEN", "prep_type": "WASH", "price": 3.0, "variant": 1, "texture": "WHEAT_RAW" },
+        { "name": "MILLED_WHEAT", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 3.0, "variant": 2, "texture": "WHEAT_MILLED" }
+      ]
+    },
+    {
+      "category": "BARLEY",
+      "variants": [
+        { "name": "RAW_BARLEY", "cook_type": "OVEN", "prep_type": "WASH", "price": 3.5, "variant": 1, "texture": "BARLEY_RAW" },
+        { "name": "COOKED_BARLEY", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 3.5, "variant": 2, "texture": "BARLEY_COOKED" }
+      ]
+    },
+    {
+      "category": "NORI",
+      "variants": [
+        { "name": "DRIED_NORI", "cook_type": "PAN", "prep_type": "PREP_NONE", "price": 7.0, "variant": 1, "texture": "NORI_DRIED" },
+        { "name": "TOASTED_NORI", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 7.0, "variant": 2, "texture": "NORI_TOASTED" }
+      ]
+    },
+    {
+      "category": "WAKAME",
+      "variants": [
+        { "name": "DRIED_WAKAME", "cook_type": "COOK_NONE", "prep_type": "WASH", "price": 6.0, "variant": 1, "texture": "WAKAME_DRIED" },
+        { "name": "SOAKED_WAKAME", "cook_type": "OVEN", "prep_type": "PREP_NONE", "price": 6.0, "variant": 2, "texture": "WAKAME_SOAKED" }
+      ]
+    },
+    {
+      "category": "MILK",
+      "variants": [
+        { "name": "FRESH_MILK", "cook_type": "OVEN", "prep_type": "PREP_NONE", "price": 4.0, "variant": 1, "texture": "MILK_FRESH" },
+        { "name": "HEATED_MILK", "cook_type": "COOK_NONE", "prep_type": "PREP_NONE", "price": 4.0, "variant": 2, "texture": "MILK_HEATED" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "group": "milk",
+  "variants": [
+    { "id": 1, "suffix": " (Fresh)", "state": "RAW", "resultTag": "NONE", "prepType": "PREP_NONE", "cookType": "OVEN", "price": 4.0, "texture": "MILK_FRESH" },
+    { "id": 2, "suffix": " (Heated)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 4.0, "texture": "MILK_HEATED" }
+  ]
+}

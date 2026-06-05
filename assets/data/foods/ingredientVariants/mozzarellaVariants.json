@@ -1,0 +1,7 @@
+{
+  "group": "mozzarella",
+  "variants": [
+    { "id": 1, "suffix": " (Fresh)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "PAN", "price": 12.0, "texture": "MOZZARELLA_FRESH" },
+    { "id": 2, "suffix": " (Melted)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 12.0, "texture": "MOZZARELLA_MELTED" }
+  ]
+}

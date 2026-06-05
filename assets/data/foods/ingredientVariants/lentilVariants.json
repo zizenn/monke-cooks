@@ -1,0 +1,8 @@
+{
+  "group": "lentil",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "WASH", "cookType": "COOK_NONE", "price": 6.0, "texture": "LENTIL_RAW" },
+    { "id": 2, "suffix": " (Rinsed)", "state": "PREPPED", "resultTag": "RINSED", "prepType": "PREP_NONE", "cookType": "OVEN", "price": 6.0, "texture": "LENTIL_RINSED" },
+    { "id": 3, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 8.0, "texture": "LENTIL_COOKED" }
+  ]
+}

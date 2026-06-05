@@ -1,0 +1,8 @@
+{
+  "group": "egg",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "CRACK", "cookType": "COOK_NONE", "price": 3.5, "texture": "EGG_RAW" },
+    { "id": 2, "suffix": " (Cracked)", "state": "PREPPED", "resultTag": "CRACKED", "prepType": "PREP_NONE", "cookType": "PAN", "price": 3.5, "texture": "EGG_CRACKED" },
+    { "id": 3, "suffix": " (Fried)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 3.5, "texture": "EGG_FRIED" }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "group": "cumin",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "PAN", "price": 3.0, "texture": "CUMIN_RAW" },
+    { "id": 2, "suffix": " (Roasted)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 3.0, "texture": "CUMIN_ROASTED" }
+  ]
+}

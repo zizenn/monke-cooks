@@ -1,0 +1,7 @@
+{
+  "group": "parmigiano",
+  "variants": [
+    { "id": 1, "suffix": " (Fresh)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "PAN", "price": 14.0, "texture": "PARMIGIANO_FRESH" },
+    { "id": 2, "suffix": " (Melted)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 14.0, "texture": "PARMIGIANO_MELTED" }
+  ]
+}

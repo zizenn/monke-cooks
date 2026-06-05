@@ -1,0 +1,14 @@
+{
+  "stock": [
+    { "ingredient": "Turmeric", "quantity": 3 },
+    { "ingredient": "Vanilla", "quantity": 1 },
+    { "ingredient": "Star Anise", "quantity": 2 },
+    { "ingredient": "Cloves", "quantity": 2 },
+    { "ingredient": "Nutmeg", "quantity": 1 },
+    { "ingredient": "Wheat", "quantity": 4 },
+    { "ingredient": "Barley", "quantity": 2 },
+    { "ingredient": "Nori", "quantity": 3 },
+    { "ingredient": "Wakame", "quantity": 2 },
+    { "ingredient": "Milk", "quantity": 2 }
+  ]
+}

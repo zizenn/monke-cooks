@@ -1,0 +1,7 @@
+{
+  "group": "barley",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "WASH", "cookType": "OVEN", "price": 3.5, "texture": "BARLEY_RAW" },
+    { "id": 2, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 3.5, "texture": "BARLEY_COOKED" }
+  ]
+}

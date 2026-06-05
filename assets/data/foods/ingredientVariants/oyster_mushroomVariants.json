@@ -1,0 +1,8 @@
+{
+  "group": "oyster_mushroom",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "COOK_NONE", "price": 7.0, "texture": "OYSTER_MUSHROOM_RAW" },
+    { "id": 2, "suffix": " (Sliced)", "state": "PREPPED", "resultTag": "SLICED", "prepType": "PREP_NONE", "cookType": "PAN", "price": 7.0, "texture": "OYSTER_MUSHROOM_SLICED" },
+    { "id": 3, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 9.0, "texture": "OYSTER_MUSHROOM_COOKED" }
+  ]
+}

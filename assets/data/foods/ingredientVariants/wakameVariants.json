@@ -1,0 +1,7 @@
+{
+  "group": "wakame",
+  "variants": [
+    { "id": 1, "suffix": " (Dried)", "state": "RAW", "resultTag": "NONE", "prepType": "WASH", "cookType": "OVEN", "price": 6.0, "texture": "WAKAME_DRIED" },
+    { "id": 2, "suffix": " (Soaked)", "state": "PREPPED", "resultTag": "SOAKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 6.0, "texture": "WAKAME_SOAKED" }
+  ]
+}

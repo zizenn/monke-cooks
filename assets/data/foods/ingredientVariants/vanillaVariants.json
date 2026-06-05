@@ -1,0 +1,7 @@
+{
+  "group": "vanilla",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "PAN", "price": 8.0, "texture": "VANILLA_RAW" },
+    { "id": 2, "suffix": " (Processed)", "state": "PREPPED", "resultTag": "PROCESSED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 8.0, "texture": "VANILLA_PROCESSED" }
+  ]
+}

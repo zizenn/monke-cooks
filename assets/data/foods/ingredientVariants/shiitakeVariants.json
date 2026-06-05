@@ -1,0 +1,8 @@
+{
+  "group": "shiitake",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "CUT", "cookType": "COOK_NONE", "price": 5.5, "texture": "SHIITAKE_RAW" },
+    { "id": 2, "suffix": " (Sliced)", "state": "PREPPED", "resultTag": "SLICED", "prepType": "PREP_NONE", "cookType": "PAN", "price": 5.5, "texture": "SHIITAKE_SLICED" },
+    { "id": 3, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 7.0, "texture": "SHIITAKE_COOKED" }
+  ]
+}

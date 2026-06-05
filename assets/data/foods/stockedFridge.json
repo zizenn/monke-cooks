@@ -1,0 +1,15 @@
+{
+  "stock": [
+    { "ingredient": "Egg", "quantity": 2 },
+    { "ingredient": "Rice", "quantity": 1 },
+    { "ingredient": "Shiitake", "quantity": 3 },
+    { "ingredient": "Chickpea", "quantity": 2 },
+    { "ingredient": "Lentil", "quantity": 1 },
+    { "ingredient": "Oyster Mushroom", "quantity": 2 },
+    { "ingredient": "Mozzarella", "quantity": 2 },
+    { "ingredient": "Parmigiano", "quantity": 1 },
+    { "ingredient": "Cheddar", "quantity": 3 },
+    { "ingredient": "Pepper", "quantity": 4 },
+    { "ingredient": "Cumin", "quantity": 2 }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "group": "pepper",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "GROUND", "cookType": "PAN", "price": 2.5, "texture": "PEPPER_RAW" },
+    { "id": 2, "suffix": " (Ground)", "state": "PREPPED", "resultTag": "GROUND", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 2.5, "texture": "PEPPER_GROUND" }
+  ]
+}

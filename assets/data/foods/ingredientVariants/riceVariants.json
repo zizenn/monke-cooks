@@ -1,0 +1,8 @@
+{
+  "group": "rice",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "WASH", "cookType": "COOK_NONE", "price": 5.0, "texture": "RICE_RAW" },
+    { "id": 2, "suffix": " (Washed)", "state": "PREPPED", "resultTag": "WASHED", "prepType": "PREP_NONE", "cookType": "OVEN", "price": 5.0, "texture": "RICE_WASHED" },
+    { "id": 3, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 6.5, "texture": "RICE_COOKED" }
+  ]
+}

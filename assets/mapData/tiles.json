@@ -1,0 +1,26 @@
+{
+  "tile_types": [
+    {
+      "id": 0,
+      "name": "floor",
+      "walkable": true,
+      "interactable": false,
+      "holdsItem": false
+    },
+    {
+      "id": 1,
+      "name": "counter",
+      "walkable": false,
+      "interactable": false,
+      "holdsItem": true
+    },
+    {
+      "id": 2,
+      "name": "sink",
+      "walkable": false,
+      "interactable": true,
+      "holdsItem": false,
+      "filePath": ""
+    }
+  ]
+}

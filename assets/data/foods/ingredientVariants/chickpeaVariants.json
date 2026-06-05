@@ -1,0 +1,8 @@
+{
+  "group": "chickpea",
+  "variants": [
+    { "id": 1, "suffix": " (Raw)", "state": "RAW", "resultTag": "NONE", "prepType": "WASH", "cookType": "COOK_NONE", "price": 8.0, "texture": "CHICKPEA_RAW" },
+    { "id": 2, "suffix": " (Soaked)", "state": "PREPPED", "resultTag": "SOAKED", "prepType": "PREP_NONE", "cookType": "OVEN", "price": 8.0, "texture": "CHICKPEA_SOAKED" },
+    { "id": 3, "suffix": " (Cooked)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 10.0, "texture": "CHICKPEA_COOKED" }
+  ]
+}

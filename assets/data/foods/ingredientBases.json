@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    { "id": 1, "name": "Egg", "location": "FRIDGE", "variantGroup": "egg" },
+    { "id": 2, "name": "Rice", "location": "FRIDGE", "variantGroup": "rice" },
+    { "id": 3, "name": "Shiitake", "location": "FRIDGE", "variantGroup": "shiitake" },
+    { "id": 4, "name": "Chickpea", "location": "FRIDGE", "variantGroup": "chickpea" },
+    { "id": 5, "name": "Lentil", "location": "FRIDGE", "variantGroup": "lentil" },
+    { "id": 6, "name": "Oyster Mushroom", "location": "FRIDGE", "variantGroup": "oyster_mushroom" },
+    { "id": 7, "name": "Mozzarella", "location": "FRIDGE", "variantGroup": "mozzarella" },
+    { "id": 8, "name": "Parmigiano", "location": "FRIDGE", "variantGroup": "parmigiano" },
+    { "id": 9, "name": "Cheddar", "location": "FRIDGE", "variantGroup": "cheddar" },
+    { "id": 10, "name": "Pepper", "location": "FRIDGE", "variantGroup": "pepper" },
+    { "id": 11, "name": "Cumin", "location": "FRIDGE", "variantGroup": "cumin" },
+    { "id": 12, "name": "Turmeric", "location": "PANTRY", "variantGroup": "turmeric" },
+    { "id": 13, "name": "Vanilla", "location": "PANTRY", "variantGroup": "vanilla" },
+    { "id": 14, "name": "Star Anise", "location": "PANTRY", "variantGroup": "star_anise" },
+    { "id": 15, "name": "Cloves", "location": "PANTRY", "variantGroup": "cloves" },
+    { "id": 16, "name": "Nutmeg", "location": "PANTRY", "variantGroup": "nutmeg" },
+    { "id": 17, "name": "Wheat", "location": "PANTRY", "variantGroup": "wheat" },
+    { "id": 18, "name": "Barley", "location": "PANTRY", "variantGroup": "barley" },
+    { "id": 19, "name": "Nori", "location": "PANTRY", "variantGroup": "nori" },
+    { "id": 20, "name": "Wakame", "location": "PANTRY", "variantGroup": "wakame" },
+    { "id": 21, "name": "Milk", "location": "PANTRY", "variantGroup": "milk" }
+  ]
+}

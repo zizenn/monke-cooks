@@ -1,82 +1,45 @@
-CC = gcc
-rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
-SOURCES := $(call rwildcard,src/,*.c)
-TARGET := game
-RAYLIB_HEADERS := raylib.h raymath.h rlgl.h
+CC      := gcc
+TARGET  := game
+SOURCES := $(wildcard src/*.c) $(wildcard src/**/*.c)
 
+# Platform Detection & Setup
 ifeq ($(OS),Windows_NT)
-TARGET_OS := windows
+    EXE           := $(TARGET).exe
+    RAYLIB_LIB    := lib/libraylib.a
+    PLATFORM_LIBS := -lgdi32 -lwinmm -lopengl32
+    CFLAGS        := -DNOGDI -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS
+    CLEAN_CMD     := cmd /c "if exist $(EXE) del /f /q $(EXE)"
 else
-UNAME_S := $(shell uname -s)
-ifneq (,$(findstring MINGW,$(UNAME_S)))
-TARGET_OS := windows
-else ifneq (,$(findstring MSYS,$(UNAME_S)))
-TARGET_OS := windows
-else ifeq ($(UNAME_S),Darwin)
-TARGET_OS := macos
-else ifeq ($(UNAME_S),Linux)
-TARGET_OS := linux
-else
-$(error Unsupported platform: $(UNAME_S))
-endif
+    EXE           := $(TARGET)
+    CLEAN_CMD     := rm -f $(EXE)
+    UNAME_S       := $(shell uname -s)
+    ifeq ($(UNAME_S),Darwin) # macOS
+        RAYLIB_LIB    := lib/macos/libraylib.a
+        PLATFORM_LIBS := -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
+    else # Linux assumed
+        RAYLIB_LIB    := lib/linux/libraylib.a
+        PLATFORM_LIBS := -lm -ldl -lpthread -lGL -lrt -lX11
+    endif
 endif
 
-ifeq ($(TARGET_OS),windows)
-EXE := $(TARGET).exe
-RAYLIB_LIB := lib/libraylib.a
-RAYLIB_INCLUDE := lib
-PLATFORM_LIBS := -lgdi32 -lwinmm -lopengl32
-CFLAGS := -DNOGDI -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS
-RUN_CMD := ./$(EXE)
-ifeq ($(wildcard $(RAYLIB_LIB)),)
-$(error Missing $(RAYLIB_LIB). Add Windows raylib binaries under lib/)
-endif
-else ifeq ($(TARGET_OS),linux)
-EXE := $(TARGET)
-RAYLIB_LIB := lib/linux/libraylib.a
-RAYLIB_INCLUDE := lib
-PLATFORM_LIBS := -lm -ldl -lpthread -lGL -lrt -lX11
-RUN_CMD := ./$(EXE)
-ifeq ($(wildcard $(RAYLIB_LIB)),)
-$(error Missing $(RAYLIB_LIB). Add Linux raylib binaries under lib/linux/)
-endif
-else ifeq ($(TARGET_OS),macos)
-EXE := $(TARGET)
-RAYLIB_LIB := lib/macos/libraylib.a
-RAYLIB_INCLUDE := lib
-PLATFORM_LIBS := -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
-RUN_CMD := ./$(EXE)
-ifeq ($(wildcard $(RAYLIB_LIB)),)
-$(error Missing $(RAYLIB_LIB). Add macOS raylib binaries under lib/macos/)
-endif
-endif
+CPPFLAGS := -Iinclude -Ilib
 
-CPPFLAGS := -Iinclude -I$(RAYLIB_INCLUDE)
+# 2. Build Targets
+.PHONY: all run clean lsp
 
-.PHONY: default all run clean
+# Making 'all' automatically trigger the 'lsp' definition file update
+all: lsp $(EXE)
 
-default: all
+$(EXE): $(SOURCES)
+	$(CC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(RAYLIB_LIB) $(PLATFORM_LIBS)
 
-all: $(RAYLIB_LIB)
-	$(CC) -o $(EXE) $(SOURCES) $(CPPFLAGS) $(CFLAGS) $(RAYLIB_LIB) $(PLATFORM_LIBS)
-
-ifeq ($(TARGET_OS),windows)
-$(RAYLIB_LIB):
-	@echo "Using local Windows raylib at $(RAYLIB_LIB)"
-else ifeq ($(TARGET_OS),linux)
-$(RAYLIB_LIB):
-	@echo "Using local Linux raylib at $(RAYLIB_LIB)"
-else ifeq ($(TARGET_OS),macos)
-$(RAYLIB_LIB):
-	@echo "Using local macOS raylib at $(RAYLIB_LIB)"
-endif
+# Force compiledb to evaluate the clean tool command 'make' directly
+lsp:
+	@echo "Updating compile_commands.json..."
+	-@compiledb -n make --no-print-directory $(EXE)
 
 run: all
-	$(RUN_CMD)
+	./$(EXE)
 
 clean:
-ifeq ($(TARGET_OS),windows)
-	@cmd /c "if exist game.exe del /f /q game.exe & if exist game del /f /q game"
-else
-	@rm -f game game.exe
-endif
+	@$(CLEAN_CMD)

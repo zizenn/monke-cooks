@@ -1,0 +1,7 @@
+{
+  "group": "nori",
+  "variants": [
+    { "id": 1, "suffix": " (Dried)", "state": "RAW", "resultTag": "NONE", "prepType": "PREP_NONE", "cookType": "PAN", "price": 7.0, "texture": "NORI_DRIED" },
+    { "id": 2, "suffix": " (Toasted)", "state": "COOKED", "resultTag": "COOKED", "prepType": "PREP_NONE", "cookType": "COOK_NONE", "price": 7.0, "texture": "NORI_TOASTED" }
+  ]
+}

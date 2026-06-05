@@ -4,5 +4,4 @@
 
 1. https://keifoopx.itch.io/99-various-ingredients
 2. https://ghostpixxells.itch.io/pixelfood
-3. person on github for the monkey pictures.
-   - VERY SORRY I CANNOT FIND YOU AGAIN :(
+3. https://shubibubi.itch.io/cozy-people

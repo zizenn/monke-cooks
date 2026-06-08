@@ -83,7 +83,9 @@ void SwitchToLevelByIndex(int humanIndex) {
     return;
   }
 
-  if (currentLevel != NULL) {
+  bool hasPreviousLevel = (currentLevel != NULL);
+
+  if (hasPreviousLevel) {
     printf("Scene Manager: Cleaning up old level -> %s\n", currentLevel->name);
     if (currentLevel->Unload != NULL) {
       currentLevel->Unload(currentLevel);
@@ -96,7 +98,11 @@ void SwitchToLevelByIndex(int humanIndex) {
 
   printf("Scene Manager: Entering Level %d -> %s\n", currentLevel->id, currentLevel->name);
 
-  InitLevelTextureDatabase(currentLevel->textureJsonPath);
+  if (hasPreviousLevel) {
+    if (currentLevel->Load != NULL) {
+      currentLevel->Load(currentLevel);
+    }
+  }
 }
 
 void SwitchToNextLevel(void) {

@@ -19,12 +19,12 @@ This repo is set up to build from local project files only.
 
 ```bash
 gcc
+compiledb
 ```
-this can be downloaded via your preferred package manager. (NEEDED ON ALL PLATFORM)
+this can be downloaded via your preferred package manager (pip for compiledb). (NEEDED ON ALL PLATFORM)
 after that, anyone can run:
 
 ```bash
-make
 make run
 ```
 

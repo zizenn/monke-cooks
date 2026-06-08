@@ -15,6 +15,7 @@ void GenericLevelLoad(Level* self) {
   InitPlayer(1, 1);
   LoadTileDatabase(self->tileManifestJsonPath);
   LoadMapLayout(self->mapJsonPath);
+  InitLevelTextureDatabase(self->textureJsonPath);
 }
 
 void GenericLevelUpdate(Level* self) {
@@ -29,6 +30,7 @@ static void DrawTile(Texture2D tex, int pixelX, int pixelY, Color fallbackColor)
     DrawTexturePro(tex, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
   } else {
     DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, fallbackColor);
+    DrawTextEx(GetFontDefault(), currentLevel->name, (Vector2){ pixelX+5, pixelY+5 }, 0.5f, 0.5f,  BLACK);
   }
 }
 
@@ -46,7 +48,7 @@ void GenericLevelDraw(Level* self) {
       DrawTile(counterTex, pixelX, pixelY, LIGHTGRAY);
     }
     else if (currentTile.tileId == TILE_SINK) {
-      Texture2D sinkTex = GetTextureByName("SINK_TOP");
+      Texture2D sinkTex = GetTextureByName("SINK");
       DrawTile(sinkTex, pixelX, pixelY, BLUE);
     }
     else {

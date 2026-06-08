@@ -86,9 +86,8 @@ int BackgroundLevelWorker(void* arg) {
         registry[i].isLoaded = false;
         registry[i].texture = (Texture2D){ 0 };
 
-        // Thread-safe CPU operations only
         registry[i].rawImage = LoadImage(pathStr);
-        registry[i].isLoaded = true; // Signal main thread
+        registry[i].isLoaded = true;
     }
 
     levelRegistry = registry;
@@ -120,9 +119,8 @@ void UpdateAsyncTextureLoading(void) {
 
     for (int i = 0; i < totalLevelTextures; i++) {
         if (levelRegistry && levelRegistry[i].isLoaded && levelRegistry[i].texture.id == 0) {
-            // Safe main thread context hardware allocation
             levelRegistry[i].texture = LoadTextureFromImage(levelRegistry[i].rawImage);
-            UnloadImage(levelRegistry[i].rawImage); // Free RAM buffer
+            UnloadImage(levelRegistry[i].rawImage);
             levelTexturesLoadedCount++;
         }
     }

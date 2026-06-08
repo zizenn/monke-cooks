@@ -1,6 +1,6 @@
 [
  {
-  "directory": "C:\\Users\\HasanSakif(SchoolSA)\\Documents\\code\\projects\\raylib\\monke_cooksRefactor",
+  "directory": "C:\\Users\\HasanSakif(SchoolSA)\\Documents\\code\\projects\\raylib\\monke_cooks",
   "arguments": [
    "gcc",
    "-o",
@@ -9,31 +9,8 @@
    "src/external/parson.c",
    "src/external/tinycthread.c",
    "src/game/game.c",
-   "src/managers/map_manager.c",
-   "src/managers/texture_manager.c",
-   "src/menus/main_menu.c",
-   "-Iinclude",
-   "-Ilib",
-   "-DNOGDI",
-   "-DNOMINMAX",
-   "-D_CRT_SECURE_NO_WARNINGS",
-   "lib/libraylib.a",
-   "-lgdi32",
-   "-lwinmm",
-   "-lopengl32"
-  ],
-  "file": "src/menus/main_menu.c"
- },
- {
-  "directory": "C:\\Users\\HasanSakif(SchoolSA)\\Documents\\code\\projects\\raylib\\monke_cooksRefactor",
-  "arguments": [
-   "gcc",
-   "-o",
-   "game.exe",
-   "src/main.c",
-   "src/external/parson.c",
-   "src/external/tinycthread.c",
-   "src/game/game.c",
+   "src/game/levels.c",
+   "src/managers/level_manager.c",
    "src/managers/map_manager.c",
    "src/managers/texture_manager.c",
    "src/menus/main_menu.c",

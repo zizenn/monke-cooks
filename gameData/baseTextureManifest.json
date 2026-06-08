@@ -1,0 +1,20 @@
+{
+  "textures": [
+    {
+      "name": "PLAYER_DOWN",
+      "filePath": "assets/monkey/imgs/down.png"
+    },
+    {
+      "name": "PLAYER_UP",
+      "filePath": "assets/monkey/imgs/up.png"
+    },
+    {
+      "name": "PLAYER_LEFT",
+      "filePath": "assets/monkey/imgs/left.png"
+    },
+    {
+      "name": "PLAYER_RIGHT",
+      "filePath": "assets/monkey/imgs/right.png"
+    }
+  ]
+}

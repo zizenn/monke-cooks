@@ -22,6 +22,16 @@ freely, subject to the following restrictions:
     distribution.
 */
 
+#if defined(_WIN32)
+  #ifndef NOGDI
+    #define NOGDI
+  #endif
+  #ifndef NOUSER
+    #define NOUSER
+  #endif
+  #define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <stdlib.h>
 #include "external/tinycthread.h"
 

@@ -2,7 +2,7 @@
 #include "external/raylib.h"
 #include "core/scenes.h"
 #include "core/map.h"
-#include "core/globals.h"
+#include "game/level.h"
 #include "core/config.h"
 #include "game/player.h"
 #include "stddef.h"
@@ -10,36 +10,32 @@
 void DrawMapGridLines(void);
 
 void LoadGame(void) {
-  // loading stuff
-  LoadTileDatabase("assets/mapData/tiles.json");
-  LoadMapLayout("assets/mapData/mapFiles/map1.json");
-  LoadTextureDatabase("assets/data/textures.json");
-
-  InitPlayer(5, 5);
+  // load level
+  if (currentLevel != NULL && currentLevel->Load != NULL) currentLevel->Load(currentLevel);
 }
 
 void UpdateGame(void) {
-  UpdatePlayer();
+  UpdateAsyncTextureLoading();
+
+  if (!IsTextureDatabaseReady()) {
+    return;
+  }
+
+  if (currentLevel != NULL && currentLevel->Update != NULL) {
+    currentLevel->Update(currentLevel);
+  }
+
+  if (IsKeyPressed(KEY_N)) {
+    SwitchToNextLevel();
+  }
+
 }
 
 void DrawGame(void) {
-  DrawMapGridLines();
-  DrawPlayer();
+  if (currentLevel != NULL && currentLevel->Draw != NULL) currentLevel->Draw(currentLevel);
 }
 
 void UnloadGame(void) {
-  UnloadAllMapData();
-  UnloadTextureDatabase();
-}
+  if (currentLevel != NULL && currentLevel->Unload != NULL) currentLevel->Unload(currentLevel);
 
-void DrawMapGridLines(void) {
-  for (int col = 0; col <= MAP_COLS; col++) {
-    int x = col * TILE_SIZE;
-    DrawLine(x, 0, x, VIRTUAL_HEIGHT, DARKGRAY);
-  }
-
-  for (int row = 0; row <= MAP_ROWS; row++) {
-    int y = row * TILE_SIZE;
-    DrawLine(0, y, VIRTUAL_WIDTH, y, DARKGRAY);
-  }
 }

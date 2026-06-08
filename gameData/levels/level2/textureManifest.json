@@ -1,0 +1,16 @@
+{
+  "textures": [
+    {
+      "name": "DISH_01",
+      "filePath": "assets/food/dishes/01_dish.png"
+    },
+    {
+      "name": "BURGER",
+      "filePath": "assets/food/dishes/15_burger.png"
+    },
+    {
+      "name": "FRENCH_FRIES",
+      "filePath": "assets/food/dishes/44_frenchfries.png"
+    }
+  ]
+}

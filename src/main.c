@@ -2,6 +2,8 @@
 #include "core/scenes.h"
 #include "core/globals.h"
 #include "core/config.h"
+#include "core/textures.h"
+#include "game/level.h"
 #include "stddef.h"
 
 // defining variables
@@ -48,6 +50,10 @@ int main() {
   InitWindow(initWidth, initHeight, "monke cooks");
   SetTargetFPS(gameFPS);
 
+  LoadBaseTextureDatabase("gameData/baseTextureManifest.json");
+  LoadLevelManifest("gameData/levels/levels.json");
+  SwitchToLevelByIndex(1);
+
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
   HandleScene(currentScene, ACTION_LOAD);
@@ -88,6 +94,8 @@ int main() {
   }
 
   HandleScene(currentScene, ACTION_UNLOAD);
+  UnloadLevelManifest();
+  UnloadBaseTextureDatabase();
   UnloadRenderTexture(canvas);
   CloseWindow();
 

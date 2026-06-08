@@ -1,6 +1,9 @@
 #ifndef MAP_H
 #define MAP_H
 
+#define MAP_WIDTH 16
+#define MAP_HEIGHT 9
+
 #include "stdbool.h"
 
 typedef enum {

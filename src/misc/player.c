@@ -1,5 +1,4 @@
 #include "game/player.h"
-#include "external/raylib.h"
 #include "game/keymap.h"
 #include "core/map.h"
 #include "core/textures.h"
@@ -75,7 +74,7 @@ void UpdatePlayer(void) {
     // collision check
     TileType* targetBlueprint = GetTileBlueprintAt(nextX, nextY);
     if (targetBlueprint != NULL && !targetBlueprint->walkable) {
-      return; // Bonk!
+      return;
     }
 
     player.gridX = nextX;

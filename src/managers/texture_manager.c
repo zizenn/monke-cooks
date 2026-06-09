@@ -104,7 +104,7 @@ void InitLevelTextureDatabase(const char* filename) {
     levelThreadFinished = false;
     levelRegistry = NULL;
 
-    // Launch background execution lane
+    // background thread
     if (thrd_create(&levelLoadingThread, BackgroundLevelWorker, (void*)filename) != thrd_success) {
         printf("Error: Failed to create level loader thread context.\n");
         levelThreadFinished = true;

@@ -1,5 +1,4 @@
 #include "core/textures.h"
-#include "external/raylib.h"
 #include "game/level.h"
 #include "game/player.h"
 #include "core/config.h"

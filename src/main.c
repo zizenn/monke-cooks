@@ -1,8 +1,8 @@
-#include "external/raylib.h"
 #include "core/scenes.h"
 #include "core/globals.h"
 #include "core/config.h"
 #include "core/textures.h"
+#include "game/keymap.h"
 #include "game/level.h"
 #include "stddef.h"
 
@@ -50,6 +50,7 @@ int main() {
   InitWindow(initWidth, initHeight, "monke cooks");
   SetTargetFPS(gameFPS);
 
+  LoadKeymap("playerData/keymap.json");
   LoadBaseTextureDatabase("gameData/baseTextureManifest.json");
   LoadLevelManifest("gameData/levels/levels.json");
   SwitchToLevelByIndex(1);
@@ -94,6 +95,7 @@ int main() {
   }
 
   HandleScene(currentScene, ACTION_UNLOAD);
+  UnloadKeymap();
   UnloadLevelManifest();
   UnloadBaseTextureDatabase();
   UnloadRenderTexture(canvas);

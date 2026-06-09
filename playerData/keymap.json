@@ -1,0 +1,18 @@
+{
+  "keymaps": [
+    { "key": "KEY_W", "action": "ACTION_UP" },
+    { "key": "KEY_UP", "action": "ACTION_UP" },
+
+    { "key": "KEY_S", "action": "ACTION_DOWN" },
+    { "key": "KEY_DOWN", "action": "ACTION_DOWN" },
+
+    { "key": "KEY_A", "action": "ACTION_LEFT" },
+    { "key": "KEY_LEFT", "action": "ACTION_LEFT" },
+
+    { "key": "KEY_D", "action": "ACTION_RIGHT" },
+    { "key": "KEY_RIGHT", "action": "ACTION_RIGHT" },
+
+    { "key": "KEY_SPACE", "action": "ACTION_INTERACT" },
+    { "key": "KEY_E", "action": "ACTION_INTERACT" }
+  ]
+}

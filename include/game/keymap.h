@@ -17,9 +17,12 @@ typedef struct {
     KEYBOARD_ACTION action;
 } Keymap;
 
-extern Keymap keymaps[];
+extern Keymap* keymaps;
+extern int totalKeymaps;
 
-bool IsActionPressed(KEYBOARD_ACTION action);  // Checks if key was pressed *this frame* (good for menus/interactions)
-bool IsActionDown(KEYBOARD_ACTION action);     // Checks if key is being held *continuous down* (good for walking)
+void LoadKeymap(const char* filename);
+void UnloadKeymap(void);
+bool IsActionPressed(KEYBOARD_ACTION action);
+bool IsActionDown(KEYBOARD_ACTION action);
 
 #endif

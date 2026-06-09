@@ -2,14 +2,14 @@
   "levels": [
     {
       "id": 1,
-      "name": "The Salad Station",
+      "name": "stage 1",
       "mapJsonPath": "gameData/levels/level1/map1.json",
       "tileManifestJsonPath": "gameData/levels/level1/tileManifest.json",
       "textureJsonPath": "gameData/levels/level1/textureManifest.json"
     },
     {
       "id": 2,
-      "name": "Burger Assembly",
+      "name": "stage 2",
       "mapJsonPath": "gameData/levels/level2/map2.json",
       "tileManifestJsonPath": "gameData/levels/level2/tileManifest.json",
       "textureJsonPath": "gameData/levels/level2/textureManifest.json"

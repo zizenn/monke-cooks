@@ -6,16 +6,17 @@
    "-o",
    "game.exe",
    "src/main.c",
+   "src/LUTs/LUTs.c",
    "src/external/parson.c",
    "src/external/tinycthread.c",
    "src/game/game.c",
    "src/game/levels.c",
+   "src/gameHelpers/keymap.c",
+   "src/gameHelpers/player.c",
    "src/managers/level_manager.c",
    "src/managers/map_manager.c",
    "src/managers/texture_manager.c",
    "src/menus/main_menu.c",
-   "src/misc/keymap.c",
-   "src/misc/player.c",
    "-Iinclude",
    "-Ilib",
    "-DNOGDI",
@@ -26,6 +27,6 @@
    "-lwinmm",
    "-lopengl32"
   ],
-  "file": "src/misc/player.c"
+  "file": "src/menus/main_menu.c"
  }
 ]

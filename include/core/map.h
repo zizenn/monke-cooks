@@ -1,6 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "external/raylib.h"
 #define MAP_WIDTH 16
 #define MAP_HEIGHT 9
 
@@ -18,7 +19,8 @@ typedef struct {
   bool walkable;
   bool interactable;
   bool holdsItem;
-  const char* filePath; // Raylib texture loaded at runtime
+  char* textureName;
+  Color fallbackColor;
 } TileType;
 
 typedef struct {

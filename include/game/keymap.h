@@ -17,9 +17,22 @@ typedef struct {
     KEYBOARD_ACTION action;
 } Keymap;
 
+typedef struct {
+  const char* keyString;
+  int keyValue;
+} StringMapping;
+
+// variables
 extern Keymap* keymaps;
 extern int totalKeymaps;
 
+// LUT predefentions
+extern const StringMapping KeyLUT[];
+extern const StringMapping ActionLUT[];
+extern const int KeyLUTSize;
+extern const int ActionLUTSize;
+
+// function prototypes
 void LoadKeymap(const char* filename);
 void UnloadKeymap(void);
 bool IsActionPressed(KEYBOARD_ACTION action);

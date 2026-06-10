@@ -1,4 +1,5 @@
 #include "core/textures.h" // includes raylib.h so we dont need to include it too
+#include "external/raylib.h"
 
 #if defined(_WIN32)
   #ifndef NOGDI
@@ -16,9 +17,6 @@
 #include <stdio.h>
 
 // variables
-AssetTexture* textureRegistry = NULL;
-int totalTextures = 0;
-
 AssetTexture* baseRegistry = NULL;
 int totalBaseTextures = 0;
 
@@ -140,6 +138,7 @@ Texture2D GetTextureByName(const char* name) {
             return baseRegistry[i].texture;
         }
     }
+
     // level textures
     for (int i = 0; i < totalLevelTextures; i++) {
         if (levelRegistry && levelRegistry[i].name && strcmp(levelRegistry[i].name, name) == 0) {

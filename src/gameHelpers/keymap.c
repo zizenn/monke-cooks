@@ -4,25 +4,8 @@
 #include "stdlib.h"
 #include "string.h"
 
-typedef struct {
-  const char* keyString;
-  int keyValue;
-} StringMapping;
-
-// LUT meants lookup table
-static const StringMapping KeyLUT[] = {
-  { "KEY_W", KEY_W }, { "KEY_S", KEY_S }, { "KEY_A", KEY_A }, { "KEY_D", KEY_D },
-  { "KEY_UP", KEY_UP }, { "KEY_DOWN", KEY_DOWN }, { "KEY_LEFT", KEY_LEFT }, { "KEY_RIGHT", KEY_RIGHT },
-  { "KEY_SPACE", KEY_SPACE }, { "KEY_E", KEY_E }
-};
-
-static const StringMapping ActionLUT[] = {
-  { "ACTION_UP", ACTION_UP },
-  { "ACTION_DOWN", ACTION_DOWN },
-  { "ACTION_LEFT", ACTION_LEFT },
-  { "ACTION_RIGHT", ACTION_RIGHT },
-  { "ACTION_INTERACT", ACTION_INTERACT }
-};
+Keymap* keymaps = NULL;
+int totalKeymaps = 0;
 
 static int SearchLUT(const char* string, const StringMapping* lut, int lutSize) {
   for (int i = 0; i < lutSize; i++) {
@@ -47,8 +30,8 @@ void LoadKeymap(const char* filename) {
   totalKeymaps = (int)json_array_get_count(keymapsArray);
   keymaps = malloc(sizeof(Keymap) * totalKeymaps);
 
-  int keyLutSize = sizeof(KeyLUT) / sizeof(KeyLUT[0]);
-  int actionLutSize = sizeof(ActionLUT) / sizeof(ActionLUT[0]);
+  int keyLutSize = KeyLUTSize;
+  int actionLutSize = ActionLUTSize;
 
   for (int i = 0; i < totalKeymaps; i++) {
     JSON_Object *mapObj = json_array_get_object(keymapsArray, i);

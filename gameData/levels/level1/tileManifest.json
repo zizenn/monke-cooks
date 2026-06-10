@@ -6,7 +6,8 @@
       "walkable": true,
       "interactable": false,
       "holdsItem": false,
-      "filePath": ""
+      "textureName": null,
+      "fallbackColor": [245, 245, 245, 255]
     },
     {
       "id": 1,
@@ -14,7 +15,8 @@
       "walkable": false,
       "interactable": false,
       "holdsItem": true,
-      "filePath": ""
+      "textureName": null,
+      "fallbackColor": [200, 200, 200, 255]
     },
     {
       "id": 2,
@@ -22,7 +24,17 @@
       "walkable": false,
       "interactable": true,
       "holdsItem": false,
-      "filePath": ""
+      "textureName": null,
+      "fallbackColor": [0, 121, 241, 255]
+    },
+    {
+      "id": 3,
+      "name": "sink",
+      "walkable": false,
+      "interactable": true,
+      "holdsItem": true,
+      "textureName": null,
+      "fallbackColor": [80, 80, 80, 255]
     }
   ]
 }

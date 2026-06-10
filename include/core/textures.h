@@ -2,6 +2,7 @@
 #define TEXTURE_HANDLER_H
 
 #include "external/raylib.h"
+#include <stdbool.h>
 
 // structs
 typedef struct {
@@ -22,10 +23,12 @@ extern int levelTexturesLoadedCount;
 // function prototypes
 void LoadBaseTextureDatabase(const char* filename);
 void InitLevelTextureDatabase(const char* filename);
+void LoadTileTextures(const char* filename);
 void UpdateAsyncTextureLoading(void);
 bool IsTextureDatabaseReady(void);
 Texture2D GetTextureByName(const char* name);
 void UnloadLevelTextureDatabase(void);
 void UnloadBaseTextureDatabase(void);
+void UnloadTileTextures(void);
 
 #endif

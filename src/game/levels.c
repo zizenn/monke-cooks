@@ -1,4 +1,5 @@
 #include "core/textures.h"
+#include "external/raylib.h"
 #include "game/level.h"
 #include "game/player.h"
 #include "core/config.h"
@@ -6,8 +7,13 @@
 #include "stddef.h"
 #include "stdio.h"
 
+// variables
+RenderTexture2D tileRenderTexture;
+static bool mapNeedsRedraw = true;
+
 // function prototypes
 void DrawMapGridLines(void);
+static void DrawTiles();
 
 void GenericLevelLoad(Level* self) {
   printf("game: loading level: %s\n", self->name);
@@ -15,47 +21,29 @@ void GenericLevelLoad(Level* self) {
   LoadTileDatabase(self->tileManifestJsonPath);
   LoadMapLayout(self->mapJsonPath);
   InitLevelTextureDatabase(self->textureJsonPath);
+  tileRenderTexture = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 }
 
 void GenericLevelUpdate(Level* self) {
   (void)self;
-  UpdatePlayer();
-}
-
-static void DrawTile(Texture2D tex, int pixelX, int pixelY, Color fallbackColor) {
-  if (tex.id != 0) {
-    Rectangle source = { 0.0f, 0.0f, (float)tex.width, (float)tex.height };
-    Rectangle dest = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE };
-    DrawTexturePro(tex, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
-  } else {
-    DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, fallbackColor);
-    DrawTextEx(GetFontDefault(), currentLevel->name, (Vector2){ pixelX+5, pixelY+5 }, 0.5f, 0.5f,  BLACK);
+  if (IsKeyPressed(KEY_R)) {
+    mapNeedsRedraw = true;
   }
+  UpdatePlayer();
 }
 
 void GenericLevelDraw(Level* self) {
   (void)self;
 
-  for (int i = 0; i < totalTiles; i++) {
-    MapItem currentTile = levelTiles[i];
-
-    int pixelX = currentTile.xPos * TILE_SIZE;
-    int pixelY = currentTile.yPos * TILE_SIZE;
-
-    if (currentTile.tileId == TILE_COUNTER) {
-      Texture2D counterTex = GetTextureByName("COUNTER_TOP");
-      DrawTile(counterTex, pixelX, pixelY, LIGHTGRAY);
-    }
-    else if (currentTile.tileId == TILE_SINK) {
-      Texture2D sinkTex = GetTextureByName("SINK");
-      DrawTile(sinkTex, pixelX, pixelY, BLUE);
-    }
-    else {
-      // Default fallback layer: TILE_FLOOR
-      Texture2D floorTex = GetTextureByName("FLOOR_TILE");
-      DrawTile(floorTex, pixelX, pixelY, RAYWHITE);
-    }
+  if (mapNeedsRedraw) {
+    DrawTiles();
+    mapNeedsRedraw = false;
   }
+
+  DrawTextureRec(tileRenderTexture.texture,
+    (Rectangle){ 0, 0, (float)tileRenderTexture.texture.width, -(float)tileRenderTexture.texture.height },
+    (Vector2){ 0, 0 },
+    WHITE);
 
   DrawMapGridLines();
   DrawPlayer();
@@ -76,4 +64,34 @@ void DrawMapGridLines(void) {
     int y = row * TILE_SIZE;
     DrawLineEx((Vector2){0, y}, (Vector2){VIRTUAL_WIDTH, y}, 1.0f, DARKGRAY);
   }
+}
+
+static void DrawTiles() {
+  BeginTextureMode(tileRenderTexture);
+  ClearBackground(BLANK);
+
+  while (!IsTextureDatabaseReady()) {
+    // wait for the texture database to be ready before drawing tiles
+  }
+
+  for (int i = 0; i < totalTiles; i++) {
+    MapItem currentTile = levelTiles[i];
+
+    int pixelX = currentTile.xPos * TILE_SIZE;
+    int pixelY = currentTile.yPos * TILE_SIZE;
+
+    TileType* tileBlueprint = GetTileBlueprintAt(currentTile.xPos, currentTile.yPos);
+    if (tileBlueprint != NULL) {
+      if (tileBlueprint->textureName != NULL && tileBlueprint->textureName[0] != '\0') {
+        Texture2D texture = GetTextureByName(tileBlueprint->textureName);
+        DrawTexture(texture, pixelX, pixelY, WHITE);
+      } else {
+        DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, tileBlueprint->fallbackColor);
+      }
+    }
+  }
+
+  EndTextureMode();
+
+  printf("tiles updated");
 }

@@ -7,8 +7,6 @@
 #include "game/player.h"
 #include "stddef.h"
 
-void DrawMapGridLines(void);
-
 void LoadGame(void) {
   // load level
   if (currentLevel != NULL && currentLevel->Load != NULL) currentLevel->Load(currentLevel);

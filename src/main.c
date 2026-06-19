@@ -28,10 +28,10 @@ typedef struct {
 
 // enums
 typedef enum {
-    ACTION_LOAD,
-    ACTION_UPDATE,
-    ACTION_DRAW,
-    ACTION_UNLOAD
+  ACTION_LOAD,
+  ACTION_UPDATE,
+  ACTION_DRAW,
+  ACTION_UNLOAD
 } SCENEACTION;
 
 // function prototypes

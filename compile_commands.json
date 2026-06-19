@@ -1,32 +1,32 @@
 [
  {
-  "directory": "C:\\Users\\HasanSakif(SchoolSA)\\Documents\\code\\projects\\raylib\\monke_cooks",
+  "directory": "/home/zizenn/Documents/code/monke_cooks",
   "arguments": [
    "gcc",
    "-o",
-   "game.exe",
+   "game",
    "src/main.c",
-   "src/LUTs/LUTs.c",
    "src/external/parson.c",
    "src/external/tinycthread.c",
    "src/game/game.c",
-   "src/game/levels.c",
    "src/gameHelpers/keymap.c",
    "src/gameHelpers/player.c",
+   "src/game/levels.c",
+   "src/LUTs/LUTs.c",
    "src/managers/level_manager.c",
    "src/managers/map_manager.c",
    "src/managers/texture_manager.c",
    "src/menus/main_menu.c",
    "-Iinclude",
    "-Ilib",
-   "-DNOGDI",
-   "-DNOMINMAX",
-   "-D_CRT_SECURE_NO_WARNINGS",
-   "lib/libraylib.a",
-   "-lgdi32",
-   "-lwinmm",
-   "-lopengl32"
+   "lib/linux/libraylib.a",
+   "-lm",
+   "-ldl",
+   "-lpthread",
+   "-lGL",
+   "-lrt",
+   "-lX11"
   ],
   "file": "src/menus/main_menu.c"
  }
-]
+]

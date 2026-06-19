@@ -4,3 +4,5 @@
 .vscode
 .clangd
 .repomixignore
+shell.nix
+.envrc

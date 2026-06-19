@@ -47,6 +47,7 @@ FuncMapping functionMap[] = {
 #define MAP_SIZE (sizeof(functionMap) / sizeof(functionMap[0]))
 
 int main() {
+  SetTraceLogLevel(LOG_WARNING);
   InitWindow(initWidth, initHeight, "monke cooks");
   SetTargetFPS(gameFPS);
 
@@ -58,6 +59,8 @@ int main() {
   canvas = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
   HandleScene(currentScene, ACTION_LOAD);
+
+  printf("\n\n");
 
   while (!quitGame && !WindowShouldClose()) {
     // assigning per frame variables

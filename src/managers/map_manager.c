@@ -13,7 +13,7 @@ MapItem* levelTiles = NULL;
 int totalTiles = 0;
 
 Color ParseRaylibColor(JSON_Object* tile_object) {
-  Color parsedColor = WHITE; // Default fallback
+  Color parsedColor = MAGENTA; // Default fallback
 
   JSON_Array* colorArray = json_object_get_array(tile_object, "fallbackColor");
 
@@ -52,9 +52,8 @@ void LoadTileDatabase(const char* filename) {
         JSON_Object *tileObj = json_array_get_object(typesArray, i);
 
         tileDatabase[i].id       = (int)json_object_get_number(tileObj, "id");
+        tileDatabase[i].actionId = (int)json_object_get_number(tileObj, "actionId");
         tileDatabase[i].walkable     = json_object_get_boolean(tileObj, "walkable");
-        tileDatabase[i].interactable = json_object_get_boolean(tileObj, "interactable");
-        tileDatabase[i].holdsItem    = json_object_get_boolean(tileObj, "holdsItem");
 
         const char* fetchedName      = json_object_get_string(tileObj, "name");
         tileDatabase[i].name         = malloc(strlen(fetchedName) + 1);

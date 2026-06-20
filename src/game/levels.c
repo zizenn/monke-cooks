@@ -1,5 +1,6 @@
 #include "core/textures.h"
 #include "external/raylib.h"
+#include "external/rlgl.h"
 #include "game/level.h"
 #include "game/player.h"
 #include "core/config.h"
@@ -10,10 +11,13 @@
 // variables
 RenderTexture2D tileRenderTexture;
 static bool mapNeedsRedraw = true;
+Font jetbrainsmonoRegular;
 
 // function prototypes
 void DrawMapGridLines(void);
-static void DrawTiles();
+static void DrawTiles(void);
+static funcPointer SearchLUTForAction(int actionId);
+static void PerformActions(int actionId);
 
 void GenericLevelLoad(Level* self) {
   printf("game: loading level: %s\n", self->name);
@@ -29,16 +33,16 @@ void GenericLevelUpdate(Level* self) {
   if (IsKeyPressed(KEY_R)) {
     mapNeedsRedraw = true;
   }
+  if (mapNeedsRedraw) {
+    DrawTiles();
+    mapNeedsRedraw = false;
+  }
+
   UpdatePlayer();
 }
 
 void GenericLevelDraw(Level* self) {
   (void)self;
-
-  if (mapNeedsRedraw) {
-    DrawTiles();
-    mapNeedsRedraw = false;
-  }
 
   DrawTextureRec(tileRenderTexture.texture,
     (Rectangle){ 0, 0, (float)tileRenderTexture.texture.width, -(float)tileRenderTexture.texture.height },
@@ -51,6 +55,7 @@ void GenericLevelDraw(Level* self) {
 
 void GenericLevelUnload(Level* self) {
   UnloadAllMapData();
+  UnloadFont(jetbrainsmonoRegular);
   printf("game: unloaded level: %s\n", self->name);
 }
 
@@ -66,7 +71,7 @@ void DrawMapGridLines(void) {
   }
 }
 
-static void DrawTiles() {
+static void DrawTiles(void) {
   BeginTextureMode(tileRenderTexture);
   ClearBackground(BLANK);
 
@@ -93,5 +98,5 @@ static void DrawTiles() {
 
   EndTextureMode();
 
-  printf("tiles updated");
+  printf("tiling system: tiles updated");
 }

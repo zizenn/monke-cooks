@@ -1,10 +1,7 @@
 #include "core/textures.h"
 #include "external/raylib.h"
 #include "core/scenes.h"
-#include "core/map.h"
 #include "game/level.h"
-#include "core/config.h"
-#include "game/player.h"
 #include "stddef.h"
 
 void LoadGame(void) {

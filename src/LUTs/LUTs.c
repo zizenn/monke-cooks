@@ -1,9 +1,11 @@
 #include "game/keymap.h"
+#include "core/map.h"
+
+
 
 // LUT meants lookup table
 
 // KEYMAP LUTs
-
 const StringMapping KeyLUT[] = {
   { "KEY_W", KEY_W }, { "KEY_S", KEY_S }, { "KEY_A", KEY_A }, { "KEY_D", KEY_D },
   { "KEY_UP", KEY_UP }, { "KEY_DOWN", KEY_DOWN }, { "KEY_LEFT", KEY_LEFT }, { "KEY_RIGHT", KEY_RIGHT },
@@ -20,3 +22,8 @@ const StringMapping ActionLUT[] = {
 
 const int KeyLUTSize = sizeof(KeyLUT) / sizeof(KeyLUT[0]);
 const int ActionLUTSize = sizeof(ActionLUT) / sizeof(ActionLUT[0]);
+
+// TILE ACTIONS LUT
+
+// defining the function pointer
+typedef void (*funcPointer)(void);

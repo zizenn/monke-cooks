@@ -4,8 +4,7 @@
       "id": 0,
       "name": "floor",
       "walkable": true,
-      "interactable": false,
-      "holdsItem": false,
+      "actionId": 0,
       "textureName": null,
       "fallbackColor": [245, 245, 245, 255]
     },
@@ -13,8 +12,7 @@
       "id": 1,
       "name": "counter",
       "walkable": false,
-      "interactable": false,
-      "holdsItem": true,
+      "actionId": 1,
       "textureName": null,
       "fallbackColor": [200, 200, 200, 255]
     },
@@ -22,17 +20,15 @@
       "id": 2,
       "name": "sink",
       "walkable": false,
-      "interactable": true,
-      "holdsItem": false,
+      "actionId": 2,
       "textureName": null,
       "fallbackColor": [0, 121, 241, 255]
     },
     {
       "id": 3,
-      "name": "sink",
+      "name": "stove",
       "walkable": false,
-      "interactable": true,
-      "holdsItem": true,
+      "actionId": 3,
       "textureName": null,
       "fallbackColor": [80, 80, 80, 255]
     }

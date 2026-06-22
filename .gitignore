@@ -1,11 +1,8 @@
-*.exe
-/game
 .DS_Store
 .vscode
 .clangd
 .repomixignore
 .cache
-.devenv/
-/devenv.nix
-/devenv.yaml
-/devenv.lock
+/.devenv/
+/devenv*
+/game

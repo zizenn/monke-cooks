@@ -39,7 +39,7 @@ lsp:
 	-@compiledb -n make --no-print-directory $(EXE)
 
 run: all
-	@SDL_VIDEODRIVER=x11 LIBGL_ALWAYS_SOFTWARE=0 ./$(EXE)
+	@LIBGL_ALWAYS_SOFTWARE=0 ./$(EXE)
 
 clean:
 	@$(CLEAN_CMD)

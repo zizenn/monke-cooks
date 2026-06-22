@@ -2,9 +2,11 @@
 #include "core/globals.h"
 #include "core/config.h"
 #include "core/textures.h"
+#include "external/raylib.h"
 #include "game/keymap.h"
 #include "game/level.h"
 #include "stddef.h"
+#include <stdio.h>
 
 // defining variables
 bool quitGame = false;

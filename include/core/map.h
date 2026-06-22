@@ -17,6 +17,11 @@ typedef enum {
 typedef void (*funcPointer)(void);
 
 typedef struct {
+  int actionId;
+  funcPointer function;
+} Action;
+
+typedef struct {
   TILE_ID id;
   const char* name;
   bool walkable;

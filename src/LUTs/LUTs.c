@@ -1,8 +1,6 @@
 #include "game/keymap.h"
 #include "core/map.h"
 
-
-
 // LUT meants lookup table
 
 // KEYMAP LUTs
@@ -24,6 +22,3 @@ const int KeyLUTSize = sizeof(KeyLUT) / sizeof(KeyLUT[0]);
 const int ActionLUTSize = sizeof(ActionLUT) / sizeof(ActionLUT[0]);
 
 // TILE ACTIONS LUT
-
-// defining the function pointer
-typedef void (*funcPointer)(void);

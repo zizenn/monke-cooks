@@ -9,6 +9,7 @@
    "src/external/parson.c",
    "src/external/tinycthread.c",
    "src/game/game.c",
+   "src/gameHelpers/actions.c",
    "src/gameHelpers/keymap.c",
    "src/gameHelpers/player.c",
    "src/game/levels.c",

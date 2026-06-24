@@ -6,3 +6,7 @@
 /.devenv/
 /devenv*
 /game
+/.clang-tidy
+/.zed
+/build/
+/monke_cooks

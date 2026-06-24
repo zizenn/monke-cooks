@@ -1,33 +1,223 @@
 [
  {
-  "directory": "/home/zizenn/Documents/code/monke_cooks",
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
   "arguments": [
    "gcc",
-   "-o",
-   "game",
-   "src/main.c",
-   "src/external/parson.c",
-   "src/external/tinycthread.c",
-   "src/game/game.c",
-   "src/gameHelpers/actions.c",
-   "src/gameHelpers/keymap.c",
-   "src/gameHelpers/player.c",
-   "src/game/levels.c",
-   "src/LUTs/LUTs.c",
-   "src/managers/level_manager.c",
-   "src/managers/map_manager.c",
-   "src/managers/texture_manager.c",
-   "src/menus/main_menu.c",
    "-Iinclude",
    "-Ilib",
-   "lib/linux/libraylib.a",
-   "-lm",
-   "-ldl",
-   "-lpthread",
-   "-lGL",
-   "-lrt",
-   "-lX11"
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/menus/main_menu.c",
+   "-o",
+   "src/menus/main_menu.o"
   ],
   "file": "src/menus/main_menu.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/main.c",
+   "-o",
+   "src/main.o"
+  ],
+  "file": "src/main.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/external/parson.c",
+   "-o",
+   "src/external/parson.o"
+  ],
+  "file": "src/external/parson.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/external/tinycthread.c",
+   "-o",
+   "src/external/tinycthread.o"
+  ],
+  "file": "src/external/tinycthread.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/game/game.c",
+   "-o",
+   "src/game/game.o"
+  ],
+  "file": "src/game/game.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/gameHelpers/actions.c",
+   "-o",
+   "src/gameHelpers/actions.o"
+  ],
+  "file": "src/gameHelpers/actions.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/gameHelpers/keymap.c",
+   "-o",
+   "src/gameHelpers/keymap.o"
+  ],
+  "file": "src/gameHelpers/keymap.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/gameHelpers/player.c",
+   "-o",
+   "src/gameHelpers/player.o"
+  ],
+  "file": "src/gameHelpers/player.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/game/levels.c",
+   "-o",
+   "src/game/levels.o"
+  ],
+  "file": "src/game/levels.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/LUTs/LUTs.c",
+   "-o",
+   "src/LUTs/LUTs.o"
+  ],
+  "file": "src/LUTs/LUTs.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/managers/level_manager.c",
+   "-o",
+   "src/managers/level_manager.o"
+  ],
+  "file": "src/managers/level_manager.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/managers/map_manager.c",
+   "-o",
+   "src/managers/map_manager.o"
+  ],
+  "file": "src/managers/map_manager.c"
+ },
+ {
+  "directory": "/home/zizenn/Documents/code/monke_unAIified",
+  "arguments": [
+   "gcc",
+   "-Iinclude",
+   "-Ilib",
+   "-std=c11",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-c",
+   "src/managers/texture_manager.c",
+   "-o",
+   "src/managers/texture_manager.o"
+  ],
+  "file": "src/managers/texture_manager.c"
  }
 ]

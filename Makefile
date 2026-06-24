@@ -1,6 +1,7 @@
 CC      := gcc
 TARGET  := game
 SOURCES := $(wildcard src/*.c) $(wildcard src/**/*.c)
+OBJECTS := $(SOURCES:.c=.o)
 
 # Platform Detection & Setup
 ifeq ($(OS),Windows_NT)
@@ -11,7 +12,7 @@ ifeq ($(OS),Windows_NT)
     CLEAN_CMD     := cmd /c "if exist $(EXE) del /f /q $(EXE)"
 else
     EXE           := $(TARGET)
-    CLEAN_CMD     := rm -f $(EXE)
+    CLEAN_CMD     := rm -f $(EXE) $(OBJECTS)
     UNAME_S       := $(shell uname -s)
     ifeq ($(UNAME_S),Darwin) # macOS
         RAYLIB_LIB    := lib/macos/libraylib.a
@@ -23,6 +24,7 @@ else
 endif
 
 CPPFLAGS := -Iinclude -Ilib
+CFLAGS   += -std=c11 -Wall -Wextra -Wpedantic
 
 # 2. Build Targets
 .PHONY: all run clean lsp
@@ -30,8 +32,11 @@ CPPFLAGS := -Iinclude -Ilib
 # Making 'all' automatically trigger the 'lsp' definition file update
 all: lsp $(EXE)
 
-$(EXE): $(SOURCES)
-	$(CC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(RAYLIB_LIB) $(PLATFORM_LIBS)
+$(EXE): $(OBJECTS)
+	$(CC) -o $@ $^ $(RAYLIB_LIB) $(PLATFORM_LIBS)
+
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 # Force compiledb to evaluate the clean tool command 'make' directly
 lsp:

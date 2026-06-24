@@ -1,6 +1,6 @@
-#include "core/scenes.h"
-#include "core/globals.h"
 #include "core/config.h"
+#include "core/globals.h"
+#include "core/scenes.h"
 #include "core/textures.h"
 #include "external/raylib.h"
 #include "game/keymap.h"
@@ -41,9 +41,8 @@ void HandleScene(GAMESCENE scene, SCENEACTION action);
 
 // function mapping
 FuncMapping functionMap[] = {
-  {SCENE_GAME, LoadGame, UpdateGame, DrawGame, UnloadGame},
-  {SCENE_MAIN, LoadMain, UpdateMain, DrawMain, UnloadMain}
-};
+    {SCENE_GAME, LoadGame, UpdateGame, DrawGame, UnloadGame},
+    {SCENE_MAIN, LoadMain, UpdateMain, DrawMain, UnloadMain}};
 
 // defining the sizes of these tables
 #define MAP_SIZE (sizeof(functionMap) / sizeof(functionMap[0]))
@@ -90,9 +89,10 @@ int main() {
     BeginDrawing();
     ClearBackground(WHITE);
 
-    Rectangle source = {0.0f, 0.0f, (float)canvas.texture.width, -(float)canvas.texture.height };
-    Rectangle dest = { 0.0f, 0.0f, screenWidth, screenHeight };
-    Vector2 origin = { 0, 0 };
+    Rectangle source = {0.0f, 0.0f, (float)canvas.texture.width,
+                        -(float)canvas.texture.height};
+    Rectangle dest = {0.0f, 0.0f, screenWidth, screenHeight};
+    Vector2 origin = {0, 0};
 
     DrawTexturePro(canvas.texture, source, dest, origin, 0.0f, WHITE);
 
@@ -114,10 +114,18 @@ void HandleScene(GAMESCENE scene, SCENEACTION action) {
     if (functionMap[i].scene == scene) {
       FuncPtr targetFunc = NULL;
       switch (action) {
-        case ACTION_LOAD: targetFunc = functionMap[i].loadFunction; break;
-        case ACTION_UPDATE: targetFunc = functionMap[i].updateFunction; break;
-        case ACTION_DRAW: targetFunc = functionMap[i].drawFunction; break;
-        case ACTION_UNLOAD: targetFunc = functionMap[i].unloadFunction; break;
+      case ACTION_LOAD:
+        targetFunc = functionMap[i].loadFunction;
+        break;
+      case ACTION_UPDATE:
+        targetFunc = functionMap[i].updateFunction;
+        break;
+      case ACTION_DRAW:
+        targetFunc = functionMap[i].drawFunction;
+        break;
+      case ACTION_UNLOAD:
+        targetFunc = functionMap[i].unloadFunction;
+        break;
       }
       if (targetFunc != NULL) {
         targetFunc();

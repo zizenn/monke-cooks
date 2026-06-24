@@ -2,11 +2,7 @@
 #define SCENES_H
 
 // the gamescene enum
-
-typedef enum {
-  SCENE_MAIN,
-  SCENE_GAME
-} GAMESCENE;
+typedef enum { SCENE_MAIN, SCENE_GAME } GAMESCENE;
 
 extern GAMESCENE currentScene;
 

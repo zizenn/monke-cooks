@@ -1,14 +1,31 @@
-#include "external/raylib-cpp.hpp"
+#include "raylib-cpp.hpp"
+#include "scenes.hpp"
+#include <iostream>
 
 int main() {
-  raylib::Window window(800, 600, "Hello Raylib-cpp");
+
+  ::SetTraceLogLevel(LOG_NONE);
+  raylib::Window window(800, 600, "monke cooks");
+
+  if (bigBanana == false) {
+    std::cout << "\n\nbig banana\n\n" << std::endl;
+  }
+
+  // 1 time loads
+  SceneManager sceneManager;
+  Scene scenes[] = {mainMenu("mainMenu", loadMainMenu, updateMainMenu,
+                             drawMainMenu, unloadMainMenu)};
 
   while (!window.ShouldClose()) {
+    // variables per frame
+    float deltaTime = ::GetFrameTime();
+
+    // updating
+
+    // drawing
     BeginDrawing();
 
-    window.ClearBackground(raylib::Color::RayWhite());
-    raylib::Text::Draw("Hello, Raylib-cpp!", 190, 200, 20,
-                       raylib::Color::LightGray());
+    ::ClearBackground(raylib::Color::RayWhite());
 
     EndDrawing();
   }

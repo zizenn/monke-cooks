@@ -1,5 +1,8 @@
 /**
- * [raylib-cpp](https://github.com/RobLoach/raylib-cpp) is a C++ wrapper library for raylib, a simple and easy-to-use library to enjoy videogames programming. This C++ header provides object-oriented wrappers around raylib's struct interfaces.
+ * [raylib-cpp](https://github.com/RobLoach/raylib-cpp) is a C++ wrapper library
+ * for raylib, a simple and easy-to-use library to enjoy videogames programming.
+ * This C++ header provides object-oriented wrappers around raylib's struct
+ * interfaces.
  *
  * @see raylib namespace for a list of all available classes.
  * @mainpage raylib-cpp
@@ -7,25 +10,30 @@
  * @author Rob Loach (RobLoach)
  * @copyright zlib/libpng
  *
- *   raylib-cpp is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
- *   BSD-like license that allows static linking with closed source software:
+ *   raylib-cpp is licensed under an unmodified zlib/libpng license, which is an
+ * OSI-certified, BSD-like license that allows static linking with closed source
+ * software:
  *
  *   Copyright 2020 Rob Loach (RobLoach)
  *
- *   This software is provided "as-is", without any express or implied warranty. In no event
- *   will the authors be held liable for any damages arising from the use of this software.
+ *   This software is provided "as-is", without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from the
+ * use of this software.
  *
- *   Permission is granted to anyone to use this software for any purpose, including commercial
- *   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ *   Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- *     1. The origin of this software must not be misrepresented; you must not claim that you
- *     wrote the original software. If you use this software in a product, an acknowledgment
- *     in the product documentation would be appreciated but is not required.
+ *     1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software in a
+ * product, an acknowledgment in the product documentation would be appreciated
+ * but is not required.
  *
- *     2. Altered source versions must be plainly marked as such, and must not be misrepresented
- *     as being the original software.
+ *     2. Altered source versions must be plainly marked as such, and must not
+ * be misrepresented as being the original software.
  *
- *     3. This notice may not be removed or altered from any source distribution.
+ *     3. This notice may not be removed or altered from any source
+ * distribution.
  */
 
 #ifndef RAYLIB_CPP_INCLUDE_RAYLIB_CPP_HPP_
@@ -52,8 +60,8 @@
 #include "./Matrix.hpp"
 #include "./Mesh.hpp"
 #include "./Model.hpp"
-#include "./ModelUnmanaged.hpp"
 #include "./ModelAnimation.hpp"
+#include "./ModelUnmanaged.hpp"
 #include "./Mouse.hpp"
 #include "./Music.hpp"
 #include "./MusicUnmanaged.hpp"
@@ -84,5 +92,7 @@
 namespace raylib {
 // Nothing.
 } // namespace raylib
+
+const bool bigBanana = false;
 
 #endif // RAYLIB_CPP_INCLUDE_RAYLIB_CPP_HPP_

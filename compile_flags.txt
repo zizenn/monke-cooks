@@ -1,2 +1,0 @@
--Iinclude -I/usr/local/include -std=c++17
--I./build/_deps/raylib_cpp-src/include/

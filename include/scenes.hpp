@@ -64,3 +64,10 @@ public:
     std::cerr << "scene manager, err: scene '" << name << "' not found.\n";
   }
 };
+
+// scene function prototypes
+
+void loadMainMenu();
+void updateMainMenu();
+void drawMainMenu();
+void unloadMainMenu();

@@ -1,0 +1,20 @@
+# Enable modern C++, performance, and bug checks
+Checks: '
+  bugprone-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  cppcoreguidelines-*,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-owning-memory
+'
+
+# Turn warnings into compilation errors (Optional)
+WarningsAsErrors: ''
+
+# Fine-tune formatting and naming options if needed
+CheckOptions:
+  - key:             readability-identifier-naming.VariableCase
+    value:           camelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelCase

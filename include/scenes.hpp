@@ -6,20 +6,19 @@
 
 // func pointer aliases
 using VoidFunc = void (*)();
-using UpdateFunc = void (*)(float);
 
 class Scene {
 private:
   std::string name;
   VoidFunc load;
-  UpdateFunc update;
+  VoidFunc update;
   VoidFunc draw;
   VoidFunc unload;
 
 public:
   // constructor
-  Scene(const std::string &name, VoidFunc load, UpdateFunc update,
-        VoidFunc draw, VoidFunc unload)
+  Scene(const std::string &name, VoidFunc load, VoidFunc update, VoidFunc draw,
+        VoidFunc unload)
       : name(name), load(load), update(update), draw(draw), unload(unload) {}
 
   // name getter
@@ -67,7 +66,13 @@ public:
 
 // scene function prototypes
 
-void loadMainMenu();
-void updateMainMenu();
-void drawMainMenu();
-void unloadMainMenu();
+void LoadMainMenu();
+void UpdateMainMenu();
+void DrawMainMenu();
+void UnloadMainMenu();
+
+// game function prototypes
+void LoadGame();
+void UpdateGame();
+void DrawGame();
+void UnloadGame();

@@ -1,3 +1,4 @@
+#include "engine.hpp"
 #include "raylib-cpp.hpp"
 #include "scenes.hpp"
 #include "time.hpp"
@@ -5,28 +6,40 @@
 
 int main() {
 
-  ::SetTraceLogLevel(LOG_NONE);
-  raylib::Window window(800, 600, "monke cooks");
+      const int windowWidth = 1280;
+      const int windowHeight = 720;
 
-  if (bigBanana == false) {
-    std::cout << "\n\nbig banana\n\n" << std::endl;
-  }
+      raylib::Window window(windowWidth, windowHeight, "monke cooks");
 
-  // 1 time loads
-  SceneManager sceneManager;
-  while (!window.ShouldClose()) {
-    // variables per frame
-    Time::Update();
+      if (ballers::bigBanana == false) {
+            std::cout << "\n\nbig banana\n\n" << std::endl;
+      }
 
-    // updating
+      // 1 time loads
+      // loadable scenes
+      Scene scenes[] = {
+            Scene("MainMenu", LoadMainMenu, UpdateMainMenu, DrawMainMenu,
+                  UnloadMainMenu),
+            Scene("Game", LoadGame, UpdateGame, DrawGame, UnloadGame),
+      };
 
-    // drawing
-    BeginDrawing();
+      SceneManager sceneManager;
 
-    ::ClearBackground(raylib::Color::RayWhite());
+      while (!window.ShouldClose()) {
+            // variables per frame
+            Time::Update();
 
-    EndDrawing();
-  }
+            // updating
+            sceneManager.addScene(scenes[0]); // MainMenu
+            sceneManager.addScene(scenes[1]); // Game
 
-  return 0;
+            // drawing
+            BeginDrawing();
+
+            ::ClearBackground(raylib::Color::RayWhite());
+
+            EndDrawing();
+      }
+
+      return 0;
 }

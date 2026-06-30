@@ -93,6 +93,8 @@ namespace raylib {
 // Nothing.
 } // namespace raylib
 
+namespace ballers {
 const bool bigBanana = false;
+}
 
 #endif // RAYLIB_CPP_INCLUDE_RAYLIB_CPP_HPP_

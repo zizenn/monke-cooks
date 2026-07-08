@@ -1,5 +1,6 @@
 #include "raylib-cpp.hpp"
 #include "scenes.hpp"
+#include "time.hpp"
 #include <iostream>
 
 int main() {
@@ -13,12 +14,9 @@ int main() {
 
   // 1 time loads
   SceneManager sceneManager;
-  Scene scenes[] = {mainMenu("mainMenu", loadMainMenu, updateMainMenu,
-                             drawMainMenu, unloadMainMenu)};
-
   while (!window.ShouldClose()) {
     // variables per frame
-    float deltaTime = ::GetFrameTime();
+    Time::Update();
 
     // updating
 

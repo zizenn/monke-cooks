@@ -1,5 +1,5 @@
-# Enable modern C++, performance, and bug checks
-Checks: '
+---
+Checks: >-
   bugprone-*,
   modernize-*,
   performance-*,
@@ -7,14 +7,44 @@ Checks: '
   cppcoreguidelines-*,
   -modernize-use-trailing-return-type,
   -cppcoreguidelines-owning-memory
-'
 
-# Turn warnings into compilation errors (Optional)
 WarningsAsErrors: ''
 
-# Fine-tune formatting and naming options if needed
 CheckOptions:
-  - key:             readability-identifier-naming.VariableCase
-    value:           camelCase
-  - key:             readability-identifier-naming.FunctionCase
-    value:           camelCase
+  # 1. TYPES, CLASSES, NAMESPACES, ENUMS (PascalCase)
+  - key:   readability-identifier-naming.ClassCase
+    value: PascalCase
+  - key:   readability-identifier-naming.StructCase
+    value: PascalCase
+  - key:   readability-identifier-naming.EnumCase
+    value: PascalCase
+  - key:   readability-identifier-naming.EnumConstantCase
+    value: PascalCase
+  - key:   readability-identifier-naming.NamespaceCase
+    value: PascalCase
+
+  # 2. FUNCTIONS & LOCAL VARIABLES (camelCase)
+  - key:   readability-identifier-naming.FunctionCase
+    value: camelCase
+  - key:   readability-identifier-naming.VariableCase
+    value: camelCase
+
+  # 3. CLASS MEMBER VARIABLES (camelCase_)
+  # Public members use normal camelCase, private/protected enforce the trailing underscore.
+  - key:   readability-identifier-naming.PublicMemberCase
+    value: camelCase
+  - key:   readability-identifier-naming.ProtectedMemberCase
+    value: camelCase
+  - key:   readability-identifier-naming.ProtectedMemberSuffix
+    value: _
+  - key:   readability-identifier-naming.PrivateMemberCase
+    value: camelCase
+  - key:   readability-identifier-naming.PrivateMemberSuffix
+    value: _
+
+  # 4. CONSTANTS & MACROS (UPPER_CASE)
+  - key:   readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key:   readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+...

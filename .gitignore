@@ -1,13 +1,12 @@
 .DS_Store
 /.vscode
 /.clangd
-/.repomixignore
 /.cache
 /.devenv/
 /devenv*
 /build
 /compile_commands.json
 /.zed/
-/monke_cooks
 /.clang-tidy
 /game
+*.o

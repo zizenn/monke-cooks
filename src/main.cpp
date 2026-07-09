@@ -1,8 +1,6 @@
-#include "engine.hpp"
 #include "raylib-cpp.hpp"
 #include "scenes.hpp"
 #include "time.hpp"
-#include <iostream>
 
 int main() {
 
@@ -10,10 +8,6 @@ int main() {
       const int windowHeight = 720;
 
       raylib::Window window(windowWidth, windowHeight, "monke cooks");
-
-      if (ballers::bigBanana == false) {
-            std::cout << "\n\nbig banana\n\n" << std::endl;
-      }
 
       // 1 time loads
       SceneManager sceneManager;
@@ -38,7 +32,6 @@ int main() {
             // drawing
             BeginDrawing();
 
-            ::ClearBackground(raylib::Color::RayWhite());
             ::ClearBackground(raylib::Color::RayWhite());
             sceneManager.draw();
 

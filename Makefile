@@ -18,13 +18,16 @@ LDFLAGS := -Llib/macos -lraylib -framework OpenGL -framework Cocoa -framework IO
 endif
 endif
 
-.PHONY: all clean
+.PHONY: all clean run
 
 $(TARGET): $(OBJS)
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+run: $(TARGET)
+	./$<
 
 clean:
 	rm -f $(OBJS) $(TARGET)

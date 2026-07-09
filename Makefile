@@ -9,8 +9,12 @@ OBJS     := $(SRCS:src/%.cpp=$(BUILD)/%.o)
 
 ifeq ($(OS),Windows_NT)
 LDFLAGS := -Llib/windows -lraylib -lopengl32 -lgdi32 -lwinmm
+MKDIR    = powershell -NoProfile -Command New-Item -ItemType Directory -Path $(1) -Force | Out-Null
+DEL      = powershell -NoProfile -Command Remove-Item -Path $(1) -Force -Recurse
 else
 UNAME_S := $(shell uname -s)
+MKDIR    = mkdir -p $(1)
+DEL      = rm -rf $(1)
 ifeq ($(UNAME_S),Linux)
 LDFLAGS := -Llib/linux -l:libraylib.a -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon -lX11 -lGL -lm -lpthread -ldl -lrt
 endif
@@ -25,8 +29,9 @@ $(TARGET): $(OBJS)
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
 $(BUILD)/%.o: src/%.cpp
-	@mkdir -p $(@D)
+	@$(call MKDIR,$(@D))
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD) $(TARGET)
+	$(call DEL,$(BUILD))
+	$(call DEL,$(TARGET))

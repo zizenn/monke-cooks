@@ -37,14 +37,14 @@ private:
   Scene *currentScene = nullptr;
 
 public:
-  void addScene(const Scene &scene) {
+  void add(const Scene &scene) {
     scenes.push_back(scene);
     if (currentScene == nullptr) {
-      changeScene(scene.getName());
+      change(scene.getName());
     }
   }
 
-  void changeScene(const std::string &name) {
+  void change(const std::string &name) {
     // unload b4 loading new scene
     if (currentScene && currentScene->getUnload()) {
       currentScene->getUnload()();
@@ -62,6 +62,18 @@ public:
     }
     std::cerr << "scene manager, err: scene '" << name << "' not found.\n";
   }
+
+  void update() {
+    if (currentScene && currentScene->getUpdate()) {
+      currentScene->getUpdate()();
+    }
+  }
+
+    void draw() {
+        if (currentScene && currentScene->getDraw()) {
+        currentScene->getDraw()();
+        }
+    }
 };
 
 // scene function prototypes

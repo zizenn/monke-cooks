@@ -16,6 +16,8 @@ int main() {
       }
 
       // 1 time loads
+      SceneManager sceneManager;
+
       // loadable scenes
       Scene scenes[] = {
             Scene("MainMenu", LoadMainMenu, UpdateMainMenu, DrawMainMenu,
@@ -23,20 +25,22 @@ int main() {
             Scene("Game", LoadGame, UpdateGame, DrawGame, UnloadGame),
       };
 
-      SceneManager sceneManager;
+      sceneManager.add(scenes[0]); // MainMenu
+      sceneManager.add(scenes[1]); // Game
 
       while (!window.ShouldClose()) {
             // variables per frame
             Time::Update();
 
             // updating
-            sceneManager.addScene(scenes[0]); // MainMenu
-            sceneManager.addScene(scenes[1]); // Game
+            sceneManager.update();
 
             // drawing
             BeginDrawing();
 
             ::ClearBackground(raylib::Color::RayWhite());
+            ::ClearBackground(raylib::Color::RayWhite());
+            sceneManager.draw();
 
             EndDrawing();
       }

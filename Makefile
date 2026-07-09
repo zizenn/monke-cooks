@@ -12,7 +12,7 @@ LDFLAGS := -Llib/windows -lraylib -lopengl32 -lgdi32 -lwinmm
 else
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-LDFLAGS := -Llib/linux -l:libraylib.a -lX11 -lGL -lm -lpthread -ldl -lrt
+LDFLAGS := -Llib/linux -l:libraylib.a -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon -lX11 -lGL -lm -lpthread -ldl -lrt
 endif
 ifeq ($(UNAME_S),Darwin)
 LDFLAGS := -Llib/macos -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo

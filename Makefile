@@ -9,8 +9,13 @@ OBJS     := $(SRCS:src/%.cpp=$(BUILD)/%.o)
 
 ifeq ($(OS),Windows_NT)
 LDFLAGS := -Llib/windows -lraylib -lopengl32 -lgdi32 -lwinmm
-MKDIR    = powershell -NoProfile -Command New-Item -ItemType Directory -Path $(1) -Force | Out-Null
-DEL      = powershell -NoProfile -Command Remove-Item -Path $(1) -Force -Recurse
+ifneq ($(findstring /,$(SHELL)),)
+MKDIR = mkdir -p $(1)
+DEL   = rm -rf $(1)
+else
+MKDIR = powershell -NoProfile -Command "New-Item -ItemType Directory -Path '$(1)' -Force"
+DEL   = powershell -NoProfile -Command "Remove-Item -Path '$(1)' -Force -Recurse"
+endif
 else
 UNAME_S := $(shell uname -s)
 MKDIR    = mkdir -p $(1)

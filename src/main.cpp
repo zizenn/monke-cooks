@@ -27,13 +27,13 @@ int main() {
             Time::Update();
 
             // updating
-            sceneManager.update();
+            // sceneManager.update();
 
             // drawing
             BeginDrawing();
 
             ::ClearBackground(raylib::Color::RayWhite());
-            sceneManager.draw();
+            // sceneManager.draw();
 
             EndDrawing();
       }

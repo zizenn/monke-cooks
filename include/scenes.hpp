@@ -1,75 +1,11 @@
 #pragma once
 
+#include <array>
 #include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
 
-// func pointer aliases
-using Func = void (*)();
+namespace scene {
 
-class Scene {
-private:
-      std::string name_;
-      Func load_;
-      Func update_;
-      Func draw_;
-      Func unload_;
-
-public:
-      // constructor
-      Scene(const std::string &name, Func load, Func update, Func draw,
-            Func unload)
-          : name_(name), load_(load), update_(update), draw_(draw),
-            unload_(unload) {}
-
-      // name getter
-      auto getName() const { return name_; }
-
-      // func getters
-      auto getLoad() const { return load_; }
-      auto getUpdate() const { return update_; }
-      auto getDraw() const { return draw_; }
-      auto getUnload() const { return unload_; }
-};
-
-class SceneManager {
-private:
-      std::vector<std::unique_ptr<Scene>> scenes;
-      Scene *currentScene = nullptr;
-
-      void Load() {
-            if (currentScene && currentScene->getLoad()) {
-                  currentScene->getLoad()();
-            }
-      }
-
-      void Unload() {
-            if (currentScene && currentScene->getUnload()) {
-                  currentScene->getUnload()();
-            }
-      }
-
-      void Update() {
-            if (currentScene && currentScene->getUpdate()) {
-                  currentScene->getUpdate()();
-            }
-      }
-
-      void Draw() {
-            if (currentScene && currentScene->getDraw()) {
-                  currentScene->getDraw()();
-            }
-      }
-
-public:
-      void PushScene(std::unique_ptr<Scene> scene) {
-            if (condition) {
-            }
-      }
-};
-// scene function prototypes
-
+// main menu function prototypes
 void LoadMainMenu();
 void UpdateMainMenu();
 void DrawMainMenu();
@@ -80,3 +16,97 @@ void LoadGame();
 void UpdateGame();
 void DrawGame();
 void UnloadGame();
+
+// func pointer aliases
+using Func = void (*)();
+
+enum class Scenes {
+      MainMenu,
+      Game,
+};
+
+class Scene {
+private:
+      Scenes name_;
+      Func load_;
+      Func update_;
+      Func draw_;
+      Func unload_;
+
+public:
+      Scene(const Scenes &name, const Func load, const Func update,
+            const Func draw, const Func unload)
+          : name_(name), load_(load), update_(update), draw_(draw),
+            unload_(unload) {}
+
+      auto GetName() const { return name_; }
+      auto GetLoad() const { return load_; }
+      auto GetUpdate() const { return update_; }
+      auto GetDraw() const { return draw_; }
+      auto GetUnload() const { return unload_; }
+};
+
+class SceneManager {
+private:
+      std::array<Scene, 2> scenes = {{
+            {Scenes::MainMenu, LoadMainMenu, UpdateMainMenu, DrawMainMenu,
+             UnloadMainMenu},
+            {Scenes::Game, LoadGame, UpdateGame, DrawGame, UnloadGame},
+      }};
+
+      Scene *currentScene_ = nullptr;
+      Scene *prevScene_ = nullptr;
+
+      void Load() {
+            if (currentScene_ && currentScene_->GetLoad()) {
+                  currentScene_->GetLoad()();
+            }
+      }
+
+      void Unload() {
+            if (currentScene_ && currentScene_->GetUnload()) {
+                  currentScene_->GetUnload()();
+            }
+      }
+
+public:
+      void Update() {
+            if (currentScene_ && currentScene_->GetUpdate()) {
+                  currentScene_->GetUpdate()();
+            }
+      }
+
+      void Draw() {
+            if (currentScene_ && currentScene_->GetDraw()) {
+                  currentScene_->GetDraw()();
+            }
+      }
+      void CheckSceneChange() {
+            if (prevScene_ != currentScene_) {
+                  if (prevScene_ && prevScene_->GetUnload()) {
+                        prevScene_->GetUnload()();
+                        std::cout << "[scene] unloading scene: "
+                                  << static_cast<int>(prevScene_->GetName())
+                                  << std::endl;
+                  }
+                  if (currentScene_ && currentScene_->GetLoad()) {
+                        currentScene_->GetLoad()();
+                        std::cout << "[scene] loading scene: "
+                                  << static_cast<int>(currentScene_->GetName())
+                                  << std::endl;
+                  }
+                  prevScene_ = currentScene_;
+            }
+      }
+
+      void ChangeScene(const Scenes &sceneName) {
+            for (auto &scene : scenes) {
+                  if (scene.GetName() == sceneName) {
+                        currentScene_ = &scene;
+                        break;
+                  }
+            }
+      }
+};
+
+}; // namespace scene

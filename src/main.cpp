@@ -1,4 +1,4 @@
-#include "raylib-cpp.hpp"
+#include "Window.hpp"
 #include "scenes.hpp"
 #include "time.hpp"
 
@@ -9,31 +9,24 @@ int main() {
 
       raylib::Window window(windowWidth, windowHeight, "monke cooks");
 
-      // 1 time loads
-      SceneManager sceneManager;
+      scene::SceneManager sceneManager;
 
-      // loadable scenes
-      Scene scenes[] = {
-            Scene("MainMenu", LoadMainMenu, UpdateMainMenu, DrawMainMenu,
-                  UnloadMainMenu),
-            Scene("Game", LoadGame, UpdateGame, DrawGame, UnloadGame),
-      };
-
-      sceneManager.add(scenes[0]); // MainMenu
-      sceneManager.add(scenes[1]); // Game
+      // load the first scene
+      sceneManager.ChangeScene(scene::Scenes::MainMenu);
 
       while (!window.ShouldClose()) {
             // variables per frame
             Time::Update();
+            sceneManager.CheckSceneChange();
 
             // updating
-            // sceneManager.update();
+            sceneManager.Update();
 
             // drawing
             BeginDrawing();
 
             ::ClearBackground(raylib::Color::RayWhite());
-            // sceneManager.draw();
+            sceneManager.Draw();
 
             EndDrawing();
       }

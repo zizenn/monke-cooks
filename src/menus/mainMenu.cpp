@@ -1,15 +1,25 @@
 #include "Color.hpp"
 #include "Rectangle.hpp"
-#include "raylib-cpp.hpp"
 #include "scenes.hpp"
+#include "time.hpp"
+#include <iostream>
 
-void LoadMainMenu() { std::cout << "Loading Main Menu" << std::endl; }
+static float posX = 0.0f;
 
-void UpdateMainMenu() {}
+void scene::LoadMainMenu() { std::cout << "Loading Main Menu" << std::endl; }
 
-void DrawMainMenu() {
-      raylib::Rectangle testRec = {20, 20, 100, 100};
+void scene::UpdateMainMenu() {
+      posX += 100.0f * Time::DeltaTime();
+      if (posX > 1280) {
+            posX = 0.0f;
+      }
+}
+
+void scene::DrawMainMenu() {
+      raylib::Rectangle testRec = {posX, 20, 100, 100};
       testRec.Draw(raylib::Color::SkyBlue());
 }
 
-void UnloadMainMenu() { std::cout << "Unloading Main Menu" << std::endl; }
+void scene::UnloadMainMenu() {
+      std::cout << "Unloading Main Menu" << std::endl;
+}

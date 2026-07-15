@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "Color.hpp"
 #include "scenes.hpp"
 #include "time.hpp"
 

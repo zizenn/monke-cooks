@@ -1,0 +1,7 @@
+---
+BasedOnStyle: Google
+IndentWidth: 6
+AccessModifierOffset: -6
+ConstructorInitializerIndentWidth: 6
+ContinuationIndentWidth: 6
+...

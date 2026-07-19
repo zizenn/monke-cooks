@@ -43,9 +43,9 @@ endif()
 # Automagically link compile_commands.json to root for clangd
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
     add_custom_target(lsp_symlink ALL
-        COMMAND ${CMAKE_COMMAND} -E create_symlink 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             "${CMAKE_BINARY_DIR}/compile_commands.json" 
             "${CMAKE_SOURCE_DIR}/compile_commands.json"
-        COMMENT "Creating compile_commands.json symlink for Neovim..."
+        COMMENT "Copying compile_commands.json for Neovim/clangd..."
     )
 endif()

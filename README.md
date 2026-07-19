@@ -22,11 +22,7 @@ you will need a C++ compiler. if you do not know what that, its a piece of softw
 #### downloading
 1. download `clang (or gcc) git cmake ninja` (this is not a tutorial search it up yourself, however it is not difficult).
 2. clone this repository anywhere you want.
-3. enter into that directory and run:
-```bash
-cmake -B build
-cmake --build build
-```
+3. enter into that directory and run either the `build.sh` for linux & macos or `build.bat` for windows
 4. run either game.exe or game inside the build directory (these are the game executables).
 5. enjoy!
 

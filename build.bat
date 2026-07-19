@@ -17,6 +17,10 @@ if %errorlevel% neq 0 (
     exit /b %errorlevel%
 )
 
-:: 3. Run the game (Direct path, no extra folders)
+:: 3. Copy compile_commands.json to root for clangd / LSP
+if exist ".\build\compile_commands.json" (
+    copy /y ".\build\compile_commands.json" ".\compile_commands.json" >nul
+)
+:: 4. Run the game (Direct path, no extra folders)
 ".\build\game.exe"
 

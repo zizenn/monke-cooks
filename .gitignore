@@ -9,5 +9,6 @@
 /.zed/
 /.clang-tidy
 /game
+/game.exe
 *.o
 devenv.lock

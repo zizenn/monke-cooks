@@ -2,13 +2,18 @@
 /.vscode
 /.clangd
 /.cache
-/.devenv/
 /devenv*
 /build
 /compile_commands.json
-/.zed/
-/.clang-tidy
 /game
 /game.exe
 *.o
 devenv.lock
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# pre-commit
+.pre-commit-config.yaml

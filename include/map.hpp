@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "raylib.h"
+#include "Vector2.hpp"
 
 namespace map {
 
@@ -15,21 +15,27 @@ static const int TILE_SIZE =
 
 // enums
 enum class TileGroups {
-      Floor,
-      Counter,
+      Floor,    // 0
+      Counter,  // 1
+      Stove,    // 2
+      Fridge,   // 3
 };
 
 // tile class
 class Tile {
 private:
       TileGroups tileGroup_;
+      raylib::Vector2 pos;
 };
 
 // map class
 class Map {
 private:
       std::string mapFilePath_;
-      const Vector2 mapSize_ = {16, 9};
+      const raylib::Vector2 mapSize_ = {16, 9};
+
+public:
+      int LoadMap();
 };
 
 }  // namespace map

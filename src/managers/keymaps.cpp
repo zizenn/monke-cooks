@@ -1,10 +1,11 @@
 #include "keymaps.hpp"
-#include "nlohmann/json.hpp"
-#include "raylib.h"
 
 #include <fstream>
 #include <string>
 #include <vector>
+
+#include "nlohmann/json.hpp"
+#include "raylib.h"
 
 using json = nlohmann::json;
 
@@ -17,12 +18,12 @@ std::vector<std::pair<int, Action>> activeControls;
 bool loaded = false;
 
 struct KeyEntry {
-      const char *name;
+      const char* name;
       int keycode;
 };
 
 struct ActionEntry {
-      const char *name;
+      const char* name;
       Action action;
 };
 
@@ -140,18 +141,16 @@ constexpr ActionEntry ACTION_TABLE[] = {
       {"interact", Action::INTERACT},   {"pause", Action::PAUSE},
 };
 
-int KeyNameToCode(const std::string &name) {
-      for (const auto &entry : KEY_TABLE) {
-            if (name == entry.name)
-                  return entry.keycode;
+int KeyNameToCode(const std::string& name) {
+      for (const auto& entry : KEY_TABLE) {
+            if (name == entry.name) return entry.keycode;
       }
       return KEY_NULL;
 }
 
-Action ActionNameToEnum(const std::string &name) {
-      for (const auto &entry : ACTION_TABLE) {
-            if (name == entry.name)
-                  return entry.action;
+Action ActionNameToEnum(const std::string& name) {
+      for (const auto& entry : ACTION_TABLE) {
+            if (name == entry.name) return entry.action;
       }
       return Action::NULL_ACTION;
 }
@@ -172,7 +171,7 @@ void WriteDefaultConfig() {
       file << defaultConfig.dump(6);
 }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 Action Keymaps::currentAction_ = Action::NULL_ACTION;
 
@@ -182,28 +181,26 @@ void Keymaps::LoadFromJson() {
       std::ifstream file(KEYMAP_FILEPATH);
       if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof()) {
             TraceLog(LOG_INFO,
-                     "[keymaps] No config found — writing defaults to %s",
+                     "[keymaps] no config found, writing defaults to %s",
                      KEYMAP_FILEPATH.c_str());
-            if (file.is_open())
-                  file.close();
+            if (file.is_open()) file.close();
             WriteDefaultConfig();
             file.open(KEYMAP_FILEPATH);
-            if (!file.is_open())
-                  return;
+            if (!file.is_open()) return;
       }
 
       json config;
       try {
             file >> config;
-      } catch (const json::parse_error &e) {
+      } catch (const json::parse_error& e) {
             TraceLog(LOG_WARNING, "[keymaps] JSON parse error in %s: %s",
                      KEYMAP_FILEPATH.c_str(), e.what());
             return;
       }
 
       for (auto it = config.begin(); it != config.end(); ++it) {
-            const std::string &keyName = it.key();
-            const std::string &actionName = it.value();
+            const std::string& keyName = it.key();
+            const std::string& actionName = it.value();
 
             const int keycode = KeyNameToCode(keyName);
             if (keycode == KEY_NULL) {
@@ -227,7 +224,7 @@ void Keymaps::LoadFromJson() {
 }
 
 Action Keymaps::CheckFrameAction_() {
-      for (const auto &[keycode, action] : activeControls) {
+      for (const auto& [keycode, action] : activeControls) {
             if (IsKeyPressed(keycode)) {
                   currentAction_ = action;
                   return action;
@@ -237,9 +234,7 @@ Action Keymaps::CheckFrameAction_() {
       return Action::NULL_ACTION;
 }
 
-const Action& Keymaps::GetCurrentAction() {
-      return currentAction_;
-}
+const Action& Keymaps::GetCurrentAction() { return currentAction_; }
 
 Action Keymaps::Update() {
       if (!loaded) {
@@ -249,4 +244,4 @@ Action Keymaps::Update() {
       return CheckFrameAction_();
 }
 
-} // namespace keymaps
+}  // namespace keymaps

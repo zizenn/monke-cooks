@@ -14,6 +14,7 @@ int map::Map::LoadMap() {
                      mapFilePath_.c_str());
             return 1;
       }
+
       json mapData;
 
       try {

@@ -3,7 +3,6 @@
 #include "raylib.h"
 #include "scenes.hpp"
 #include "time.hpp"
-#include <iostream>
 
 static float posX = 0.0f;
 
@@ -28,5 +27,5 @@ void scene::DrawMainMenu() {
 }
 
 void scene::UnloadMainMenu() {
-      std::cout << "Unloading Main Menu" << std::endl;
+      return;
 }

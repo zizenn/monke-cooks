@@ -2,35 +2,19 @@
   "tile_types": [
     {
       "id": 0,
-      "name": "floor",
-      "walkable": true,
-      "actionId": 0,
-      "textureName": null,
-      "fallbackColor": [245, 245, 245, 255]
+      "textureId": null,
     },
     {
       "id": 1,
-      "name": "counter",
-      "walkable": false,
-      "actionId": 1,
-      "textureName": null,
-      "fallbackColor": [200, 200, 200, 255]
+      "textureId": null,
     },
     {
       "id": 2,
-      "name": "sink",
-      "walkable": false,
-      "actionId": 2,
-      "textureName": null,
-      "fallbackColor": [0, 121, 241, 255]
+      "textureId": null,
     },
     {
       "id": 3,
-      "name": "stove",
-      "walkable": false,
-      "actionId": 3,
-      "textureName": null,
-      "fallbackColor": [80, 80, 80, 255]
+      "textureId": null,
     }
   ]
 }

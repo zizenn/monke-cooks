@@ -11,7 +11,7 @@ namespace map {
 // constants
 static const int TILE_SIZE =
       32;  // 32 means 32x32 image sizes for the texture, if the texture is
-           // greater, then this number it will be scaled to fit
+           // greater than this number, it will be scaled to fit
 
 // enums
 enum class TileGroups {
@@ -33,6 +33,7 @@ class Map {
 private:
       std::string mapFilePath_;
       const raylib::Vector2 mapSize_ = {16, 9};
+
 
 public:
       int LoadMap();

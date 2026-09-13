@@ -1,20 +1,20 @@
 {
-  "tile_types": [
-    {
-      "id": 0,
-      "textureId": null,
-    },
-    {
-      "id": 1,
-      "textureId": null,
-    },
-    {
-      "id": 2,
-      "textureId": null,
-    },
-    {
-      "id": 3,
-      "textureId": null,
-    }
-  ]
+      "tile_types": [
+            {
+                  "id": 0,
+                  "texturePath": "assets/tiles/floor.png"
+            },
+            {
+                  "id": 1,
+                  "texturePath": "assets/tiles/fridge.png"
+            },
+            {
+                  "id": 2,
+                  "texturePath": "assets/tiles/stove.png"
+            },
+            {
+                  "id": 3,
+                  "texturePath": "assets/tiles/trash.png"
+            }
+      ]
 }

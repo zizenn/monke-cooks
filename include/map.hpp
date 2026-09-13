@@ -25,7 +25,7 @@ enum class TileGroups {
 class Tile {
 private:
       TileGroups tileGroup_;
-      raylib::Vector2 pos;
+      raylib::Vector2 pos_;
 };
 
 // map class

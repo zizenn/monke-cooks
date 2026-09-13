@@ -15,4 +15,4 @@ public:
       bool LoadJSON();
 };
 
-}
+}  // namespace lvl

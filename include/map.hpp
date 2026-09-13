@@ -34,7 +34,6 @@ private:
       std::string mapFilePath_;
       const raylib::Vector2 mapSize_ = {16, 9};
 
-
 public:
       int LoadMap();
 };

@@ -1,19 +1,20 @@
-# pragma once
+#pragma once
 
-#include <queue>
 #include <string>
 #include <vector>
 #include "external/raylib.h"
 
 namespace tex {
 
+struct TexturePacket {
+      std::string name;
+      Texture2D tex;
+};
+
 class TextureManager {
 private:
       std::string TextureManifestPath_;
-      std::vector<Texture2D> loadedTexArray_;
-
-      // get a queue of texture file paths to load from json file
-      std::queue<std::string> DecodeFilePathsFromJSON_();
+      std::vector<TexturePacket> loadedTexArray_;
 
 public:
       TextureManager(std::string filePath) : TextureManifestPath_(filePath) {}
@@ -24,9 +25,10 @@ public:
       void Load();
 
       void Unload() {
-            for(const auto& tex : loadedTexArray_) {
-                  UnloadTexture(tex);
+            for(const auto& item : loadedTexArray_) {
+                  UnloadTexture(item.tex);
             }
+            loadedTexArray_.clear();
       }
 };
 

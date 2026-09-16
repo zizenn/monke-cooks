@@ -1,34 +1,51 @@
 #include "nlohmann/json.hpp"
 #include "texture.hpp"
 #include <fstream>
-#include <queue>
 #include <string>
 
 using json = nlohmann::json;
 
 namespace tex {
 
-std::queue<std::string> TextureManager::DecodeFilePathsFromJSON_() {
-      std::queue<std::string> texturePaths;
+void TextureManager::Load() {
+      // clear old tex
+      Unload();
 
+      // open file + checks
       std::ifstream file(TextureManifestPath_);
-      if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof()) {
-            if (file.is_open()) file.close();
-            return  texturePaths;
+      if (!file.is_open()) {
+          TraceLog(LOG_WARNING, "[texture] could not open JSON file: %s", TextureManifestPath_.c_str());
+          return;
       }
 
-      json textures;
+      // Check empty file
+      if (file.peek() == std::ifstream::traits_type::eof()) {
+          TraceLog(LOG_WARNING, "[texture] JSON file is empty: %s", TextureManifestPath_.c_str());
+          return;
+      }
+
+      // transfer json into code
+      json texturesJson;
+
       try {
-            file >> textures;
+          file >> texturesJson;
       } catch (const json::parse_error& e) {
-            TraceLog(LOG_WARNING, "[texture] JSON parse error in %s: %s",
-                     TextureManifestPath_.c_str(), e.what());
-            return texturePaths;
+          TraceLog(LOG_WARNING, "[texture] JSON parse error in %s: %s",
+                   TextureManifestPath_.c_str(), e.what());
+          return;
       }
 
-      return texturePaths;
-}
+      // array check
+      if (!texturesJson.contains("textures") || !texturesJson["textures"].is_array()) {
+            TraceLog(LOG_WARNING, "[texture] JSON missing valid \"texture array\": %s", TextureManifestPath_.c_str());
+            return;
+      }
 
+      // texture loading
+      for (const auto& item : texturesJson["textures"]) {
+
+      }
+}
 
 //      // private
 //      void TextureManager::CreateArrayFromSize(int size) {

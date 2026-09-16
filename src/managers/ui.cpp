@@ -9,9 +9,9 @@ namespace ui {
       bool Button::DetectUpdate() {
             raylib::Vector2 mousePos = GetMousePosition();
             bool tempClick = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-            if (CheckCollisionPointRec(mousePos, buttonRect)) {
+            if (CheckCollisionPointRec(mousePos, buttonRect_)) {
                   isHovered = true;
-            } else if (CheckCollisionPointRec(mousePos, buttonRect) && tempClick == true) {
+            } else if (CheckCollisionPointRec(mousePos, buttonRect_) && tempClick == true) {
                   isClicked = true;
                   isHovered = true;
             } else {

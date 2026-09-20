@@ -34,10 +34,13 @@ private:
       Func unload_;
 
 public:
-      Scene(const Scenes &name, const Func load, const Func update,
+      Scene(const Scenes& name, const Func load, const Func update,
             const Func draw, const Func unload)
-          : name_(name), load_(load), update_(update), draw_(draw),
-            unload_(unload) {}
+            : name_(name),
+              load_(load),
+              update_(update),
+              draw_(draw),
+              unload_(unload) {}
 
       auto GetName() const { return name_; }
       auto GetLoad() const { return load_; }
@@ -54,8 +57,8 @@ private:
             {Scenes::Game, LoadGame, UpdateGame, DrawGame, UnloadGame},
       }};
 
-      Scene *currentScene_ = nullptr;
-      Scene *prevScene_ = nullptr;
+      Scene* currentScene_ = nullptr;
+      Scene* prevScene_ = nullptr;
 
       void Load() {
             if (currentScene_ && currentScene_->GetLoad()) {
@@ -99,8 +102,8 @@ public:
             }
       }
 
-      void ChangeScene(const Scenes &sceneName) {
-            for (auto &scene : scenes) {
+      void ChangeScene(const Scenes& sceneName) {
+            for (auto& scene : scenes) {
                   if (scene.GetName() == sceneName) {
                         currentScene_ = &scene;
                         break;
@@ -109,4 +112,4 @@ public:
       }
 };
 
-}; // namespace scene
+};  // namespace scene

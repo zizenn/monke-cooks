@@ -1,18 +1,18 @@
+#include <iostream>
+
 #include "Color.hpp"
 #include "Window.hpp"
 #include "keymaps.hpp"
 #include "raylib.h"
 #include "scenes.hpp"
 #include "time.hpp"
-#include <iostream>
 
 int main() {
-
       // set window width + height
       const int windowWidth = 1280;
       const int windowHeight = 720;
 
-      ::SetExitKey(KEY_NULL); // disable exit key (default is ESC)
+      ::SetExitKey(KEY_NULL);  // disable exit key (default is ESC)
 
       raylib::Window window(windowWidth, windowHeight, "monke cooks");
 

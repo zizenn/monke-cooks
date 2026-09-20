@@ -1,18 +1,19 @@
 #pragma once
 
 #include <string>
-#include <vector>
 namespace lvl {
 
 class Level {
 private:
-      const std::string LEVEL_FILE_PATH_;
-      std::string MAP_FILE_PATH_;
-      std::vector<std::string> texPaths_;
+      const std::string LevelFilePath_;  // given at start
+      const std::string MapFilePath_;
+      const std::string TextureManifestPath_;
+
+      // functions
+      void ParseJSON();
 
 public:
-      Level(std::string lvlPath) : MAP_FILE_PATH_(lvlPath) {}
-      bool LoadJSON();
+      Level(std::string lvlPath) : LevelFilePath_(lvlPath) {}
 };
 
-}
+}  // namespace lvl

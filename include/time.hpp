@@ -5,8 +5,7 @@ class Time {
 private:
       static inline float timeScale_ = 1.0f;
       static inline float deltaTime_ = 0.0f;
-      static inline double totalTime_ =
-            0.0; // Fixed: Matches GetTime() double type
+      static inline double totalTime_ = 0.0;
       static inline int frameCount_ = 0;
 
 public:
@@ -19,8 +18,6 @@ public:
             frameCount_++;
       }
 
-      // [[nodiscard]] forces the compiler to warn if the return value is
-      // ignored
       [[nodiscard]] static float DeltaTime() { return deltaTime_ * timeScale_; }
       [[nodiscard]] static float UnscaledDeltaTime() { return deltaTime_; }
       [[nodiscard]] static double TotalTime() { return totalTime_; }

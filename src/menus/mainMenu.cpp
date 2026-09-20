@@ -26,6 +26,4 @@ void scene::DrawMainMenu() {
       testRec.Draw(raylib::Color::SkyBlue());
 }
 
-void scene::UnloadMainMenu() {
-      return;
-}
+void scene::UnloadMainMenu() { return; }

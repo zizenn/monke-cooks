@@ -20,9 +20,9 @@ public:
       static const Action& GetCurrentAction();
 
 private:
-      static void LoadFromJson();
+      static void Load();
       static Action CheckFrameAction_();
       static Action currentAction_;
 };
 
-} // namespace keymaps
+}  // namespace keymaps

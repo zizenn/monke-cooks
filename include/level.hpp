@@ -1,6 +1,11 @@
 #pragma once
 
 #include <string>
+
+#include "nlohmann/json.hpp"
+
+using json = nlohmann::json;
+
 namespace lvl {
 
 class Level {
@@ -10,7 +15,6 @@ private:
       const std::string TextureManifestPath_;
 
       // functions
-      void ParseJSON();
 
 public:
       Level(std::string lvlPath) : LevelFilePath_(lvlPath) {}

@@ -6,6 +6,7 @@
 
 #include "nlohmann/json.hpp"
 #include "raylib.h"
+#include "utilities.hpp"
 
 using json = nlohmann::json;
 
@@ -175,27 +176,15 @@ void WriteDefaultConfig() {
 
 Action Keymaps::currentAction_ = Action::NULL_ACTION;
 
-void Keymaps::LoadFromJson() {
+void Keymaps::Load() {
       activeControls.clear();
+      json config{};
 
-      std::ifstream file(KEYMAP_FILEPATH);
-      if (!file.is_open() || file.peek() == std::ifstream::traits_type::eof()) {
+      if (!util::ParseJson(KEYMAP_FILEPATH, "keymap", config)) {
             TraceLog(LOG_INFO,
                      "[keymaps] no config found, writing defaults to %s",
                      KEYMAP_FILEPATH.c_str());
-            if (file.is_open()) file.close();
             WriteDefaultConfig();
-            file.open(KEYMAP_FILEPATH);
-            if (!file.is_open()) return;
-      }
-
-      json config;
-      try {
-            file >> config;
-      } catch (const json::parse_error& e) {
-            TraceLog(LOG_WARNING, "[keymaps] JSON parse error in %s: %s",
-                     KEYMAP_FILEPATH.c_str(), e.what());
-            return;
       }
 
       for (auto it = config.begin(); it != config.end(); ++it) {
@@ -238,7 +227,7 @@ const Action& Keymaps::GetCurrentAction() { return currentAction_; }
 
 Action Keymaps::Update() {
       if (!loaded) {
-            LoadFromJson();
+            Load();
             loaded = true;
       }
       return CheckFrameAction_();

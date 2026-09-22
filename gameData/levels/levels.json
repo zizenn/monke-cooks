@@ -10,9 +10,9 @@
     {
       "id": 2,
       "name": "stage 2",
-      "mapJsonPath": "gameData/levels/level2/map2.json",
-      "tileManifestJsonPath": "gameData/levels/level2/tileManifest.json",
-      "textureJsonPath": "gameData/levels/level2/textureManifest.json"
+      "mapPath": "gameData/levels/level2/map2.json",
+      "tilePath": "gameData/levels/level2/tileManifest.json",
+      "texPath": "gameData/levels/level2/textureManifest.json"
     }
   ]
 }

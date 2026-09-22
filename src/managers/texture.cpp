@@ -11,6 +11,11 @@ using json = nlohmann::json;
 namespace tex {
 
 void TextureManager::Load() {
+      // check if paths are set
+      if (!isSet) {
+            return;
+      }
+
       // clear old tex
       Unload();
 
@@ -52,10 +57,16 @@ void TextureManager::Load() {
             loadedTexArray_.push_back({name, tex});
             TraceLog(LOG_INFO, "[texture] loaded %s from %s", name.c_str(),
                      path.c_str());
+            isLoaded = true;
       }
 }
 
 [[nodiscard]] Texture2D* TextureManager::GetTexture(std::string& name) {
+      // check if tex stuff is valid
+      if (!isSet || !isLoaded) {
+            return nullptr;
+      }
+
       Texture2D* tex;
       bool found = false;
 
@@ -79,6 +90,7 @@ void TextureManager::Unload() {
             UnloadTexture(item.tex);
       }
       loadedTexArray_.clear();
+      isLoaded = false;
 }
 
 }  // namespace tex

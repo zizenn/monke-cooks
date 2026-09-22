@@ -3,6 +3,7 @@
 #include "Color.hpp"
 #include "Window.hpp"
 #include "keymaps.hpp"
+#include "level.hpp"
 #include "raylib.h"
 #include "scenes.hpp"
 #include "time.hpp"
@@ -20,25 +21,27 @@ int main() {
       std::cout << "game logs:\n";
 
       // 1 time loads
-      scene::SceneManager sceneManager;
+      scene::SceneManager sceneMan;
+      lvl::Level lvlMan;
+      lvlMan.Initialize();
 
       // load the first scene
-      sceneManager.ChangeScene(scene::Scenes::MainMenu);
+      sceneMan.ChangeScene(scene::Scenes::MainMenu);
 
       while (!window.ShouldClose()) {
             // variables per frame
             Time::Update();
             keymaps::Keymaps::Update();
-            sceneManager.CheckSceneChange();
+            sceneMan.CheckSceneChange();
 
             // updating
-            sceneManager.Update();
+            sceneMan.Update();
 
             // drawing
             BeginDrawing();
 
             ::ClearBackground(raylib::Color::RayWhite());
-            sceneManager.Draw();
+            sceneMan.Draw();
 
             EndDrawing();
       }

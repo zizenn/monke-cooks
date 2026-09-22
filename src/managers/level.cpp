@@ -43,9 +43,21 @@ void Level::Initialize() {
 }
 
 void Level::LoadLevel(int id) {
-      // create load lvl stuff
-      // basically js make a for each loop that checks whether the item in the
-      // loop has the id im looking for
+      for (const auto& item : levels_) {
+            if (item.Id == id) {
+                  Load_(item);
+                  break;
+            }
+            continue;
+      }
 }
 
+void Level::Load_(const LevelContainer& levelToLoad) {
+      texMan_.Set(levelToLoad.TexPath);
+      texMan_.Load();
+      // load tile
+      // load map
+      TraceLog(LOG_INFO, "[level] level %d-%s loaded", levelToLoad.Id,
+               levelToLoad.Name.c_str());
+}
 }  // namespace lvl

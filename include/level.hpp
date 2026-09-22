@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "nlohmann/json.hpp"
+#include "texture.hpp"
 
 using json = nlohmann::json;
 
@@ -24,11 +25,18 @@ private:
       // variables
       std::vector<LevelContainer> levels_{};
 
+      // classes
+      tex::TextureManager texMan_;
+
+      // functions
+      void Load_(const LevelContainer& levelToLoad);
+
+public:
+      Level() = default;
+
       // functions
       void Initialize();
       void LoadLevel(int id);
-
-public:
 };
 
 }  // namespace lvl

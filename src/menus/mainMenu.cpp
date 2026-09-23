@@ -1,3 +1,4 @@
+#include <array>
 #include "Color.hpp"
 #include "Rectangle.hpp"
 #include "raylib.h"
@@ -6,13 +7,12 @@
 
 static float posX = 0.0f;
 
-namespace {
+std::array<raylib::Rectangle, 1> rects = {
+      (raylib::Rectangle){0, 2, 12, 20},
+};
 
-Rectangle rects[1];
-
+void scene::LoadMainMenu() {
 }
-
-void scene::LoadMainMenu() { rects[0] = {0, 0, 100, 50}; }
 
 void scene::UpdateMainMenu() {
       posX += 100.0f * Time::DeltaTime();

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <optional>
-
 #include <string>
 #include <vector>
 
@@ -29,6 +28,7 @@ class Tile {
 private:
       TileGroups tileGroup_;
       raylib::Vector2 pos_;
+
 public:
       // constructor
       Tile(TileGroups tileGroup, const raylib::Vector2& pos)
@@ -46,11 +46,11 @@ private:
       const std::string mapFilePath_;
 
       // variables
-      std::string mapName_;
       std::vector<std::vector<Tile>> mapLayout_;
 
       // functions
       int LoadTiles_();
+
 public:
       // constructor
       Map(const std::string& mapFilePath) : mapFilePath_(mapFilePath) {}
@@ -59,8 +59,9 @@ public:
       int LoadMap();
 
       // getters
-      const std::string& GetName() const { return mapName_; }
-      const std::vector<std::vector<Tile>>& GetLayout() const { return mapLayout_; }
+      const std::vector<std::vector<Tile>>& GetLayout() const {
+            return mapLayout_;
+      }
 };
 
 // helper functions

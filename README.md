@@ -28,7 +28,6 @@ you will need a C++ compiler. if you do not know what that, its a piece of softw
 
 ## team
 1. sakif (lead dev)
-2. eaton (dev)
 3. pls help
 
 ## star History

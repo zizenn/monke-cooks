@@ -5,14 +5,14 @@
       "name": "stage 1",
       "mapPath": "gameData/levels/level1/map.json",
       "texPath": "gameData/levels/level1/tex.json",
-      "tilePath": "gameData/levels/level1/til.json"
+      "tilePath": "gameData/levels/level1/tile.json"
     },
     {
       "id": 2,
       "name": "stage 2",
       "mapPath": "gameData/levels/level2/map.json",
       "texPath": "gameData/levels/level2/tex.json",
-      "tilePath": "gameData/levels/level2/til.json"
+      "tilePath": "gameData/levels/level2/tile.json"
     }
   ]
 }

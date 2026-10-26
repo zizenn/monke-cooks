@@ -11,9 +11,9 @@ namespace map {
 // constants
 constexpr std::size_t MAP_WIDTH = 16;
 constexpr std::size_t MAP_HEIGHT = 9;
-constexpr int TILE_SIZE =
-      32;  // 32 means 32x32 image sizes for the texture, if the texture is
-           // greater than this number, it will be scaled to fit
+constexpr int TILE_SIZE = 32;
+// 32 means 32x32 image sizes for the texture, if the texture is
+// greater than this number, it will be scaled to fit
 
 // enums
 enum class TileGroups {
@@ -57,6 +57,7 @@ public:
 
       // methods
       int LoadMap();
+      int DrawMap();
 
       // getters
       const std::vector<std::vector<Tile>>& GetLayout() const {

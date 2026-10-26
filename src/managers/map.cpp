@@ -63,6 +63,12 @@ int Map::LoadMap() {
       return 0;
 }
 
+// drawing the map
+int DrawMap() {
+      // < insert code here >
+      return 0;
+}
+
 // helper stuff
 std::optional<map::TileGroups> TileGroupFromInt(int value) {
       switch (value) {
